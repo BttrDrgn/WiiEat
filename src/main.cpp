@@ -17,11 +17,10 @@
 #include <fat.h>
 
 #include "main.hpp"
-#include "FreeTypeGX.h"
-#include "video.h"
-#include "audio.h"
-#include "menu.h"
-#include "input.h"
+#include "libwiigui/video.h"
+#include "libwiigui/audio.h"
+#include "libwiigui/demo_menu.h"
+#include "libwiigui/input.h"
 #include "filelist.h"
 
 struct SSettings Settings;
@@ -45,8 +44,7 @@ void DefaultSettings()
 	Settings.AutoSave = 1;
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	InitVideo(); // Initialize video
 	SetupPads(); // Initialize input
@@ -56,5 +54,5 @@ main(int argc, char *argv[])
 	InitGUIThreads(); // Initialize GUI
 
 	DefaultSettings();
-	MainMenu(MENU_SETTINGS);
+	DemoMenu(MENU_SETTINGS);
 }

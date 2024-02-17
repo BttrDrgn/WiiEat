@@ -15,7 +15,7 @@
 #include <wiiuse/wpad.h>
 
 #include "main.hpp"
-#include "menu.h"
+#include "demo_menu.h"
 #include "libwiigui/gui.h"
 #include "input.h"
 #include "filelist.h"
@@ -748,9 +748,9 @@ static int MenuSettingsFile()
 }
 
 /****************************************************************************
- * MainMenu
+ * DemoMenu
  ***************************************************************************/
-void MainMenu(int menu)
+void DemoMenu(int menu)
 {
 	int currentMenu = menu;
 

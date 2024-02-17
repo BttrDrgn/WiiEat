@@ -12,7 +12,7 @@
 #include <ogcsys.h>
 
 void InitGUIThreads();
-void MainMenu (int menuitem);
+void DemoMenu (int menuitem);
 
 enum
 {

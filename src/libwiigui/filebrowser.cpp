@@ -16,7 +16,7 @@
 #include <malloc.h>
 
 #include "filebrowser.h"
-#include "menu.h"
+#include "demo_menu.h"
 
 BROWSERINFO browser;
 BROWSERENTRY * browserList = NULL; // list of files/folders in browser

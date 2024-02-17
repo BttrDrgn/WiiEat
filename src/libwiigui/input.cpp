@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <wiiuse/wpad.h>
 
-#include "menu.h"
+#include "demo_menu.h"
 #include "video.h"
 #include "input.h"
 #include "libwiigui/gui.h"
