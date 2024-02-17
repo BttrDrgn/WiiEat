@@ -18,7 +18,7 @@ include $(DEVKITPPC)/wii_rules
 TARGET		:=	libwiigui-demo
 BUILD		:=	build
 BIN			:=	$(BUILD)/bin
-SOURCES		:=	src $(wildcard src/**) assets $(wildcard assets/**)
+SOURCES		:=	src $(wildcard src/**) $(wildcard src/**/**) assets $(wildcard assets/**)
 INCLUDES	:=	src
 
 #---------------------------------------------------------------------------------

@@ -8,7 +8,7 @@
  * GUI class definitions
  ***************************************************************************/
 
-#include "gui.h"
+#include "../gui.h"
 
 /**
  * Constructor for the GuiImageData class.

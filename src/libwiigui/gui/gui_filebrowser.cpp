@@ -8,8 +8,8 @@
  * GUI class definitions
  ***************************************************************************/
 
-#include "gui.h"
-#include "filebrowser.h"
+#include "../gui.h"
+#include "../filebrowser.h"
 
 /**
  * Constructor for the GuiFileBrowser class.
