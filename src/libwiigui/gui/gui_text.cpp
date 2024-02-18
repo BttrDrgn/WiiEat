@@ -104,7 +104,7 @@ gui_text::~gui_text()
 	}
 }
 
-void gui_text::SetText(const char * t)
+void gui_text::set_text(const char * t)
 {
 	if(origText)
 		free(origText);

@@ -35,7 +35,7 @@ gui_image_data::~gui_image_data()
 	}
 }
 
-u8 * gui_image_data::GetImage()
+u8 * gui_image_data::get_image()
 {
 	return data;
 }

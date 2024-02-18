@@ -15,9 +15,8 @@ int main(int argc, char *argv[])
 	setup_pads(); // Initialize input
 	init_audio(); // Initialize audio
 	fs::init();
-	init_free_type((u8*)font_bold_ttf, font_bold_ttf_size); // Initialize font system
+	init_free_type((u8*)font_ttf, font_ttf_size); // Initialize font system
+	net::initialize();
 	
-	menus::init_gui_threads(); // Initialize GUI
-
-	main_menu::initialize(menus::state::MENU_MAIN);
+	menus::initialize(menus::state::MENU_MAIN);
 }

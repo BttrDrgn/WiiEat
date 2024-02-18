@@ -20,7 +20,6 @@ BUILD		:=	build
 BIN			:=	dist/apps/WiiEat
 SOURCES		:=	src $(wildcard src/**) $(wildcard src/**/**) assets $(wildcard assets/**)
 INCLUDES	:=	src
-PCH			:= 	stdafx.hpp
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -33,7 +32,7 @@ LDFLAGS		=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS :=	-lpng `freetype-config --libs` -lz -lfat -lwiiuse -lbte -lasnd -logc -lvorbisidec -logg
+LIBS :=	-lcurl -lmbedtls -lmbedcrypto -lmbedx509 -lwiisocket -lm -lwiisocket -lpng `freetype-config --libs` -lz -lfat -lwiiuse -lbte -lasnd -logc -lvorbisidec -logg
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib

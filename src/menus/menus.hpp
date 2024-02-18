@@ -23,8 +23,12 @@ class menus
         static menus::state prev_menu;
         static gui_window* main_window;
         static gui_image_data* pointer[4];
+        static gui_image* bg_img;
         static bool shutdown;
 
+        static void initialize(state menu);
+        static void update();
+        static void shutdown_app();
 
         static void resume_gui()
         {
@@ -48,6 +52,12 @@ class menus
         static void init_gui_threads()
         {
             LWP_CreateThread(&menus::gui_thread, menus::update_gui, NULL, NULL, 0, 70);
+        }
+
+        static state next(menus::state next_menu)
+        {
+            prev_menu = current_menu;
+            return next_menu;
         }
 };
 

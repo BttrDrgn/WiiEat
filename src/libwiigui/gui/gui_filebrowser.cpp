@@ -169,13 +169,13 @@ void GuiFileBrowser::SetFocus(int f)
 	focus = f;
 
 	for(int i=0; i<FILE_PAGESIZE; i++)
-		fileList[i]->ResetState();
+		fileList[i]->reset_state();
 
 	if(f == 1)
-		fileList[selectedItem]->SetState(STATE_SELECTED);
+		fileList[selectedItem]->set_state(STATE_SELECTED);
 }
 
-void GuiFileBrowser::ResetState()
+void GuiFileBrowser::reset_state()
 {
 	state = STATE_DEFAULT;
 	stateChan = -1;
@@ -183,7 +183,7 @@ void GuiFileBrowser::ResetState()
 
 	for(int i=0; i<FILE_PAGESIZE; i++)
 	{
-		fileList[i]->ResetState();
+		fileList[i]->reset_state();
 	}
 }
 
@@ -264,13 +264,13 @@ void GuiFileBrowser::Update(gui_trigger * t)
 	{
 		t->wpad->btns_d |= WPAD_BUTTON_DOWN;
 		if(!this->IsFocused())
-			((gui_window *)this->GetParent())->ChangeFocus(this);
+			((gui_window *)this->GetParent())->change_focus(this);
 	}
 	else if(arrowUpBtn->get_state() == STATE_HELD && arrowUpBtn->get_stateChan() == t->chan)
 	{
 		t->wpad->btns_d |= WPAD_BUTTON_UP;
 		if(!this->IsFocused())
-			((gui_window *)this->GetParent())->ChangeFocus(this);
+			((gui_window *)this->GetParent())->change_focus(this);
 	}
 
 	// pad/joystick navigation
@@ -312,8 +312,8 @@ void GuiFileBrowser::Update(gui_trigger * t)
 			}
 			else if(fileList[selectedItem+1]->is_visible())
 			{
-				fileList[selectedItem]->ResetState();
-				fileList[++selectedItem]->SetState(STATE_SELECTED, t->chan);
+				fileList[selectedItem]->reset_state();
+				fileList[++selectedItem]->set_state(STATE_SELECTED, t->chan);
 			}
 		}
 	}
@@ -327,8 +327,8 @@ void GuiFileBrowser::Update(gui_trigger * t)
 		}
 		else if(selectedItem > 0)
 		{
-			fileList[selectedItem]->ResetState();
-			fileList[--selectedItem]->SetState(STATE_SELECTED, t->chan);
+			fileList[selectedItem]->reset_state();
+			fileList[--selectedItem]->set_state(STATE_SELECTED, t->chan);
 		}
 	}
 
@@ -341,11 +341,11 @@ void GuiFileBrowser::Update(gui_trigger * t)
 			if(browser.pageIndex+i < browser.numEntries)
 			{
 				if(fileList[i]->get_state() == STATE_DISABLED)
-					fileList[i]->SetState(STATE_DEFAULT);
+					fileList[i]->set_state(STATE_DEFAULT);
 
 				fileList[i]->SetVisible(true);
 
-				fileListText[i]->SetText(browserList[browser.pageIndex+i].displayname);
+				fileListText[i]->set_text(browserList[browser.pageIndex+i].displayname);
 
 				if(browserList[browser.pageIndex+i].isdir) // directory
 				{
@@ -361,14 +361,14 @@ void GuiFileBrowser::Update(gui_trigger * t)
 			else
 			{
 				fileList[i]->SetVisible(false);
-				fileList[i]->SetState(STATE_DISABLED);
+				fileList[i]->set_state(STATE_DISABLED);
 			}
 		}
 
 		if(i != selectedItem && fileList[i]->get_state() == STATE_SELECTED)
-			fileList[i]->ResetState();
+			fileList[i]->reset_state();
 		else if(focus && i == selectedItem && fileList[i]->get_state() == STATE_DEFAULT)
-			fileList[selectedItem]->SetState(STATE_SELECTED, t->chan);
+			fileList[selectedItem]->set_state(STATE_SELECTED, t->chan);
 
 		int currChan = t->chan;
 

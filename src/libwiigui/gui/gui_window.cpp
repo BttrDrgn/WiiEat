@@ -28,7 +28,7 @@ gui_window::~gui_window()
 {
 }
 
-void gui_window::append(GuiElement* e)
+void gui_window::append(gui_element* e)
 {
 	if (e == NULL)
 		return;
@@ -38,7 +38,7 @@ void gui_window::append(GuiElement* e)
 	e->set_parent(this);
 }
 
-void gui_window::Insert(GuiElement* e, u32 index)
+void gui_window::Insert(gui_element* e, u32 index)
 {
 	if (e == NULL || index > (_elements.size() - 1))
 		return;
@@ -48,7 +48,7 @@ void gui_window::Insert(GuiElement* e, u32 index)
 	e->set_parent(this);
 }
 
-void gui_window::remove(GuiElement* e)
+void gui_window::remove(gui_element* e)
 {
 	if (e == NULL)
 		return;
@@ -69,7 +69,7 @@ void gui_window::removeAll()
 	_elements.clear();
 }
 
-bool gui_window::Find(GuiElement* e)
+bool gui_window::Find(gui_element* e)
 {
 	if (e == NULL)
 		return false;
@@ -81,14 +81,14 @@ bool gui_window::Find(GuiElement* e)
 	return false;
 }
 
-GuiElement* gui_window::GetGuiElementAt(u32 index) const
+gui_element* gui_window::Getgui_elementAt(u32 index) const
 {
 	if (index >= _elements.size())
 		return NULL;
 	return _elements.at(index);
 }
 
-u32 gui_window::GetSize()
+u32 gui_window::get_size()
 {
 	return _elements.size();
 }
@@ -108,7 +108,7 @@ void gui_window::Draw()
 	this->update_effects();
 
 	if(parentElement && state == STATE_DISABLED)
-		Menu_DrawRectangle(0,0,screenwidth,screenheight,(GXColor){0xbe, 0xca, 0xd5, 0x70},1);
+		menu_draw_rect(0,0,screen_width,screen_height,(GXColor){0xbe, 0xca, 0xd5, 0x70},1);
 }
 
 void gui_window::draw_tool_tip()
@@ -124,7 +124,7 @@ void gui_window::draw_tool_tip()
 	}
 }
 
-void gui_window::ResetState()
+void gui_window::reset_state()
 {
 	if(state != STATE_DISABLED)
 		state = STATE_DEFAULT;
@@ -132,19 +132,19 @@ void gui_window::ResetState()
 	u32 elemSize = _elements.size();
 	for (u32 i = 0; i < elemSize; ++i)
 	{
-		try { _elements.at(i)->ResetState(); }
+		try { _elements.at(i)->reset_state(); }
 		catch (const std::exception& e) { }
 	}
 }
 
-void gui_window::SetState(int s)
+void gui_window::set_state(int s)
 {
 	state = s;
 
 	u32 elemSize = _elements.size();
 	for (u32 i = 0; i < elemSize; ++i)
 	{
-		try { _elements.at(i)->SetState(s); }
+		try { _elements.at(i)->set_state(s); }
 		catch (const std::exception& e) { }
 	}
 }
@@ -168,10 +168,10 @@ void gui_window::SetFocus(int f)
 	if(f == 1)
 		this->MoveSelectionVert(1);
 	else
-		this->ResetState();
+		this->reset_state();
 }
 
-void gui_window::ChangeFocus(GuiElement* e)
+void gui_window::change_focus(gui_element* e)
 {
 	if(parentElement)
 		return; // this is only intended for the main window
@@ -352,9 +352,9 @@ void gui_window::MoveSelectionHor(int dir)
 	matchfound:
 	if(found >= 0)
 	{
-		_elements.at(found)->SetState(STATE_SELECTED);
+		_elements.at(found)->set_state(STATE_SELECTED);
 		if(selected >= 0)
-			_elements.at(selected)->ResetState();
+			_elements.at(selected)->reset_state();
 	}
 }
 
@@ -403,9 +403,9 @@ void gui_window::MoveSelectionVert(int dir)
 	matchfound:
 	if(found >= 0)
 	{
-		_elements.at(found)->SetState(STATE_SELECTED);
+		_elements.at(found)->set_state(STATE_SELECTED);
 		if(selected >= 0)
-			_elements.at(selected)->ResetState();
+			_elements.at(selected)->reset_state();
 	}
 }
 

@@ -30,7 +30,7 @@ gui_image::gui_image(gui_image_data * img)
 	height = 0;
 	if(img)
 	{
-		image = img->GetImage();
+		image = img->get_image();
 		width = img->GetWidth();
 		height = img->GetHeight();
 	}
@@ -87,7 +87,7 @@ gui_image::~gui_image()
 		free(image);
 }
 
-u8 * gui_image::GetImage()
+u8 * gui_image::get_image()
 {
 	return image;
 }
@@ -99,7 +99,7 @@ void gui_image::set_image(gui_image_data * img)
 	height = 0;
 	if(img)
 	{
-		image = img->GetImage();
+		image = img->get_image();
 		width = img->GetWidth();
 		height = img->GetHeight();
 	}
@@ -236,12 +236,12 @@ void gui_image::Draw()
 		int alpha = this->GetAlpha();
 		for(int i=0; i<tile; ++i)
 		{
-			Menu_DrawImg(currLeft+width*i, thisTop, width, height, image, imageangle, currScaleX, currScaleY, alpha);
+			menu_draw_img(currLeft+width*i, thisTop, width, height, image, imageangle, currScaleX, currScaleY, alpha);
 		}
 	}
 	else
 	{
-		Menu_DrawImg(currLeft, thisTop, width, height, image, imageangle, currScaleX, currScaleY, this->GetAlpha());
+		menu_draw_img(currLeft, thisTop, width, height, image, imageangle, currScaleX, currScaleY, this->GetAlpha());
 	}
 
 	if(stripe > 0)
@@ -249,7 +249,7 @@ void gui_image::Draw()
 		int thisHeight = this->GetHeight();
 		int thisWidth = this->GetWidth();
 		for(int y=0; y < thisHeight; y+=6)
-			Menu_DrawRectangle(currLeft,thisTop+y,thisWidth,3,(GXColor){0, 0, 0, stripe},1);
+			menu_draw_rect(currLeft,thisTop+y,thisWidth,3,(GXColor){0, 0, 0, stripe},1);
 	}
 	this->update_effects();
 }

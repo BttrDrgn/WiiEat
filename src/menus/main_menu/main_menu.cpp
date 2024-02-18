@@ -1,7 +1,6 @@
 
 #include "main_menu.hpp"
 
-static gui_image* bg_img = NULL;
 char email_address[64];
 char password[64];
 
@@ -50,7 +49,7 @@ int WindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	btn1.set_image_hover(&btn1ImgOver);
 	btn1.set_sound_hover(&btn_sound_hover);
 	btn1.set_trigger(&trig_a);
-	btn1.SetState(STATE_SELECTED);
+	btn1.set_state(STATE_SELECTED);
 	btn1.SetEffectGrow();
 
 	gui_text btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
@@ -76,9 +75,9 @@ int WindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
 	menus::halt_gui();
-	menus::main_window->SetState(STATE_DISABLED);
+	menus::main_window->set_state(STATE_DISABLED);
 	menus::main_window->append(&promptWindow);
-	menus::main_window->ChangeFocus(&promptWindow);
+	menus::main_window->change_focus(&promptWindow);
 	menus::resume_gui();
 
 	while(choice == -1)
@@ -95,16 +94,14 @@ int WindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	while(promptWindow.GetEffect() > 0) usleep(100);
 	menus::halt_gui();
 	menus::main_window->remove(&promptWindow);
-	menus::main_window->SetState(STATE_DEFAULT);
+	menus::main_window->set_state(STATE_DEFAULT);
 	menus::resume_gui();
 	return choice;
 }
 
 static void OnScreenKeyboard(char * var, u16 maxlen)
 {
-	int save = -1;
-
-	GuiKeyboard keyboard(var, maxlen);
+	gui_keyboard keyboard(var, maxlen);
 
 	gui_sound btn_sound_hover(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	gui_image_data btnOutline(button_png);
@@ -144,19 +141,24 @@ static void OnScreenKeyboard(char * var, u16 maxlen)
 	keyboard.append(&cancelBtn);
 
 	menus::halt_gui();
-	menus::main_window->SetState(STATE_DISABLED);
+	menus::main_window->set_state(STATE_DISABLED);
 	menus::main_window->append(&keyboard);
-	menus::main_window->ChangeFocus(&keyboard);
+	menus::main_window->change_focus(&keyboard);
 	menus::resume_gui();
 
+	int save = -1;
 	while(save == -1)
 	{
 		usleep(100);
 
 		if(okBtn.get_state() == STATE_CLICKED)
+		{
 			save = 1;
+		}
 		else if(cancelBtn.get_state() == STATE_CLICKED)
+		{
 			save = 0;
+		}
 	}
 
 	if(save)
@@ -166,7 +168,7 @@ static void OnScreenKeyboard(char * var, u16 maxlen)
 
 	menus::halt_gui();
 	menus::main_window->remove(&keyboard);
-	menus::main_window->SetState(STATE_DEFAULT);
+	menus::main_window->set_state(STATE_DEFAULT);
 	menus::resume_gui();
 }
 
@@ -174,12 +176,12 @@ menus::state main_menu::update()
 {
 	menus::state menu = menus::state::MENU_NONE;
 
-	gui_window w(screenwidth, screenheight);
+	gui_window w(screen_width, screen_height);
 	gui_sound btn_sound_hover(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	gui_image_data btnSmall(button_small_png);
-	gui_image_data inputBox(input_box_png);
-	gui_image_data inputBoxHover(input_box_hover_png);
 	gui_image_data btnSmallHover(button_small_over_png);
+	gui_image_data inputBox(input_box_png);
+	gui_image_data input_box_hover(input_box_hover_png);
 	gui_image_data circle_btn(circle_button_png);
 	gui_image_data circle_btn_hover(circle_button_hover_png);
 	gui_trigger trig_a;
@@ -193,10 +195,10 @@ menus::state main_menu::update()
 	logo.set_position(50, 50);
 	w.append(&logo);
 
-	gui_text poweredByTxt("Powered by Grubhub", 12, (GXColor){0x50, 0x50, 0x50, 255});
-	poweredByTxt.set_alignment(ALIGN_LEFT, ALIGN_TOP);
-	poweredByTxt.set_position(60, 100);
-	w.append(&poweredByTxt);
+	gui_text powered_by_txt("Powered by Grubhub", 12, (GXColor){0x50, 0x50, 0x50, 255});
+	powered_by_txt.set_alignment(ALIGN_LEFT, ALIGN_TOP);
+	powered_by_txt.set_position(60, 100);
+	w.append(&powered_by_txt);
 
 	gui_text exit_btn_txt("X", 22, (GXColor){0, 0, 0, 255});
 	gui_image exit_btn_img(&circle_btn);
@@ -213,76 +215,77 @@ menus::state main_menu::update()
 	exit_btn.set_scale(0.75f);
 	w.append(&exit_btn);
 
-#ifdef DEBUG
-	gui_text consoleBtnText("</>", 20, (GXColor){0, 0, 0, 255});
-	gui_image consoleBtnImg(&circle_btn);
-	gui_image consoleBtnImgOver(&circle_btn_hover);
-	gui_button consoleBtn(circle_btn.GetWidth(), circle_btn.GetHeight());
-	consoleBtn.set_alignment(ALIGN_LEFT, ALIGN_BOTTOM);
-	consoleBtn.set_position(35, -35);
-	consoleBtn.set_label(&consoleBtnText);
-	consoleBtn.set_image(&consoleBtnImg);
-	consoleBtn.set_image_hover(&consoleBtnImgOver);
-	consoleBtn.set_sound_hover(&btn_sound_hover);
-	consoleBtn.set_trigger(&trig_a);
-	consoleBtn.set_trigger(&trig_home);
-	consoleBtn.set_scale(0.75f);
-	w.append(&consoleBtn);
-#endif
+	gui_text login_btnText("Login", 22, (GXColor){0, 0, 0, 255});
+	gui_image login_btnImg(&btnSmall);
+	gui_image login_btnImgOver(&btnSmallHover);
+	gui_button login_btn(btnSmall.GetWidth(), btnSmall.GetHeight());
+	login_btn.set_alignment(ALIGN_CENTER, ALIGN_BOTTOM);
+	login_btn.set_position(0, -35);
+	login_btn.set_label(&login_btnText);
+	login_btn.set_image(&login_btnImg);
+	login_btn.set_image_hover(&login_btnImgOver);
+	login_btn.set_sound_hover(&btn_sound_hover);
+	login_btn.set_trigger(&trig_a);
+	login_btn.SetEffectGrow();
+	w.append(&login_btn);
 
-	gui_text loginBtnText("Login", 22, (GXColor){0, 0, 0, 255});
-	gui_image loginBtnImg(&btnSmall);
-	gui_image loginBtnImgOver(&btnSmallHover);
-	gui_button loginBtn(btnSmall.GetWidth(), btnSmall.GetHeight());
-	loginBtn.set_alignment(ALIGN_CENTER, ALIGN_BOTTOM);
-	loginBtn.set_position(0, -35);
-	loginBtn.set_label(&loginBtnText);
-	loginBtn.set_image(&loginBtnImg);
-	loginBtn.set_image_hover(&loginBtnImgOver);
-	loginBtn.set_sound_hover(&btn_sound_hover);
-	loginBtn.set_trigger(&trig_a);
-	loginBtn.SetEffectGrow();
-	w.append(&loginBtn);
+	gui_text email_text("Email:", 24, (GXColor){0, 0, 0, 255});
+	email_text.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
+	email_text.set_position(-150, 175);
+	w.append(&email_text);
 
-	gui_text emailText("Email:", 24, (GXColor){0, 0, 0, 255});
-	emailText.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	emailText.set_position(-125, 175);
-	w.append(&emailText);
-
-	gui_text emailPromptText(email_address, 12, (GXColor){0, 0, 0, 255});
-	gui_image emailPromptImg(&inputBox);
-	gui_image emailPromptImgOver(&inputBoxHover);
-	emailPromptImg.set_scale_x(1.5f);
-	emailPromptImgOver.set_scale_x(1.5f);
-	gui_button emailPrompt(inputBox.GetWidth(), inputBox.GetHeight());
-	emailPrompt.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	emailPrompt.set_position(35, 150);
-	emailPrompt.set_label(&emailPromptText);
-	emailPrompt.set_image(&emailPromptImg);
-	emailPrompt.set_image_hover(&emailPromptImgOver);
-	emailPrompt.set_sound_hover(&btn_sound_hover);
-	emailPrompt.set_trigger(&trig_a);
-	w.append(&emailPrompt);
+	gui_text email_prompt_text(email_address, 12, (GXColor){0, 0, 0, 255});
+	gui_image email_prompt_img(&inputBox);
+	gui_image email_prompt_img_hover(&input_box_hover);
+	email_prompt_img.set_scale_x(1.5f);
+	email_prompt_img_hover.set_scale_x(1.5f);
+	gui_button email_prompt(inputBox.GetWidth(), inputBox.GetHeight());
+	email_prompt.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
+	email_prompt.set_position(20, 150);
+	email_prompt.set_label(&email_prompt_text);
+	email_prompt.set_image(&email_prompt_img);
+	email_prompt.set_image_hover(&email_prompt_img_hover);
+	email_prompt.set_sound_hover(&btn_sound_hover);
+	email_prompt.set_trigger(&trig_a);
+	w.append(&email_prompt);
 
 	gui_text passwordText("Password:", 24, (GXColor){0, 0, 0, 255});
 	passwordText.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	passwordText.set_position(-150, 250);
+	passwordText.set_position(-175, 250);
 	w.append(&passwordText);
 
 	gui_text passwordPromptText(password, 12, (GXColor){0, 0, 0, 255});
 	gui_image passwordPromptImg(&inputBox);
-	gui_image passwordPromptImgOver(&inputBoxHover);
+	gui_image passwordPromptImgOver(&input_box_hover);
 	passwordPromptImg.set_scale_x(1.5f);
 	passwordPromptImgOver.set_scale_x(1.5f);
 	gui_button passwordPrompt(inputBox.GetWidth(), inputBox.GetHeight());
 	passwordPrompt.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	passwordPrompt.set_position(35, 225);
+	passwordPrompt.set_position(20, 225);
 	passwordPrompt.set_label(&passwordPromptText);
 	passwordPrompt.set_image(&passwordPromptImg);
 	passwordPrompt.set_image_hover(&passwordPromptImgOver);
 	passwordPrompt.set_sound_hover(&btn_sound_hover);
 	passwordPrompt.set_trigger(&trig_a);
 	w.append(&passwordPrompt);
+
+	
+#ifdef DEBUG
+	gui_text console_btnText("</>", 20, (GXColor){0, 0, 0, 255});
+	gui_image console_btnImg(&circle_btn);
+	gui_image console_btnImgOver(&circle_btn_hover);
+	gui_button console_btn(circle_btn.GetWidth(), circle_btn.GetHeight());
+	console_btn.set_alignment(ALIGN_LEFT, ALIGN_BOTTOM);
+	console_btn.set_position(35, -35);
+	console_btn.set_label(&console_btnText);
+	console_btn.set_image(&console_btnImg);
+	console_btn.set_image_hover(&console_btnImgOver);
+	console_btn.set_sound_hover(&btn_sound_hover);
+	console_btn.set_trigger(&trig_a);
+	console_btn.set_trigger(&trig_home);
+	console_btn.set_scale(0.75f);
+	w.append(&console_btn);
+#endif
 
 	menus::halt_gui();
 	menus::main_window->append(&w);
@@ -294,72 +297,19 @@ menus::state main_menu::update()
 
 		if(exit_btn.get_state() == STATE_CLICKED)
 		{
-			menu = menus::state::MENU_EXIT;
+			menu = menus::next(menus::state::MENU_EXIT);
 		}
-		else if(consoleBtn.get_state() == STATE_CLICKED)
+		else if(login_btn.get_state() == STATE_CLICKED)
 		{
-			menus::prev_menu = menus::state::MENU_MAIN;
-			menu = menus::state::MENU_CONSOLE;
+			login_btn.reset_state();
+		}
+		else if(console_btn.get_state() == STATE_CLICKED)
+		{
+			menu = menus::next(menus::state::MENU_CONSOLE);
 		}
 	}
 
 	menus::halt_gui();
 	menus::main_window->remove(&w);
 	return menu;
-}
-
-void main_menu::initialize(menus::state menu)
-{
-	menus::current_menu = menu;
-
-	#ifdef HW_RVL
-	menus::pointer[0] = new gui_image_data(player1_point_png);
-	menus::pointer[1] = new gui_image_data(player2_point_png);
-	menus::pointer[2] = new gui_image_data(player3_point_png);
-	menus::pointer[3] = new gui_image_data(player4_point_png);
-	#endif
-
-	menus::main_window = new gui_window(screenwidth, screenheight);
-
-	bg_img = new gui_image(screenwidth, screenheight, (GXColor){0xE1, 0xE1, 0xE1, 0xFF});
-	menus::main_window->append(bg_img);
-
-	gui_trigger trig_a;
-	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-
-	menus::resume_gui();
-
-	while(menus::current_menu != menus::state::MENU_EXIT)
-	{
-		switch (menus::current_menu)
-		{
-			case menus::state::MENU_CONSOLE:
-				menus::current_menu = console_menu::update();
-				break;
-
-			case menus::state::MENU_MAIN:
-			default:
-				menus::current_menu = main_menu::update();
-				break;
-		}
-	}
-
-	menus::resume_gui();
-	menus::shutdown = true;
-	while(true) 
-	{
-		usleep(100);
-	}
-
-	menus::halt_gui();
-
-	delete bg_img;
-	delete menus::main_window;
-
-	delete menus::pointer[0];
-	delete menus::pointer[1];
-	delete menus::pointer[2];
-	delete menus::pointer[3];
-
-	menus::main_window = NULL;
 }

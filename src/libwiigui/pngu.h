@@ -61,7 +61,7 @@ void PNGU_ReleaseImageContext (IMGCTX ctx);
 ****************************************************************************/
 
 // Retrieves info from selected PNG file, including image dimensions, color format, background and transparency colors.
-int PNGU_GetImageProperties (IMGCTX ctx, PNGUPROP *fileproperties);
+int PNGU_get_imageProperties (IMGCTX ctx, PNGUPROP *fileproperties);
 
 /****************************************************************************
 * Image conversion								                            *

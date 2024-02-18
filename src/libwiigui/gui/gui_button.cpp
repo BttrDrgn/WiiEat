@@ -218,7 +218,7 @@ void gui_button::Update(gui_trigger * t)
 		{
 			if(state == STATE_DEFAULT) // we weren't on the button before!
 			{
-				this->SetState(STATE_SELECTED, t->chan);
+				this->set_state(STATE_SELECTED, t->chan);
 
 				if(this->Rumble())
 					rumbleRequest[t->chan] = 1;
@@ -238,7 +238,7 @@ void gui_button::Update(gui_trigger * t)
 		else
 		{
 			if(state == STATE_SELECTED && (stateChan == t->chan || stateChan == -1))
-				this->ResetState();
+				this->reset_state();
 
 			if(effectTarget == effectTargetOver && effectAmount == effectAmountOver)
 			{
@@ -279,7 +279,7 @@ void gui_button::Update(gui_trigger * t)
 						{
 							if(!t->wpad->ir.valid ||	this->IsInside(t->wpad->ir.x, t->wpad->ir.y))
 							{
-								this->SetState(STATE_CLICKED, t->chan);
+								this->set_state(STATE_CLICKED, t->chan);
 
 								if(sound_click)
 									sound_click->Play();
@@ -287,12 +287,12 @@ void gui_button::Update(gui_trigger * t)
 						}
 						else if(trigger[i]->type == TRIGGER_BUTTON_ONLY)
 						{
-							this->SetState(STATE_CLICKED, t->chan);
+							this->set_state(STATE_CLICKED, t->chan);
 						}
 						else if(trigger[i]->type == TRIGGER_BUTTON_ONLY_IN_FOCUS &&
 								parentElement->IsFocused())
 						{
-							this->SetState(STATE_CLICKED, t->chan);
+							this->set_state(STATE_CLICKED, t->chan);
 						}
 					}
 				}
@@ -327,7 +327,7 @@ void gui_button::Update(gui_trigger * t)
 				{
 					if(trigger[i]->type == TRIGGER_HELD && state == STATE_SELECTED &&
 						(t->chan == stateChan || stateChan == -1))
-						this->SetState(STATE_CLICKED, t->chan);
+						this->set_state(STATE_CLICKED, t->chan);
 				}
 
 				if(
@@ -342,11 +342,11 @@ void gui_button::Update(gui_trigger * t)
 
 				if(!held && state == STATE_HELD && stateChan == t->chan)
 				{
-					this->ResetState();
+					this->reset_state();
 				}
 				else if(held && state == STATE_CLICKED && stateChan == t->chan)
 				{
-					this->SetState(STATE_HELD, t->chan);
+					this->set_state(STATE_HELD, t->chan);
 				}
 			}
 		}

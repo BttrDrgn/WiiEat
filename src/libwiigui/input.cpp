@@ -24,11 +24,11 @@ gui_trigger userInput[4];
 static int rumbleCount[4] = {0,0,0,0};
 
 /****************************************************************************
- * UpdatePads
+ * update_pads
  *
  * Scans pad and wpad
  ***************************************************************************/
-void UpdatePads()
+void update_pads()
 {
 	WPAD_ScanPads();
 	PAD_ScanPads();
@@ -47,11 +47,6 @@ void UpdatePads()
 	}
 }
 
-/****************************************************************************
- * setup_pads
- *
- * Sets up userInput triggers for use
- ***************************************************************************/
 void setup_pads()
 {
 	PAD_Init();
@@ -59,8 +54,7 @@ void setup_pads()
 
 	// read wiimote accelerometer and IR data
 	WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
-	WPAD_SetVRes(WPAD_CHAN_ALL, screenwidth, screenheight);
-	WPAD_SetMotionPlus(-1, 1);
+	WPAD_SetVRes(WPAD_CHAN_ALL, screen_width, screen_height);
 
 	for(int i=0; i < 4; i++)
 	{
@@ -83,10 +77,10 @@ void shutoff_rumble()
 }
 
 /****************************************************************************
- * DoRumble
+ * do_rumble
  ***************************************************************************/
 
-void DoRumble(int i)
+void do_rumble(int i)
 {
 	if(rumbleRequest[i] && rumbleCount[i] < 3)
 	{

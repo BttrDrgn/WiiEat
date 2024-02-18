@@ -152,13 +152,13 @@ void GuiOptionBrowser::SetFocus(int f)
 	focus = f;
 
 	for(int i=0; i<PAGESIZE; i++)
-		optionBtn[i]->ResetState();
+		optionBtn[i]->reset_state();
 
 	if(f == 1)
-		optionBtn[selectedItem]->SetState(STATE_SELECTED);
+		optionBtn[selectedItem]->set_state(STATE_SELECTED);
 }
 
-void GuiOptionBrowser::ResetState()
+void GuiOptionBrowser::reset_state()
 {
 	if(state != STATE_DISABLED)
 	{
@@ -168,7 +168,7 @@ void GuiOptionBrowser::ResetState()
 
 	for(int i=0; i<PAGESIZE; i++)
 	{
-		optionBtn[i]->ResetState();
+		optionBtn[i]->reset_state();
 	}
 }
 
@@ -179,7 +179,7 @@ int GuiOptionBrowser::GetClickedOption()
 	{
 		if(optionBtn[i]->get_state() == STATE_CLICKED)
 		{
-			optionBtn[i]->SetState(STATE_SELECTED);
+			optionBtn[i]->set_state(STATE_SELECTED);
 			found = optionIndex[i];
 			break;
 		}
@@ -279,18 +279,18 @@ void GuiOptionBrowser::Update(gui_trigger * t)
 				if(optionBtn[i]->get_state() == STATE_DISABLED)
 				{
 					optionBtn[i]->SetVisible(true);
-					optionBtn[i]->SetState(STATE_DEFAULT);
+					optionBtn[i]->set_state(STATE_DEFAULT);
 				}
 
-				optionTxt[i]->SetText(options->name[next]);
-				optionVal[i]->SetText(options->value[next]);
+				optionTxt[i]->set_text(options->name[next]);
+				optionVal[i]->set_text(options->value[next]);
 				optionIndex[i] = next;
 				next = this->FindMenuItem(next, 1);
 			}
 			else
 			{
 				optionBtn[i]->SetVisible(false);
-				optionBtn[i]->SetState(STATE_DISABLED);
+				optionBtn[i]->set_state(STATE_DISABLED);
 			}
 		}
 	}
@@ -298,9 +298,9 @@ void GuiOptionBrowser::Update(gui_trigger * t)
 	for(int i=0; i<PAGESIZE; ++i)
 	{
 		if(i != selectedItem && optionBtn[i]->get_state() == STATE_SELECTED)
-			optionBtn[i]->ResetState();
+			optionBtn[i]->reset_state();
 		else if(focus && i == selectedItem && optionBtn[i]->get_state() == STATE_DEFAULT)
-			optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);
+			optionBtn[selectedItem]->set_state(STATE_SELECTED, t->chan);
 
 		int currChan = t->chan;
 
@@ -332,12 +332,12 @@ void GuiOptionBrowser::Update(gui_trigger * t)
 			}
 			else if(optionBtn[selectedItem+1]->is_visible())
 			{
-				optionBtn[selectedItem]->ResetState();
-				optionBtn[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
+				optionBtn[selectedItem]->reset_state();
+				optionBtn[selectedItem+1]->set_state(STATE_SELECTED, t->chan);
 				++selectedItem;
 			}
 		}
-		arrowDownBtn->ResetState();
+		arrowDownBtn->reset_state();
 	}
 	else if(t->Up() || arrowUpBtn->get_state() == STATE_CLICKED)
 	{
@@ -353,12 +353,12 @@ void GuiOptionBrowser::Update(gui_trigger * t)
 			}
 			else
 			{
-				optionBtn[selectedItem]->ResetState();
-				optionBtn[selectedItem-1]->SetState(STATE_SELECTED, t->chan);
+				optionBtn[selectedItem]->reset_state();
+				optionBtn[selectedItem-1]->set_state(STATE_SELECTED, t->chan);
 				--selectedItem;
 			}
 		}
-		arrowUpBtn->ResetState();
+		arrowUpBtn->reset_state();
 	}
 
 	if(update_cb)

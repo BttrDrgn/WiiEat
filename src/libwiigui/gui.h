@@ -59,7 +59,7 @@ extern FreeTypeGX *fontSystem[];
 #define MAX_OPTIONS 			150
 #define MAX_KEYBOARD_DISPLAY	32
 
-typedef void (*UpdateCallback)(void * e);
+typedef void (*update_callback)(void * e);
 
 enum
 {
@@ -230,19 +230,19 @@ class gui_trigger
 extern gui_trigger userInput[4];
 
 //!Primary GUI class. Most other classes inherit from this class.
-class GuiElement
+class gui_element
 {
 	public:
 		//!Constructor
-		GuiElement();
+		gui_element();
 		//!Destructor
-		~GuiElement();
+		~gui_element();
 		//!Set the element's parent
 		//!\param e Pointer to parent element
-		void set_parent(GuiElement * e);
+		void set_parent(gui_element * e);
 		//!Gets the element's parent
 		//!\return Pointer to parent element
-		GuiElement * GetParent();
+		gui_element * GetParent();
 		//!Gets the current leftmost coordinate of the element
 		//!Considers horizontal alignment, x offset, width, and parent element's GetLeft() / GetWidth() values
 		//!\return left coordinate
@@ -383,7 +383,7 @@ class GuiElement
 		void update_effects();
 		//!Sets a function to called after after Update()
 		//!Callback function can be used to response to changes in the state of the element, and/or update the element's attributes
-		void SetUpdateCallback(UpdateCallback u);
+		void set_update_callback(update_callback u);
 		//!Checks whether the element is in focus
 		//!\return true if element is in focus, false otherwise
 		int IsFocused();
@@ -396,9 +396,9 @@ class GuiElement
 		//!Sets the element's state
 		//!\param s State (STATE_DEFAULT, STATE_SELECTED, STATE_CLICKED, STATE_DISABLED)
 		//!\param c Controller channel (0-3, -1 = none)
-		virtual void SetState(int s, int c = -1);
+		virtual void set_state(int s, int c = -1);
 		//!Resets the element's state to STATE_DEFAULT
-		virtual void ResetState();
+		virtual void reset_state();
 		//!Gets whether or not the element is in STATE_SELECTED
 		//!\return true if selected, false otherwise
 		virtual int GetSelected();
@@ -417,8 +417,8 @@ class GuiElement
 		virtual void draw_tool_tip();
 	protected:
 		gui_trigger * trigger[3]; //!< gui_triggers (input actions) that this element responds to
-		UpdateCallback update_cb; //!< Callback function to call when this element is updated
-		GuiElement * parentElement; //!< Parent element
+		update_callback update_cb; //!< Callback function to call when this element is updated
+		gui_element * parentElement; //!< Parent element
 		int focus; //!< Element focus (-1 = focus disabled, 0 = not focused, 1 = focused)
 		int width; //!< Element width
 		int height; //!< Element height
@@ -452,8 +452,8 @@ class GuiElement
 		bool rumble; //!< Wiimote rumble (on/off) - set to on when this element requests a rumble event
 };
 
-//!Allows GuiElements to be grouped together into a "window"
-class gui_window : public GuiElement
+//!Allows gui_elements to be grouped together into a "window"
+class gui_window : public gui_element
 {
 	public:
 		//!Constructor
@@ -464,47 +464,47 @@ class gui_window : public GuiElement
 		gui_window(int w, int h);
 		//!Destructor
 		~gui_window();
-		//!appends a GuiElement to the gui_window
-		//!\param e The GuiElement to append. If it is already in the gui_window, it is removed first
-		void append(GuiElement* e);
-		//!Inserts a GuiElement into the gui_window at the specified index
-		//!\param e The GuiElement to insert. If it is already in the gui_window, it is removed first
+		//!appends a gui_element to the gui_window
+		//!\param e The gui_element to append. If it is already in the gui_window, it is removed first
+		void append(gui_element* e);
+		//!Inserts a gui_element into the gui_window at the specified index
+		//!\param e The gui_element to insert. If it is already in the gui_window, it is removed first
 		//!\param i Index in which to insert the element
-		void Insert(GuiElement* e, u32 i);
-		//!removes the specified GuiElement from the gui_window
-		//!\param e GuiElement to be removed
-		void remove(GuiElement* e);
-		//!removes all GuiElements
+		void Insert(gui_element* e, u32 i);
+		//!removes the specified gui_element from the gui_window
+		//!\param e gui_element to be removed
+		void remove(gui_element* e);
+		//!removes all gui_elements
 		void removeAll();
-		//!Looks for the specified GuiElement
-		//!\param e The GuiElement to find
+		//!Looks for the specified gui_element
+		//!\param e The gui_element to find
 		//!\return true if found, false otherwise
-		bool Find(GuiElement* e);
-		//!Returns the GuiElement at the specified index
+		bool Find(gui_element* e);
+		//!Returns the gui_element at the specified index
 		//!\param index The index of the element
 		//!\return A pointer to the element at the index, NULL on error (eg: out of bounds)
-		GuiElement* GetGuiElementAt(u32 index) const;
+		gui_element* Getgui_elementAt(u32 index) const;
 		//!Returns the size of the list of elements
 		//!\return The size of the current element list
-		u32 GetSize();
+		u32 get_size();
 		//!Sets the visibility of the window
 		//!\param v visibility (true = visible)
 		void SetVisible(bool v);
 		//!Resets the window's state to STATE_DEFAULT
-		void ResetState();
+		void reset_state();
 		//!Sets the window's state
 		//!\param s State
-		void SetState(int s);
-		//!Gets the index of the GuiElement inside the window that is currently selected
-		//!\return index of selected GuiElement
+		void set_state(int s);
+		//!Gets the index of the gui_element inside the window that is currently selected
+		//!\return index of selected gui_element
 		int GetSelected();
 		//!Sets the window focus
 		//!\param f Focus
 		void SetFocus(int f);
 		//!Change the focus to the specified element
 		//!This is intended for the primary gui_window only
-		//!\param e GuiElement that should have focus
-		void ChangeFocus(GuiElement * e);
+		//!\param e gui_element that should have focus
+		void change_focus(gui_element * e);
 		//!Changes window focus to the next focusable window or element
 		//!If no element is in focus, changes focus to the first available element
 		//!If B or 1 button is pressed, changes focus to the next available element
@@ -528,7 +528,7 @@ class gui_window : public GuiElement
 		//!\param t Pointer to a gui_trigger, containing the current input data from PAD/WPAD
 		void Update(gui_trigger * t);
 	protected:
-		std::vector<GuiElement*> _elements; //!< Contains all elements within the gui_window
+		std::vector<gui_element*> _elements; //!< Contains all elements within the gui_window
 };
 
 //!Converts image data into GX-useable RGBA8. Currently designed for use only with PNG files
@@ -545,7 +545,7 @@ class gui_image_data
 		~gui_image_data();
 		//!Gets a pointer to the image data
 		//!\return pointer to image data
-		u8 * GetImage();
+		u8 * get_image();
 		//!Gets the image width
 		//!\return image width
 		int GetWidth();
@@ -559,7 +559,7 @@ class gui_image_data
 };
 
 //!Display, manage, and manipulate images in the GUI
-class gui_image : public GuiElement
+class gui_image : public gui_element
 {
 	public:
 		//!Constructor
@@ -591,7 +591,7 @@ class gui_image : public GuiElement
 		void Draw();
 		//!Gets the image data
 		//!\return pointer to image data
-		u8 * GetImage();
+		u8 * get_image();
 		//!Sets up a new image using the gui_image_data object specified
 		//!\param img Pointer to gui_image_data object
 		void set_image(gui_image_data * img);
@@ -626,7 +626,7 @@ class gui_image : public GuiElement
 };
 
 //!Display, manage, and manipulate text in the GUI
-class gui_text : public GuiElement
+class gui_text : public gui_element
 {
 	public:
 		//!Constructor
@@ -642,7 +642,7 @@ class gui_text : public GuiElement
 		~gui_text();
 		//!Sets the text of the gui_text element
 		//!\param t Text
-		void SetText(const char * t);
+		void set_text(const char * t);
 		//!Sets the text of the gui_text element
 		//!\param t UTF-8 Text
 		void SetWText(wchar_t * t);
@@ -703,7 +703,7 @@ class gui_text : public GuiElement
 };
 
 //!Display, manage, and manipulate tooltips in the GUI
-class gui_tooltip : public GuiElement
+class gui_tooltip : public gui_element
 {
 	public:
 		//!Constructor
@@ -715,7 +715,7 @@ class gui_tooltip : public GuiElement
 		float GetScale();
 		//!Sets the text of the gui_tooltip element
 		//!\param t Text
-		void SetText(const char * t);
+		void set_text(const char * t);
 		//!Constantly called to draw the gui_tooltip
 		void draw_tool_tip();
 	
@@ -729,7 +729,7 @@ class gui_tooltip : public GuiElement
 };
 
 //!Display, manage, and manipulate buttons in the GUI. Buttons can have images, icons, text, and sound set (all of which are optional)
-class gui_button : public GuiElement
+class gui_button : public gui_element
 {
 	public:
 		//!Constructor
@@ -823,11 +823,11 @@ typedef struct _keytype {
 } Key;
 
 //!On-screen keyboard
-class GuiKeyboard : public gui_window
+class gui_keyboard : public gui_window
 {
 	public:
-		GuiKeyboard(char * t, u32 m);
-		~GuiKeyboard();
+		gui_keyboard(char * t, u32 m);
+		~gui_keyboard();
 		void Update(gui_trigger * t);
 		char kbtextstr[256];
 	protected:
@@ -876,7 +876,7 @@ typedef struct _optionlist {
 } OptionList;
 
 //!Display a list of menu options
-class GuiOptionBrowser : public GuiElement
+class GuiOptionBrowser : public gui_element
 {
 	public:
 		GuiOptionBrowser(int w, int h, OptionList * l);
@@ -885,7 +885,7 @@ class GuiOptionBrowser : public GuiElement
 		void SetCol2Position(int x);
 		int FindMenuItem(int c, int d);
 		int GetClickedOption();
-		void ResetState();
+		void reset_state();
 		void SetFocus(int f);
 		void Draw();
 		void TriggerUpdate();
@@ -929,12 +929,12 @@ class GuiOptionBrowser : public GuiElement
 };
 
 //!Display a list of files
-class GuiFileBrowser : public GuiElement
+class GuiFileBrowser : public gui_element
 {
 	public:
 		GuiFileBrowser(int w, int h);
 		~GuiFileBrowser();
-		void ResetState();
+		void reset_state();
 		void SetFocus(int f);
 		void Draw();
 		void draw_tool_tip();

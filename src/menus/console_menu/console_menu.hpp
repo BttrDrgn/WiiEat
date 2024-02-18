@@ -10,11 +10,18 @@
 #include "libwiigui/gui.h"
 #include "libwiigui/input.h"
 
+#define LINES 13
+
 class console_menu
 {
     public:
         static menus::state update(); 
         static std::vector<std::string> console_out;
+        static bool needs_update;
+        static int scroll;
+
+        static void write_line(const std::string& msg);
+        static void scroll_dir(int dir);
 };
 
 #endif

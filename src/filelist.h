@@ -12,8 +12,7 @@
 #include <gccore.h>
 
 // Fonts
-#include "font_bold_ttf.h"
-#include "font_medium_ttf.h"
+#include "font_ttf.h"
 
 // Languages
 #include "en_lang.h"

@@ -542,7 +542,7 @@ void PNGU_ReleaseImageContext (IMGCTX ctx)
 	free (ctx);
 }
 
-int PNGU_GetImageProperties (IMGCTX ctx, PNGUPROP *imgprop)
+int PNGU_get_imageProperties (IMGCTX ctx, PNGUPROP *imgprop)
 {
 	int res;
 
@@ -566,7 +566,7 @@ PNGU_u8 * DecodePNG(const PNGU_u8 *src, int * width, int * height, int maxwidth,
 	if(!ctx)
 		return NULL;
 
-	if(PNGU_GetImageProperties(ctx, &imgProp) == PNGU_OK)
+	if(PNGU_get_imageProperties(ctx, &imgProp) == PNGU_OK)
 		dst = PNGU_DecodeTo4x4RGBA8 (ctx, imgProp.imgWidth, imgProp.imgHeight, width, height, maxwidth, maxheight);
 
 	PNGU_ReleaseImageContext (ctx);

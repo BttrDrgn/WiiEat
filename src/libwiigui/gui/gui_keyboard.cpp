@@ -22,10 +22,10 @@ static char * GetDisplayText(char * t)
 }
 
 /**
- * Constructor for the GuiKeyboard class.
+ * Constructor for the gui_keyboard class.
  */
 
-GuiKeyboard::GuiKeyboard(char * t, u32 max)
+gui_keyboard::gui_keyboard(char * t, u32 max)
 {
 	width = 540;
 	height = 400;
@@ -211,9 +211,9 @@ GuiKeyboard::GuiKeyboard(char * t, u32 max)
 }
 
 /**
- * Destructor for the GuiKeyboard class.
+ * Destructor for the gui_keyboard class.
  */
-GuiKeyboard::~GuiKeyboard()
+gui_keyboard::~gui_keyboard()
 {
 	delete kbText;
 	delete keyTextbox;
@@ -259,7 +259,7 @@ GuiKeyboard::~GuiKeyboard()
 	}
 }
 
-void GuiKeyboard::Update(gui_trigger * t)
+void gui_keyboard::Update(gui_trigger * t)
 {
 	if(_elements.size() == 0 || (state == STATE_DISABLED && parentElement))
 		return;
@@ -277,29 +277,29 @@ void GuiKeyboard::Update(gui_trigger * t)
 		if(strlen(kbtextstr) < kbtextmaxlen)
 		{
 			kbtextstr[strlen(kbtextstr)] = ' ';
-			kbText->SetText(kbtextstr);
+			kbText->set_text(kbtextstr);
 		}
-		keySpace->SetState(STATE_SELECTED, t->chan);
+		keySpace->set_state(STATE_SELECTED, t->chan);
 	}
 	else if(keyBack->get_state() == STATE_CLICKED)
 	{
 		if(strlen(kbtextstr) > 0)
 		{
 			kbtextstr[strlen(kbtextstr)-1] = 0;
-			kbText->SetText(GetDisplayText(kbtextstr));
+			kbText->set_text(GetDisplayText(kbtextstr));
 		}
-		keyBack->SetState(STATE_SELECTED, t->chan);
+		keyBack->set_state(STATE_SELECTED, t->chan);
 	}
 	else if(keyShift->get_state() == STATE_CLICKED)
 	{
 		shift ^= 1;
-		keyShift->SetState(STATE_SELECTED, t->chan);
+		keyShift->set_state(STATE_SELECTED, t->chan);
 		update = true;
 	}
 	else if(keyCaps->get_state() == STATE_CLICKED)
 	{
 		caps ^= 1;
-		keyCaps->SetState(STATE_SELECTED, t->chan);
+		keyCaps->set_state(STATE_SELECTED, t->chan);
 		update = true;
 	}
 
@@ -320,7 +320,7 @@ void GuiKeyboard::Update(gui_trigger * t)
 					else
 						txt[0] = keys[i][j].ch;
 
-					keyTxt[i][j]->SetText(txt);
+					keyTxt[i][j]->set_text(txt);
 				}
 
 				if(keyBtn[i][j]->get_state() == STATE_CLICKED)
@@ -339,8 +339,8 @@ void GuiKeyboard::Update(gui_trigger * t)
 						}
 						kbtextstr[len+1] = '\0';
 					}
-					kbText->SetText(GetDisplayText(kbtextstr));
-					keyBtn[i][j]->SetState(STATE_SELECTED, t->chan);
+					kbText->set_text(GetDisplayText(kbtextstr));
+					keyBtn[i][j]->set_state(STATE_SELECTED, t->chan);
 
 					if(shift)
 					{

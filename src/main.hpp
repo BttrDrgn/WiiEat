@@ -9,23 +9,31 @@
 #define _MAIN_H_
 
 #define DEBUG
+
 #include <gccore.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <ogcsys.h>
 #include <unistd.h>
-#include <wiiuse/wpad.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h> 
+#include <curl/curl.h>
+#include <mbedtls/sha1.h>
+#include <gctypes.h>
+#include <wiisocket.h>
 #include <fat.h>
-#include <network.h>
+#include <net.hpp>
+#include <vector>
+#include <string>
+#include <filelist.h>
 
 #include "fs.hpp"
 #include "menus/main_menu/main_menu.hpp"
+#include "menus/console_menu/console_menu.hpp"
 #include "libwiigui/FreeTypeGX.h"
 #include "libwiigui/video.h"
 #include "libwiigui/audio.h"
 #include "libwiigui/input.h"
-#include "filelist.h"
+
 
 class main
 {

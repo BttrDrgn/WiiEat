@@ -23,8 +23,8 @@ static int whichfb = 0; // Switch
 static GXRModeObj *vmode; // Menu video mode
 static unsigned char gp_fifo[DEFAULT_FIFO_SIZE] ATTRIBUTE_ALIGN (32);
 static Mtx GXmodelView2D;
-int screenheight;
-int screenwidth;
+int screen_height;
+int screen_width;
 u32 FrameTimer = 0;
 
 /****************************************************************************
@@ -118,8 +118,8 @@ void init_video ()
 
 	VIDEO_Configure (vmode);
 
-	screenheight = 480;
-	screenwidth = vmode->fbWidth;
+	screen_height = 480;
+	screen_width = vmode->fbWidth;
 
 	// Allocate the video buffers
 	xfb[0] = (u32 *) SYS_AllocateFramebuffer (vmode);
@@ -170,11 +170,11 @@ void stop_gx()
 }
 
 /****************************************************************************
- * Menu_Render
+ * menu_render
  *
  * Renders everything current sent to GX, and flushes video
  ***************************************************************************/
-void Menu_Render()
+void menu_render()
 {
 	whichfb ^= 1; // flip framebuffer
 	GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
@@ -188,11 +188,11 @@ void Menu_Render()
 }
 
 /****************************************************************************
- * Menu_DrawImg
+ * menu_draw_img
  *
  * Draws the specified image on screen using GX
  ***************************************************************************/
-void Menu_DrawImg(f32 xpos, f32 ypos, u16 width, u16 height, u8 data[],
+void menu_draw_img(f32 xpos, f32 ypos, u16 width, u16 height, u8 data[],
 	f32 degrees, f32 scaleX, f32 scaleY, u8 alpha)
 {
 	if(data == NULL)
@@ -245,11 +245,11 @@ void Menu_DrawImg(f32 xpos, f32 ypos, u16 width, u16 height, u8 data[],
 }
 
 /****************************************************************************
- * Menu_DrawRectangle
+ * menu_draw_rect
  *
  * Draws a rectangle at the specified coordinates using GX
  ***************************************************************************/
-void Menu_DrawRectangle(f32 x, f32 y, f32 width, f32 height, GXColor color, u8 filled)
+void menu_draw_rect(f32 x, f32 y, f32 width, f32 height, GXColor color, u8 filled)
 {
 	long n = 4;
 	f32 x2 = x+width;

@@ -13,7 +13,7 @@
 /**
  * Constructor for the Object class.
  */
-GuiElement::GuiElement()
+gui_element::gui_element()
 {
 	xoffset = 0;
 	yoffset = 0;
@@ -56,23 +56,23 @@ GuiElement::GuiElement()
 }
 
 /**
- * Destructor for the GuiElement class.
+ * Destructor for the gui_element class.
  */
-GuiElement::~GuiElement()
+gui_element::~gui_element()
 {
 }
 
-void GuiElement::set_parent(GuiElement * e)
+void gui_element::set_parent(gui_element * e)
 {
 	parentElement = e;
 }
 
-GuiElement * GuiElement::GetParent()
+gui_element * gui_element::GetParent()
 {
 	return parentElement;
 }
 
-int GuiElement::GetLeft()
+int gui_element::GetLeft()
 {
 	int x = 0;
 	int pWidth = 0;
@@ -103,7 +103,7 @@ int GuiElement::GetLeft()
 	return x + xoffset;
 }
 
-int GuiElement::GetTop()
+int gui_element::GetTop()
 {
 	int y = 0;
 	int pHeight = 0;
@@ -134,79 +134,79 @@ int GuiElement::GetTop()
 	return y + yoffset;
 }
 
-void GuiElement::SetMinX(int x)
+void gui_element::SetMinX(int x)
 {
 	xmin = x;
 }
 
-int GuiElement::GetMinX()
+int gui_element::GetMinX()
 {
 	return xmin;
 }
 
-void GuiElement::SetMaxX(int x)
+void gui_element::SetMaxX(int x)
 {
 	xmax = x;
 }
 
-int GuiElement::GetMaxX()
+int gui_element::GetMaxX()
 {
 	return xmax;
 }
 
-void GuiElement::SetMinY(int y)
+void gui_element::SetMinY(int y)
 {
 	ymin = y;
 }
 
-int GuiElement::GetMinY()
+int gui_element::GetMinY()
 {
 	return ymin;
 }
 
-void GuiElement::SetMaxY(int y)
+void gui_element::SetMaxY(int y)
 {
 	ymax = y;
 }
 
-int GuiElement::GetMaxY()
+int gui_element::GetMaxY()
 {
 	return ymax;
 }
 
-int GuiElement::GetWidth()
+int gui_element::GetWidth()
 {
 	return width;
 }
 
-int GuiElement::GetHeight()
+int gui_element::GetHeight()
 {
 	return height;
 }
 
-void GuiElement::SetSize(int w, int h)
+void gui_element::SetSize(int w, int h)
 {
 
 	width = w;
 	height = h;
 }
 
-bool GuiElement::is_visible()
+bool gui_element::is_visible()
 {
 	return visible;
 }
 
-void GuiElement::SetVisible(bool v)
+void gui_element::SetVisible(bool v)
 {
 	visible = v;
 }
 
-void GuiElement::SetAlpha(int a)
+void gui_element::SetAlpha(int a)
 {
 	alpha = a;
 }
 
-int GuiElement::GetAlpha()
+int gui_element::GetAlpha()
 {
 	int a = alpha;
 
@@ -219,23 +219,23 @@ int GuiElement::GetAlpha()
 	return a;
 }
 
-void GuiElement::set_scale(float s)
+void gui_element::set_scale(float s)
 {
 	xscale = s;
 	yscale = s;
 }
 
-void GuiElement::set_scale_x(float s)
+void gui_element::set_scale_x(float s)
 {
 	xscale = s;
 }
 
-void GuiElement::set_scale_y(float s)
+void gui_element::set_scale_y(float s)
 {
 	yscale = s;
 }
 
-void GuiElement::set_scale(int mw, int mh)
+void gui_element::set_scale(int mw, int mh)
 {
 	xscale = 1.0f;
 	if(width > mw || height > mh)
@@ -248,7 +248,7 @@ void GuiElement::set_scale(int mw, int mh)
 	yscale = xscale;
 }
 
-float GuiElement::GetScale()
+float gui_element::GetScale()
 {
 	float s = xscale * scaleDyn;
 
@@ -258,7 +258,7 @@ float GuiElement::GetScale()
 	return s;
 }
 
-float GuiElement::GetScaleX()
+float gui_element::GetScaleX()
 {
 	float s = xscale * scaleDyn;
 
@@ -268,7 +268,7 @@ float GuiElement::GetScaleX()
 	return s;
 }
 
-float GuiElement::GetScaleY()
+float gui_element::GetScaleY()
 {
 	float s = yscale * scaleDyn;
 
@@ -278,23 +278,23 @@ float GuiElement::GetScaleY()
 	return s;
 }
 
-int GuiElement::get_state()
+int gui_element::get_state()
 {
 	return state;
 }
 
-int GuiElement::get_stateChan()
+int gui_element::get_stateChan()
 {
 	return stateChan;
 }
 
-void GuiElement::SetState(int s, int c)
+void gui_element::set_state(int s, int c)
 {
 	state = s;
 	stateChan = c;
 }
 
-void GuiElement::ResetState()
+void gui_element::reset_state()
 {
 	if(state != STATE_DISABLED)
 	{
@@ -303,22 +303,22 @@ void GuiElement::ResetState()
 	}
 }
 
-void GuiElement::SetClickable(bool c)
+void gui_element::SetClickable(bool c)
 {
 	clickable = c;
 }
 
-void GuiElement::SetSelectable(bool s)
+void gui_element::SetSelectable(bool s)
 {
 	selectable = s;
 }
 
-void GuiElement::SetHoldable(bool d)
+void gui_element::SetHoldable(bool d)
 {
 	holdable = d;
 }
 
-bool GuiElement::IsSelectable()
+bool gui_element::IsSelectable()
 {
 	if(state == STATE_DISABLED || state == STATE_CLICKED)
 		return false;
@@ -326,7 +326,7 @@ bool GuiElement::IsSelectable()
 		return selectable;
 }
 
-bool GuiElement::IsClickable()
+bool gui_element::IsClickable()
 {
 	if(state == STATE_DISABLED ||
 		state == STATE_CLICKED ||
@@ -336,7 +336,7 @@ bool GuiElement::IsClickable()
 		return clickable;
 }
 
-bool GuiElement::IsHoldable()
+bool gui_element::IsHoldable()
 {
 	if(state == STATE_DISABLED)
 		return false;
@@ -344,17 +344,17 @@ bool GuiElement::IsHoldable()
 		return holdable;
 }
 
-void GuiElement::SetFocus(int f)
+void gui_element::SetFocus(int f)
 {
 	focus = f;
 }
 
-int GuiElement::IsFocused()
+int gui_element::IsFocused()
 {
 	return focus;
 }
 
-void GuiElement::set_trigger(gui_trigger * t)
+void gui_element::set_trigger(gui_trigger * t)
 {
 	if(!trigger[0])
 		trigger[0] = t;
@@ -366,39 +366,39 @@ void GuiElement::set_trigger(gui_trigger * t)
 		trigger[0] = t;
 }
 
-void GuiElement::set_trigger(u8 i, gui_trigger * t)
+void gui_element::set_trigger(u8 i, gui_trigger * t)
 {
 	trigger[i] = t;
 }
 
-bool GuiElement::Rumble()
+bool gui_element::Rumble()
 {
 	return rumble;
 }
 
-void GuiElement::SetRumble(bool r)
+void gui_element::SetRumble(bool r)
 {
 	rumble = r;
 }
 
-int GuiElement::GetEffect()
+int gui_element::GetEffect()
 {
 	return effects;
 }
 
-void GuiElement::SetEffect(int eff, int amount, int target)
+void gui_element::SetEffect(int eff, int amount, int target)
 {
 	if(eff & EFFECT_SLIDE_IN)
 	{
 		// these calculations overcompensate a little
 		if(eff & EFFECT_SLIDE_TOP)
-			yoffsetDyn = -screenheight;
+			yoffsetDyn = -screen_height;
 		else if(eff & EFFECT_SLIDE_LEFT)
-			xoffsetDyn = -screenwidth;
+			xoffsetDyn = -screen_width;
 		else if(eff & EFFECT_SLIDE_BOTTOM)
-			yoffsetDyn = screenheight;
+			yoffsetDyn = screen_height;
 		else if(eff & EFFECT_SLIDE_RIGHT)
-			xoffsetDyn = screenwidth;
+			xoffsetDyn = screen_width;
 	}
 	if(eff & EFFECT_FADE)
 	{
@@ -413,19 +413,19 @@ void GuiElement::SetEffect(int eff, int amount, int target)
 	effectTarget = target;
 }
 
-void GuiElement::SetEffectOnOver(int eff, int amount, int target)
+void gui_element::SetEffectOnOver(int eff, int amount, int target)
 {
 	effectsOver |= eff;
 	effectAmountOver = amount;
 	effectTargetOver = target;
 }
 
-void GuiElement::SetEffectGrow()
+void gui_element::SetEffectGrow()
 {
 	SetEffectOnOver(EFFECT_SCALE, 4, 110);
 }
 
-void GuiElement::update_effects()
+void gui_element::update_effects()
 {
 	if(effects & (EFFECT_SLIDE_IN | EFFECT_SLIDE_OUT))
 	{
@@ -478,28 +478,28 @@ void GuiElement::update_effects()
 			{
 				xoffsetDyn -= effectAmount;
 
-				if(xoffsetDyn <= -screenwidth)
+				if(xoffsetDyn <= -screen_width)
 					effects = 0; // shut off effect
 			}
 			else if(effects & EFFECT_SLIDE_RIGHT)
 			{
 				xoffsetDyn += effectAmount;
 
-				if(xoffsetDyn >= screenwidth)
+				if(xoffsetDyn >= screen_width)
 					effects = 0; // shut off effect
 			}
 			else if(effects & EFFECT_SLIDE_TOP)
 			{
 				yoffsetDyn -= effectAmount;
 
-				if(yoffsetDyn <= -screenheight)
+				if(yoffsetDyn <= -screen_height)
 					effects = 0; // shut off effect
 			}
 			else if(effects & EFFECT_SLIDE_BOTTOM)
 			{
 				yoffsetDyn += effectAmount;
 
-				if(yoffsetDyn >= screenheight)
+				if(yoffsetDyn >= screen_height)
 					effects = 0; // shut off effect
 			}
 		}
@@ -533,47 +533,47 @@ void GuiElement::update_effects()
 	}
 }
 
-void GuiElement::Update(gui_trigger * t)
+void gui_element::Update(gui_trigger * t)
 {
 	if(update_cb)
 		update_cb(this);
 }
 
-void GuiElement::SetUpdateCallback(UpdateCallback u)
+void gui_element::set_update_callback(update_callback u)
 {
 	update_cb = u;
 }
 
-void GuiElement::set_position(int xoff, int yoff)
+void gui_element::set_position(int xoff, int yoff)
 {
 	xoffset = xoff;
 	yoffset = yoff;
 }
 
-void GuiElement::set_alignment(int hor, int vert)
+void gui_element::set_alignment(int hor, int vert)
 {
 	alignmentHor = hor;
 	alignmentVert = vert;
 }
 
-int GuiElement::GetSelected()
+int gui_element::GetSelected()
 {
 	return -1;
 }
 
-void GuiElement::reset_text()
+void gui_element::reset_text()
 {
 }
 
-void GuiElement::Draw()
+void gui_element::Draw()
 {
 }
 
-void GuiElement::draw_tool_tip()
+void gui_element::draw_tool_tip()
 {
 }
 
-bool GuiElement::IsInside(int x, int y)
+bool gui_element::IsInside(int x, int y)
 {
 	if(unsigned(x - this->GetLeft())  < unsigned(width)
 	&& unsigned(y - this->GetTop())  < unsigned(height))
