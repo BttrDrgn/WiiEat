@@ -10,45 +10,45 @@
 
 #include "../gui.h"
 
-GuiWindow::GuiWindow()
+gui_window::gui_window()
 {
 	width = 0;
 	height = 0;
 	focus = 0; // allow focus
 }
 
-GuiWindow::GuiWindow(int w, int h)
+gui_window::gui_window(int w, int h)
 {
 	width = w;
 	height = h;
 	focus = 0; // allow focus
 }
 
-GuiWindow::~GuiWindow()
+gui_window::~gui_window()
 {
 }
 
-void GuiWindow::Append(GuiElement* e)
+void gui_window::append(GuiElement* e)
 {
 	if (e == NULL)
 		return;
 
-	Remove(e);
+	remove(e);
 	_elements.push_back(e);
-	e->SetParent(this);
+	e->set_parent(this);
 }
 
-void GuiWindow::Insert(GuiElement* e, u32 index)
+void gui_window::Insert(GuiElement* e, u32 index)
 {
 	if (e == NULL || index > (_elements.size() - 1))
 		return;
 
-	Remove(e);
+	remove(e);
 	_elements.insert(_elements.begin()+index, e);
-	e->SetParent(this);
+	e->set_parent(this);
 }
 
-void GuiWindow::Remove(GuiElement* e)
+void gui_window::remove(GuiElement* e)
 {
 	if (e == NULL)
 		return;
@@ -64,12 +64,12 @@ void GuiWindow::Remove(GuiElement* e)
 	}
 }
 
-void GuiWindow::RemoveAll()
+void gui_window::removeAll()
 {
 	_elements.clear();
 }
 
-bool GuiWindow::Find(GuiElement* e)
+bool gui_window::Find(GuiElement* e)
 {
 	if (e == NULL)
 		return false;
@@ -81,21 +81,21 @@ bool GuiWindow::Find(GuiElement* e)
 	return false;
 }
 
-GuiElement* GuiWindow::GetGuiElementAt(u32 index) const
+GuiElement* gui_window::GetGuiElementAt(u32 index) const
 {
 	if (index >= _elements.size())
 		return NULL;
 	return _elements.at(index);
 }
 
-u32 GuiWindow::GetSize()
+u32 gui_window::GetSize()
 {
 	return _elements.size();
 }
 
-void GuiWindow::Draw()
+void gui_window::Draw()
 {
-	if(_elements.size() == 0 || !this->IsVisible())
+	if(_elements.size() == 0 || !this->is_visible())
 		return;
 
 	u32 elemSize = _elements.size();
@@ -105,26 +105,26 @@ void GuiWindow::Draw()
 		catch (const std::exception& e) { }
 	}
 
-	this->UpdateEffects();
+	this->update_effects();
 
 	if(parentElement && state == STATE_DISABLED)
 		Menu_DrawRectangle(0,0,screenwidth,screenheight,(GXColor){0xbe, 0xca, 0xd5, 0x70},1);
 }
 
-void GuiWindow::DrawTooltip()
+void gui_window::draw_tool_tip()
 {
-	if(_elements.size() == 0 || !this->IsVisible())
+	if(_elements.size() == 0 || !this->is_visible())
 		return;
 
 	u32 elemSize = _elements.size();
 	for (u32 i = 0; i < elemSize; i++)
 	{
-		try	{ _elements.at(i)->DrawTooltip(); }
+		try	{ _elements.at(i)->draw_tool_tip(); }
 		catch (const std::exception& e) { }
 	}
 }
 
-void GuiWindow::ResetState()
+void gui_window::ResetState()
 {
 	if(state != STATE_DISABLED)
 		state = STATE_DEFAULT;
@@ -137,7 +137,7 @@ void GuiWindow::ResetState()
 	}
 }
 
-void GuiWindow::SetState(int s)
+void gui_window::SetState(int s)
 {
 	state = s;
 
@@ -149,7 +149,7 @@ void GuiWindow::SetState(int s)
 	}
 }
 
-void GuiWindow::SetVisible(bool v)
+void gui_window::SetVisible(bool v)
 {
 	visible = v;
 
@@ -161,7 +161,7 @@ void GuiWindow::SetVisible(bool v)
 	}
 }
 
-void GuiWindow::SetFocus(int f)
+void gui_window::SetFocus(int f)
 {
 	focus = f;
 
@@ -171,7 +171,7 @@ void GuiWindow::SetFocus(int f)
 		this->ResetState();
 }
 
-void GuiWindow::ChangeFocus(GuiElement* e)
+void gui_window::ChangeFocus(GuiElement* e)
 {
 	if(parentElement)
 		return; // this is only intended for the main window
@@ -186,7 +186,7 @@ void GuiWindow::ChangeFocus(GuiElement* e)
 	}
 }
 
-void GuiWindow::ToggleFocus(GuiTrigger * t)
+void gui_window::ToggleFocus(gui_trigger * t)
 {
 	if(parentElement)
 		return; // this is only intended for the main window
@@ -218,7 +218,7 @@ void GuiWindow::ToggleFocus(GuiTrigger * t)
 		{
 			try
 			{
-				if(_elements.at(i)->IsFocused() == 0 && _elements.at(i)->GetState() != STATE_DISABLED) // focus is possible (but not set)
+				if(_elements.at(i)->IsFocused() == 0 && _elements.at(i)->get_state() != STATE_DISABLED) // focus is possible (but not set)
 				{
 					_elements.at(i)->SetFocus(1); // give this element focus
 					break;
@@ -235,7 +235,7 @@ void GuiWindow::ToggleFocus(GuiTrigger * t)
 		{
 			try
 			{
-				if(_elements.at(i)->IsFocused() == 0 && _elements.at(i)->GetState() != STATE_DISABLED) // focus is possible (but not set)
+				if(_elements.at(i)->IsFocused() == 0 && _elements.at(i)->get_state() != STATE_DISABLED) // focus is possible (but not set)
 				{
 					newfocus = i;
 					_elements.at(i)->SetFocus(1); // give this element focus
@@ -252,7 +252,7 @@ void GuiWindow::ToggleFocus(GuiTrigger * t)
 			{
 				try
 				{
-					if(_elements.at(i)->IsFocused() == 0 && _elements.at(i)->GetState() != STATE_DISABLED) // focus is possible (but not set)
+					if(_elements.at(i)->IsFocused() == 0 && _elements.at(i)->get_state() != STATE_DISABLED) // focus is possible (but not set)
 					{
 						_elements.at(i)->SetFocus(1); // give this element focus
 						_elements.at(found)->SetFocus(0); // disable focus on other element
@@ -265,7 +265,7 @@ void GuiWindow::ToggleFocus(GuiTrigger * t)
 	}
 }
 
-int GuiWindow::GetSelected()
+int gui_window::GetSelected()
 {
 	// find selected element
 	int found = -1;
@@ -274,7 +274,7 @@ int GuiWindow::GetSelected()
 	{
 		try
 		{
-			if(_elements.at(i)->GetState() == STATE_SELECTED)
+			if(_elements.at(i)->get_state() == STATE_SELECTED)
 			{
 				found = int(i);
 				break;
@@ -287,7 +287,7 @@ int GuiWindow::GetSelected()
 
 // set element to left/right as selected
 // there's probably a more clever way to do this, but this way works
-void GuiWindow::MoveSelectionHor(int dir)
+void gui_window::MoveSelectionHor(int dir)
 {
 	int found = -1;
 	u16 left = 0;
@@ -358,7 +358,7 @@ void GuiWindow::MoveSelectionHor(int dir)
 	}
 }
 
-void GuiWindow::MoveSelectionVert(int dir)
+void gui_window::MoveSelectionVert(int dir)
 {
 	int found = -1;
 	u16 left = 0;
@@ -409,17 +409,17 @@ void GuiWindow::MoveSelectionVert(int dir)
 	}
 }
 
-void GuiWindow::ResetText()
+void gui_window::reset_text()
 {
 	u32 elemSize = _elements.size();
 	for (u32 i = 0; i < elemSize; i++)
 	{
-		try { _elements.at(i)->ResetText(); }
+		try { _elements.at(i)->reset_text(); }
 		catch (const std::exception& e) { }
 	}
 }
 
-void GuiWindow::Update(GuiTrigger * t)
+void gui_window::Update(gui_trigger * t)
 {
 	if(_elements.size() == 0 || (state == STATE_DISABLED && parentElement))
 		return;
@@ -446,6 +446,6 @@ void GuiWindow::Update(GuiTrigger * t)
 			this->MoveSelectionVert(-1);
 	}
 
-	if(updateCB)
-		updateCB(this);
+	if(update_cb)
+		update_cb(this);
 }

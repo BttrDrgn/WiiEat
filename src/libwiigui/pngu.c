@@ -319,7 +319,7 @@ static int pngu_decode (IMGCTX ctx, PNGU_u32 width, PNGU_u32 height, PNGU_u32 st
 	if (ctx->prop.imgBitDepth == 16)
         png_set_strip_16 (ctx->png_ptr);
 
-	// Remove alpha channel if we don't need it
+	// remove alpha channel if we don't need it
 	if (stripAlpha && ((ctx->prop.imgColorType == PNGU_COLOR_TYPE_RGB_ALPHA) || (ctx->prop.imgColorType == PNGU_COLOR_TYPE_GRAY_ALPHA)))
         png_set_strip_alpha (ctx->png_ptr);
 

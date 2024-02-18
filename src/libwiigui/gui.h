@@ -65,7 +65,7 @@ enum
 {
 	ALIGN_LEFT,
 	ALIGN_RIGHT,
-	ALIGN_CENTRE,
+	ALIGN_CENTER,
 	ALIGN_TOP,
 	ALIGN_BOTTOM,
 	ALIGN_MIDDLE
@@ -130,16 +130,16 @@ typedef struct _paddata {
 #define EFFECT_COLOR_TRANSITION		256
 
 //!Sound conversion and playback. A wrapper for other sound libraries - ASND, libmad, ltremor, etc
-class GuiSound
+class gui_sound
 {
 	public:
 		//!Constructor
 		//!\param s Pointer to the sound data
 		//!\param l Length of sound data
 		//!\param t Sound format type (SOUND_PCM or SOUND_OGG)
-		GuiSound(const u8 * s, s32 l, int t);
+		gui_sound(const u8 * s, s32 l, int t);
 		//!Destructor
-		~GuiSound();
+		~gui_sound();
 		//!Start sound playback
 		void Play();
 		//!Stop sound playback
@@ -167,18 +167,18 @@ class GuiSound
 };
 
 //!Menu input trigger management. Determine if action is neccessary based on input data by comparing controller input data to a specific trigger element.
-class GuiTrigger
+class gui_trigger
 {
 	public:
 		//!Constructor
-		GuiTrigger();
+		gui_trigger();
 		//!Destructor
-		~GuiTrigger();
+		~gui_trigger();
 		//!Sets a simple trigger. Requires: element is selected, and trigger button is pressed
 		//!\param ch Controller channel number
 		//!\param wiibtns Wii controller trigger button(s) - classic controller buttons are considered separately
 		//!\param gcbtns GameCube controller trigger button(s)
-		void SetSimpleTrigger(s32 ch, u32 wiibtns, u16 gcbtns);
+		void set_simple_trigger(s32 ch, u32 wiibtns, u16 gcbtns);
 		//!Sets a held trigger. Requires: element is selected, and trigger button is pressed
 		//!\param ch Controller channel number
 		//!\param wiibtns Wii controller trigger button(s) - classic controller buttons are considered separately
@@ -188,7 +188,7 @@ class GuiTrigger
 		//!\param ch Controller channel number
 		//!\param wiibtns Wii controller trigger button(s) - classic controller buttons are considered separately
 		//!\param gcbtns GameCube controller trigger button(s)
-		void SetButtonOnlyTrigger(s32 ch, u32 wiibtns, u16 gcbtns);
+		void set_button_only_trigger(s32 ch, u32 wiibtns, u16 gcbtns);
 		//!Sets a button-only trigger. Requires: trigger button is pressed and parent window of element is in focus
 		//!\param ch Controller channel number
 		//!\param wiibtns Wii controller trigger button(s) - classic controller buttons are considered separately
@@ -227,7 +227,7 @@ class GuiTrigger
 		u8 type; //!< trigger type (TRIGGER_SIMPLE,	TRIGGER_HELD, TRIGGER_BUTTON_ONLY, TRIGGER_BUTTON_ONLY_IN_FOCUS)
 };
 
-extern GuiTrigger userInput[4];
+extern gui_trigger userInput[4];
 
 //!Primary GUI class. Most other classes inherit from this class.
 class GuiElement
@@ -239,7 +239,7 @@ class GuiElement
 		~GuiElement();
 		//!Set the element's parent
 		//!\param e Pointer to parent element
-		void SetParent(GuiElement * e);
+		void set_parent(GuiElement * e);
 		//!Gets the element's parent
 		//!\return Pointer to parent element
 		GuiElement * GetParent();
@@ -287,7 +287,7 @@ class GuiElement
 		void SetSize(int w, int h);
 		//!Checks whether or not the element is visible
 		//!\return true if visible, false otherwise
-		bool IsVisible();
+		bool is_visible();
 		//!Checks whether or not the element is selectable
 		//!\return true if selectable, false otherwise
 		bool IsSelectable();
@@ -308,10 +308,10 @@ class GuiElement
 		void SetHoldable(bool h);
 		//!Gets the element's current state
 		//!\return state
-		int GetState();
+		int get_state();
 		//!Gets the controller channel that last changed the element's state
 		//!\return Channel number (0-3, -1 = no channel)
-		int GetStateChan();
+		int get_stateChan();
 		//!Sets the element's alpha value
 		//!\param a alpha value
 		void SetAlpha(int a);
@@ -321,17 +321,17 @@ class GuiElement
 		int GetAlpha();
 		//!Sets the element's x and y scale
 		//!\param s scale (1 is 100%)
-		void SetScale(float s);
+		void set_scale(float s);
 		//!Sets the element's x scale
 		//!\param s scale (1 is 100%)
-		void SetScaleX(float s);
+		void set_scale_x(float s);
 		//!Sets the element's y scale
 		//!\param s scale (1 is 100%)
-		void SetScaleY(float s);
+		void set_scale_y(float s);
 		//!Sets the element's x and y scale, using the provided max width/height
 		//!\param w Maximum width
 		//!\param h Maximum height
-		void SetScale(int w, int h);
+		void set_scale(int w, int h);
 		//!Gets the element's current scale
 		//!Considers scale, scaleDyn, and the parent element's GetScale() value
 		float GetScale();
@@ -341,13 +341,13 @@ class GuiElement
 		//!Gets the element's current y scale
 		//!Considers scale, scaleDyn, and the parent element's GetScale() value
 		float GetScaleY();
-		//!Set a new GuiTrigger for the element
-		//!\param t Pointer to GuiTrigger
-		void SetTrigger(GuiTrigger * t);
+		//!Set a new gui_trigger for the element
+		//!\param t Pointer to gui_trigger
+		void set_trigger(gui_trigger * t);
 		//!\overload
 		//!\param i Index of trigger array to set
-		//!\param t Pointer to GuiTrigger
-		void SetTrigger(u8 i, GuiTrigger * t);
+		//!\param t Pointer to gui_trigger
+		void set_trigger(u8 i, gui_trigger * t);
 		//!Checks whether rumble was requested by the element
 		//!\return true is rumble was requested, false otherwise
 		bool Rumble();
@@ -377,10 +377,10 @@ class GuiElement
 		//!Sets the element's position
 		//!\param x X coordinate
 		//!\param y Y coordinate
-		void SetPosition(int x, int y);
+		void set_position(int x, int y);
 		//!Updates the element's effects (dynamic values)
 		//!Called by Draw(), used for animation purposes
-		void UpdateEffects();
+		void update_effects();
 		//!Sets a function to called after after Update()
 		//!Callback function can be used to response to changes in the state of the element, and/or update the element's attributes
 		void SetUpdateCallback(UpdateCallback u);
@@ -403,21 +403,21 @@ class GuiElement
 		//!\return true if selected, false otherwise
 		virtual int GetSelected();
 		//!Sets the element's alignment respective to its parent element
-		//!\param hor Horizontal alignment (ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTRE)
+		//!\param hor Horizontal alignment (ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
 		//!\param vert Vertical alignment (ALIGN_TOP, ALIGN_BOTTOM, ALIGN_MIDDLE)
-		virtual void SetAlignment(int hor, int vert);
+		virtual void set_alignment(int hor, int vert);
 		//!Called when the language has changed, to obtain new text values for all text elements
-		virtual void ResetText();
+		virtual void reset_text();
 		//!Called constantly to allow the element to respond to the current input data
-		//!\param t Pointer to a GuiTrigger, containing the current input data from PAD/WPAD
-		virtual void Update(GuiTrigger * t);
+		//!\param t Pointer to a gui_trigger, containing the current input data from PAD/WPAD
+		virtual void Update(gui_trigger * t);
 		//!Called constantly to redraw the element
 		virtual void Draw();
 		//!Called constantly to redraw the element's tooltip
-		virtual void DrawTooltip();
+		virtual void draw_tool_tip();
 	protected:
-		GuiTrigger * trigger[3]; //!< GuiTriggers (input actions) that this element responds to
-		UpdateCallback updateCB; //!< Callback function to call when this element is updated
+		gui_trigger * trigger[3]; //!< gui_triggers (input actions) that this element responds to
+		UpdateCallback update_cb; //!< Callback function to call when this element is updated
 		GuiElement * parentElement; //!< Parent element
 		int focus; //!< Element focus (-1 = focus disabled, 0 = not focused, 1 = focused)
 		int width; //!< Element width
@@ -453,29 +453,29 @@ class GuiElement
 };
 
 //!Allows GuiElements to be grouped together into a "window"
-class GuiWindow : public GuiElement
+class gui_window : public GuiElement
 {
 	public:
 		//!Constructor
-		GuiWindow();
+		gui_window();
 		//!\overload
 		//!\param w Width of window
 		//!\param h Height of window
-		GuiWindow(int w, int h);
+		gui_window(int w, int h);
 		//!Destructor
-		~GuiWindow();
-		//!Appends a GuiElement to the GuiWindow
-		//!\param e The GuiElement to append. If it is already in the GuiWindow, it is removed first
-		void Append(GuiElement* e);
-		//!Inserts a GuiElement into the GuiWindow at the specified index
-		//!\param e The GuiElement to insert. If it is already in the GuiWindow, it is removed first
+		~gui_window();
+		//!appends a GuiElement to the gui_window
+		//!\param e The GuiElement to append. If it is already in the gui_window, it is removed first
+		void append(GuiElement* e);
+		//!Inserts a GuiElement into the gui_window at the specified index
+		//!\param e The GuiElement to insert. If it is already in the gui_window, it is removed first
 		//!\param i Index in which to insert the element
 		void Insert(GuiElement* e, u32 i);
-		//!Removes the specified GuiElement from the GuiWindow
+		//!removes the specified GuiElement from the gui_window
 		//!\param e GuiElement to be removed
-		void Remove(GuiElement* e);
-		//!Removes all GuiElements
-		void RemoveAll();
+		void remove(GuiElement* e);
+		//!removes all GuiElements
+		void removeAll();
 		//!Looks for the specified GuiElement
 		//!\param e The GuiElement to find
 		//!\return true if found, false otherwise
@@ -502,15 +502,15 @@ class GuiWindow : public GuiElement
 		//!\param f Focus
 		void SetFocus(int f);
 		//!Change the focus to the specified element
-		//!This is intended for the primary GuiWindow only
+		//!This is intended for the primary gui_window only
 		//!\param e GuiElement that should have focus
 		void ChangeFocus(GuiElement * e);
 		//!Changes window focus to the next focusable window or element
 		//!If no element is in focus, changes focus to the first available element
 		//!If B or 1 button is pressed, changes focus to the next available element
-		//!This is intended for the primary GuiWindow only
-		//!\param t Pointer to a GuiTrigger, containing the current input data from PAD/WPAD
-		void ToggleFocus(GuiTrigger * t);
+		//!This is intended for the primary gui_window only
+		//!\param t Pointer to a gui_trigger, containing the current input data from PAD/WPAD
+		void ToggleFocus(gui_trigger * t);
 		//!Moves the selected element to the element to the left or right
 		//!\param d Direction to move (-1 = left, 1 = right)
 		void MoveSelectionHor(int d);
@@ -518,21 +518,21 @@ class GuiWindow : public GuiElement
 		//!\param d Direction to move (-1 = up, 1 = down)
 		void MoveSelectionVert(int d);
 		//!Resets the text for all contained elements
-		void ResetText();
-		//!Draws all the elements in this GuiWindow
+		void reset_text();
+		//!Draws all the elements in this gui_window
 		void Draw();
-		//!Draws all of the tooltips in this GuiWindow
-		void DrawTooltip();
+		//!Draws all of the tooltips in this gui_window
+		void draw_tool_tip();
 		//!Updates the window and all elements contains within
-		//!Allows the GuiWindow and all elements to respond to the input data specified
-		//!\param t Pointer to a GuiTrigger, containing the current input data from PAD/WPAD
-		void Update(GuiTrigger * t);
+		//!Allows the gui_window and all elements to respond to the input data specified
+		//!\param t Pointer to a gui_trigger, containing the current input data from PAD/WPAD
+		void Update(gui_trigger * t);
 	protected:
-		std::vector<GuiElement*> _elements; //!< Contains all elements within the GuiWindow
+		std::vector<GuiElement*> _elements; //!< Contains all elements within the gui_window
 };
 
 //!Converts image data into GX-useable RGBA8. Currently designed for use only with PNG files
-class GuiImageData
+class gui_image_data
 {
 	public:
 		//!Constructor
@@ -540,9 +540,9 @@ class GuiImageData
 		//!\param i Image data
 		//!\param w Max image width (0 = not set)
 		//!\param h Max image height (0 = not set)
-		GuiImageData(const u8 * i, int w=0, int h=0);
+		gui_image_data(const u8 * i, int w=0, int h=0);
 		//!Destructor
-		~GuiImageData();
+		~gui_image_data();
 		//!Gets a pointer to the image data
 		//!\return pointer to image data
 		u8 * GetImage();
@@ -559,28 +559,28 @@ class GuiImageData
 };
 
 //!Display, manage, and manipulate images in the GUI
-class GuiImage : public GuiElement
+class gui_image : public GuiElement
 {
 	public:
 		//!Constructor
-		GuiImage();
+		gui_image();
 		//!\overload
-		//!\param img Pointer to GuiImageData element
-		GuiImage(GuiImageData * img);
+		//!\param img Pointer to gui_image_data element
+		gui_image(gui_image_data * img);
 		//!\overload
 		//!Sets up a new image from the image data specified
 		//!\param img
 		//!\param w Image width
 		//!\param h Image height
-		GuiImage(u8 * img, int w, int h);
+		gui_image(u8 * img, int w, int h);
 		//!\overload
 		//!Creates an image filled with the specified color
 		//!\param w Image width
 		//!\param h Image height
 		//!\param c Image color
-		GuiImage(int w, int h, GXColor c);
+		gui_image(int w, int h, GXColor c);
 		//!Destructor
-		~GuiImage();
+		~gui_image();
 		//!Sets the image rotation angle for drawing
 		//!\param a Angle (in degrees)
 		void SetAngle(float a);
@@ -592,14 +592,14 @@ class GuiImage : public GuiElement
 		//!Gets the image data
 		//!\return pointer to image data
 		u8 * GetImage();
-		//!Sets up a new image using the GuiImageData object specified
-		//!\param img Pointer to GuiImageData object
-		void SetImage(GuiImageData * img);
+		//!Sets up a new image using the gui_image_data object specified
+		//!\param img Pointer to gui_image_data object
+		void set_image(gui_image_data * img);
 		//!\overload
 		//!\param img Pointer to image data
 		//!\param w Width
 		//!\param h Height
-		void SetImage(u8 * img, int w, int h);
+		void set_image(u8 * img, int w, int h);
 		//!Gets the pixel color at the specified coordinates of the image
 		//!\param x X coordinate
 		//!\param y Y coordinate
@@ -619,36 +619,36 @@ class GuiImage : public GuiElement
 		void SetStripe(int s);
 	protected:
 		int imgType; //!< Type of image data (IMAGE_TEXTURE, IMAGE_COLOR, IMAGE_DATA)
-		u8 * image; //!< Poiner to image data. May be shared with GuiImageData data
+		u8 * image; //!< Poiner to image data. May be shared with gui_image_data data
 		f32 imageangle; //!< Angle to draw the image
 		int tile; //!< Number of times to draw (tile) the image horizontally
 		int stripe; //!< Alpha value (0-255) to apply a stripe effect to the texture
 };
 
 //!Display, manage, and manipulate text in the GUI
-class GuiText : public GuiElement
+class gui_text : public GuiElement
 {
 	public:
 		//!Constructor
 		//!\param t Text
 		//!\param s Font size
 		//!\param c Font color
-		GuiText(const char * t, int s, GXColor c);
+		gui_text(const char * t, int s, GXColor c);
 		//!\overload
 		//!Assumes SetPresets() has been called to setup preferred text attributes
 		//!\param t Text
-		GuiText(const char * t);
+		gui_text(const char * t);
 		//!Destructor
-		~GuiText();
-		//!Sets the text of the GuiText element
+		~gui_text();
+		//!Sets the text of the gui_text element
 		//!\param t Text
 		void SetText(const char * t);
-		//!Sets the text of the GuiText element
+		//!Sets the text of the gui_text element
 		//!\param t UTF-8 Text
 		void SetWText(wchar_t * t);
-		//!Gets the translated text length of the GuiText element
+		//!Gets the translated text length of the gui_text element
 		int GetLength();
-		//!Sets up preset values to be used by GuiText(t)
+		//!Sets up preset values to be used by gui_text(t)
 		//!Useful when printing multiple text elements, all with the same attributes set
 		//!\param sz Font size
 		//!\param c Font color
@@ -679,11 +679,11 @@ class GuiText : public GuiElement
 		//!\param s Style attributes
 		void SetStyle(u16 s);
 		//!Sets the text alignment
-		//!\param hor Horizontal alignment (ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTRE)
+		//!\param hor Horizontal alignment (ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
 		//!\param vert Vertical alignment (ALIGN_TOP, ALIGN_BOTTOM, ALIGN_MIDDLE)
-		void SetAlignment(int hor, int vert);
+		void set_alignment(int hor, int vert);
 		//!Updates the text to the selected language
-		void ResetText();
+		void reset_text();
 		//!Constantly called to draw the text
 		void Draw();
 	protected:
@@ -703,119 +703,119 @@ class GuiText : public GuiElement
 };
 
 //!Display, manage, and manipulate tooltips in the GUI
-class GuiTooltip : public GuiElement
+class gui_tooltip : public GuiElement
 {
 	public:
 		//!Constructor
 		//!\param t Text
-		GuiTooltip(const char *t);
+		gui_tooltip(const char *t);
 		//!Destructor
-		~GuiTooltip();
+		~gui_tooltip();
 		//!Gets the element's current scale
 		float GetScale();
-		//!Sets the text of the GuiTooltip element
+		//!Sets the text of the gui_tooltip element
 		//!\param t Text
 		void SetText(const char * t);
-		//!Constantly called to draw the GuiTooltip
-		void DrawTooltip();
+		//!Constantly called to draw the gui_tooltip
+		void draw_tool_tip();
 	
 		time_t time1, time2; //!< Tooltip times
 
 	protected:
-		GuiImage leftImage; //!< Tooltip left image
-		GuiImage tileImage; //!< Tooltip tile image
-		GuiImage rightImage; //!< Tooltip right image
-		GuiText *text; //!< Tooltip text
+		gui_image leftImage; //!< Tooltip left image
+		gui_image tileImage; //!< Tooltip tile image
+		gui_image rightImage; //!< Tooltip right image
+		gui_text *text; //!< Tooltip text
 };
 
 //!Display, manage, and manipulate buttons in the GUI. Buttons can have images, icons, text, and sound set (all of which are optional)
-class GuiButton : public GuiElement
+class gui_button : public GuiElement
 {
 	public:
 		//!Constructor
 		//!\param w Width
 		//!\param h Height
-		GuiButton(int w = 0, int h = 0);
+		gui_button(int w = 0, int h = 0);
 		//!Destructor
-		~GuiButton();
+		~gui_button();
 		//!Sets the button's image
-		//!\param i Pointer to GuiImage object
-		void SetImage(GuiImage* i);
+		//!\param i Pointer to gui_image object
+		void set_image(gui_image* i);
 		//!Sets the button's image on over
-		//!\param i Pointer to GuiImage object
-		void SetImageOver(GuiImage* i);
+		//!\param i Pointer to gui_image object
+		void set_image_hover(gui_image* i);
 		//!Sets the button's image on hold
-		//!\param i Pointer to GuiImage object
-		void SetImageHold(GuiImage* i);
+		//!\param i Pointer to gui_image object
+		void set_image_hold(gui_image* i);
 		//!Sets the button's image on click
-		//!\param i Pointer to GuiImage object
-		void SetImageClick(GuiImage* i);
+		//!\param i Pointer to gui_image object
+		void set_image_click(gui_image* i);
 		//!Sets the button's icon
-		//!\param i Pointer to GuiImage object
-		void SetIcon(GuiImage* i);
+		//!\param i Pointer to gui_image object
+		void set_icon(gui_image* i);
 		//!Sets the button's icon on over
-		//!\param i Pointer to GuiImage object
-		void SetIconOver(GuiImage* i);
+		//!\param i Pointer to gui_image object
+		void set_icon_hover(gui_image* i);
 		//!Sets the button's icon on hold
-		//!\param i Pointer to GuiImage object
-		void SetIconHold(GuiImage* i);
+		//!\param i Pointer to gui_image object
+		void set_icon_hold(gui_image* i);
 		//!Sets the button's icon on click
-		//!\param i Pointer to GuiImage object
-		void SetIconClick(GuiImage* i);
+		//!\param i Pointer to gui_image object
+		void set_icon_click(gui_image* i);
 		//!Sets the button's label
-		//!\param t Pointer to GuiText object
+		//!\param t Pointer to gui_text object
 		//!\param n Index of label to set (optional, default is 0)
-		void SetLabel(GuiText* t, int n = 0);
+		void set_label(gui_text* t, int n = 0);
 		//!Sets the button's label on over (eg: different colored text)
-		//!\param t Pointer to GuiText object
+		//!\param t Pointer to gui_text object
 		//!\param n Index of label to set (optional, default is 0)
-		void SetLabelOver(GuiText* t, int n = 0);
+		void set_label_hover(gui_text* t, int n = 0);
 		//!Sets the button's label on hold
-		//!\param t Pointer to GuiText object
+		//!\param t Pointer to gui_text object
 		//!\param n Index of label to set (optional, default is 0)
-		void SetLabelHold(GuiText* t, int n = 0);
+		void set_label_hold(gui_text* t, int n = 0);
 		//!Sets the button's label on click
-		//!\param t Pointer to GuiText object
+		//!\param t Pointer to gui_text object
 		//!\param n Index of label to set (optional, default is 0)
-		void SetLabelClick(GuiText* t, int n = 0);
+		void set_label_click(gui_text* t, int n = 0);
 		//!Sets the sound to play on over
-		//!\param s Pointer to GuiSound object
-		void SetSoundOver(GuiSound * s);
+		//!\param s Pointer to gui_sound object
+		void set_sound_hover(gui_sound * s);
 		//!Sets the sound to play on hold
-		//!\param s Pointer to GuiSound object
-		void SetSoundHold(GuiSound * s);
+		//!\param s Pointer to gui_sound object
+		void set_sound_hold(gui_sound * s);
 		//!Sets the sound to play on click
-		//!\param s Pointer to GuiSound object
-		void SetSoundClick(GuiSound * s);
+		//!\param s Pointer to gui_sound object
+		void set_sound_click(gui_sound * s);
 		//!Sets the tooltip for the button
 		//!\param t Tooltip
-		void SetTooltip(GuiTooltip * t);
-		//!Constantly called to draw the GuiButton
+		void set_tooltip(gui_tooltip * t);
+		//!Constantly called to draw the gui_button
 		void Draw();
-		//!Constantly called to draw the GuiButton's tooltip
-		void DrawTooltip();
+		//!Constantly called to draw the gui_button's tooltip
+		void draw_tool_tip();
 		//!Resets the text for all contained elements
-		void ResetText();
-		//!Constantly called to allow the GuiButton to respond to updated input data
-		//!\param t Pointer to a GuiTrigger, containing the current input data from PAD/WPAD
-		void Update(GuiTrigger * t);
+		void reset_text();
+		//!Constantly called to allow the gui_button to respond to updated input data
+		//!\param t Pointer to a gui_trigger, containing the current input data from PAD/WPAD
+		void Update(gui_trigger * t);
 	protected:
-		GuiImage * image; //!< Button image (default)
-		GuiImage * imageOver; //!< Button image for STATE_SELECTED
-		GuiImage * imageHold; //!< Button image for STATE_HELD
-		GuiImage * imageClick; //!< Button image for STATE_CLICKED
-		GuiImage * icon; //!< Button icon (drawn after button image)
-		GuiImage * iconOver; //!< Button icon for STATE_SELECTED
-		GuiImage * iconHold; //!< Button icon for STATE_HELD
-		GuiImage * iconClick; //!< Button icon for STATE_CLICKED
-		GuiText * label[3]; //!< Label(s) to display (default)
-		GuiText * labelOver[3]; //!< Label(s) to display for STATE_SELECTED
-		GuiText * labelHold[3]; //!< Label(s) to display for STATE_HELD
-		GuiText * labelClick[3]; //!< Label(s) to display for STATE_CLICKED
-		GuiSound * soundOver; //!< Sound to play for STATE_SELECTED
-		GuiSound * soundHold; //!< Sound to play for STATE_HELD
-		GuiSound * soundClick; //!< Sound to play for STATE_CLICKED
-		GuiTooltip * tooltip; //!< Tooltip to display on over
+		gui_image * image; //!< Button image (default)
+		gui_image * image_hover; //!< Button image for STATE_SELECTED
+		gui_image * image_hold; //!< Button image for STATE_HELD
+		gui_image * image_click; //!< Button image for STATE_CLICKED
+		gui_image * icon; //!< Button icon (drawn after button image)
+		gui_image * icon_hover; //!< Button icon for STATE_SELECTED
+		gui_image * icon_hold; //!< Button icon for STATE_HELD
+		gui_image * icon_click; //!< Button icon for STATE_CLICKED
+		gui_text * label[3]; //!< Label(s) to display (default)
+		gui_text * label_hover[3]; //!< Label(s) to display for STATE_SELECTED
+		gui_text * label_hold[3]; //!< Label(s) to display for STATE_HELD
+		gui_text * label_click[3]; //!< Label(s) to display for STATE_CLICKED
+		gui_sound * sound_hover; //!< Sound to play for STATE_SELECTED
+		gui_sound * sound_hold; //!< Sound to play for STATE_HELD
+		gui_sound * sound_click; //!< Sound to play for STATE_CLICKED
+		gui_tooltip * tooltip; //!< Tooltip to display on over
 };
 
 typedef struct _keytype {
@@ -823,49 +823,49 @@ typedef struct _keytype {
 } Key;
 
 //!On-screen keyboard
-class GuiKeyboard : public GuiWindow
+class GuiKeyboard : public gui_window
 {
 	public:
 		GuiKeyboard(char * t, u32 m);
 		~GuiKeyboard();
-		void Update(GuiTrigger * t);
+		void Update(gui_trigger * t);
 		char kbtextstr[256];
 	protected:
 		u32 kbtextmaxlen;
 		int shift;
 		int caps;
-		GuiText * kbText;
-		GuiImage * keyTextboxImg;
-		GuiText * keyCapsText;
-		GuiImage * keyCapsImg;
-		GuiImage * keyCapsOverImg;
-		GuiButton * keyCaps;
-		GuiText * keyShiftText;
-		GuiImage * keyShiftImg;
-		GuiImage * keyShiftOverImg;
-		GuiButton * keyShift;
-		GuiText * keyBackText;
-		GuiImage * keyBackImg;
-		GuiImage * keyBackOverImg;
-		GuiButton * keyBack;
-		GuiImage * keySpaceImg;
-		GuiImage * keySpaceOverImg;
-		GuiButton * keySpace;
-		GuiButton * keyBtn[4][11];
-		GuiImage * keyImg[4][11];
-		GuiImage * keyImgOver[4][11];
-		GuiText * keyTxt[4][11];
-		GuiImageData * keyTextbox;
-		GuiImageData * key;
-		GuiImageData * keyOver;
-		GuiImageData * keyMedium;
-		GuiImageData * keyMediumOver;
-		GuiImageData * keyLarge;
-		GuiImageData * keyLargeOver;
-		GuiSound * keySoundOver;
-		GuiSound * keySoundClick;
-		GuiTrigger * trigA;
-		GuiTrigger * trig2;
+		gui_text * kbText;
+		gui_image * keyTextboxImg;
+		gui_text * keyCapsText;
+		gui_image * keyCapsImg;
+		gui_image * keyCapsOverImg;
+		gui_button * keyCaps;
+		gui_text * keyShiftText;
+		gui_image * keyShiftImg;
+		gui_image * keyShiftOverImg;
+		gui_button * keyShift;
+		gui_text * keyBackText;
+		gui_image * keyBackImg;
+		gui_image * keyBackOverImg;
+		gui_button * keyBack;
+		gui_image * keySpaceImg;
+		gui_image * keySpaceOverImg;
+		gui_button * keySpace;
+		gui_button * keyBtn[4][11];
+		gui_image * keyImg[4][11];
+		gui_image * keyImgOver[4][11];
+		gui_text * keyTxt[4][11];
+		gui_image_data * keyTextbox;
+		gui_image_data * key;
+		gui_image_data * keyOver;
+		gui_image_data * keyMedium;
+		gui_image_data * keyMediumOver;
+		gui_image_data * keyLarge;
+		gui_image_data * keyLargeOver;
+		gui_sound * keysound_hover;
+		gui_sound * keysound_click;
+		gui_trigger * trig_a;
+		gui_trigger * trig2;
 		Key keys[4][11]; // two chars = less space than one pointer
 };
 
@@ -889,41 +889,41 @@ class GuiOptionBrowser : public GuiElement
 		void SetFocus(int f);
 		void Draw();
 		void TriggerUpdate();
-		void ResetText();
-		void Update(GuiTrigger * t);
-		GuiText * optionVal[PAGESIZE];
+		void reset_text();
+		void Update(gui_trigger * t);
+		gui_text * optionVal[PAGESIZE];
 	protected:
 		int optionIndex[PAGESIZE];
-		GuiButton * optionBtn[PAGESIZE];
-		GuiText * optionTxt[PAGESIZE];
-		GuiImage * optionBg[PAGESIZE];
+		gui_button * optionBtn[PAGESIZE];
+		gui_text * optionTxt[PAGESIZE];
+		gui_image * optionBg[PAGESIZE];
 
 		int selectedItem;
 		int listOffset;
 		OptionList * options;
 
-		GuiButton * arrowUpBtn;
-		GuiButton * arrowDownBtn;
+		gui_button * arrowUpBtn;
+		gui_button * arrowDownBtn;
 
-		GuiImage * bgOptionsImg;
-		GuiImage * scrollbarImg;
-		GuiImage * arrowDownImg;
-		GuiImage * arrowDownOverImg;
-		GuiImage * arrowUpImg;
-		GuiImage * arrowUpOverImg;
+		gui_image * bgOptionsImg;
+		gui_image * scrollbarImg;
+		gui_image * arrowDownImg;
+		gui_image * arrowDownOverImg;
+		gui_image * arrowUpImg;
+		gui_image * arrowUpOverImg;
 
-		GuiImageData * bgOptions;
-		GuiImageData * bgOptionsEntry;
-		GuiImageData * scrollbar;
-		GuiImageData * arrowDown;
-		GuiImageData * arrowDownOver;
-		GuiImageData * arrowUp;
-		GuiImageData * arrowUpOver;
+		gui_image_data * bgOptions;
+		gui_image_data * bgOptionsEntry;
+		gui_image_data * scrollbar;
+		gui_image_data * arrowDown;
+		gui_image_data * arrowDownOver;
+		gui_image_data * arrowUp;
+		gui_image_data * arrowUpOver;
 
-		GuiSound * btnSoundOver;
-		GuiSound * btnSoundClick;
-		GuiTrigger * trigA;
-		GuiTrigger * trig2;
+		gui_sound * btn_sound_hover;
+		gui_sound * btnsound_click;
+		gui_trigger * trig_a;
+		gui_trigger * trig2;
 
 		bool listChanged;
 };
@@ -937,44 +937,44 @@ class GuiFileBrowser : public GuiElement
 		void ResetState();
 		void SetFocus(int f);
 		void Draw();
-		void DrawTooltip();
+		void draw_tool_tip();
 		void TriggerUpdate();
-		void Update(GuiTrigger * t);
-		GuiButton * fileList[FILE_PAGESIZE];
+		void Update(gui_trigger * t);
+		gui_button * fileList[FILE_PAGESIZE];
 	protected:
-		GuiText * fileListText[FILE_PAGESIZE];
-		GuiImage * fileListBg[FILE_PAGESIZE];
-		GuiImage * fileListFolder[FILE_PAGESIZE];
+		gui_text * fileListText[FILE_PAGESIZE];
+		gui_image * fileListBg[FILE_PAGESIZE];
+		gui_image * fileListFolder[FILE_PAGESIZE];
 
-		GuiButton * arrowUpBtn;
-		GuiButton * arrowDownBtn;
-		GuiButton * scrollbarBoxBtn;
+		gui_button * arrowUpBtn;
+		gui_button * arrowDownBtn;
+		gui_button * scrollbarBoxBtn;
 
-		GuiImage * bgFileSelectionImg;
-		GuiImage * scrollbarImg;
-		GuiImage * arrowDownImg;
-		GuiImage * arrowDownOverImg;
-		GuiImage * arrowUpImg;
-		GuiImage * arrowUpOverImg;
-		GuiImage * scrollbarBoxImg;
-		GuiImage * scrollbarBoxOverImg;
+		gui_image * bgFileSelectionImg;
+		gui_image * scrollbarImg;
+		gui_image * arrowDownImg;
+		gui_image * arrowDownOverImg;
+		gui_image * arrowUpImg;
+		gui_image * arrowUpOverImg;
+		gui_image * scrollbarBoxImg;
+		gui_image * scrollbarBoxOverImg;
 
-		GuiImageData * bgFileSelection;
-		GuiImageData * bgFileSelectionEntry;
-		GuiImageData * fileFolder;
-		GuiImageData * scrollbar;
-		GuiImageData * arrowDown;
-		GuiImageData * arrowDownOver;
-		GuiImageData * arrowUp;
-		GuiImageData * arrowUpOver;
-		GuiImageData * scrollbarBox;
-		GuiImageData * scrollbarBoxOver;
+		gui_image_data * bgFileSelection;
+		gui_image_data * bgFileSelectionEntry;
+		gui_image_data * fileFolder;
+		gui_image_data * scrollbar;
+		gui_image_data * arrowDown;
+		gui_image_data * arrowDownOver;
+		gui_image_data * arrowUp;
+		gui_image_data * arrowUpOver;
+		gui_image_data * scrollbarBox;
+		gui_image_data * scrollbarBoxOver;
 
-		GuiSound * btnSoundOver;
-		GuiSound * btnSoundClick;
-		GuiTrigger * trigA;
-		GuiTrigger * trig2;
-		GuiTrigger * trigHeldA;
+		gui_sound * btn_sound_hover;
+		gui_sound * btnsound_click;
+		gui_trigger * trig_a;
+		gui_trigger * trig2;
+		gui_trigger * trigHeldA;
 
 		int selectedItem;
 		int numEntries;

@@ -10,33 +10,33 @@
 
 #include "../gui.h"
 /**
- * Constructor for the GuiButton class.
+ * Constructor for the gui_button class.
  */
 
-GuiButton::GuiButton(int w, int h)
+gui_button::gui_button(int w, int h)
 {
 	width = w;
 	height = h;
 	image = NULL;
-	imageOver = NULL;
-	imageHold = NULL;
-	imageClick = NULL;
+	image_hover = NULL;
+	image_hold = NULL;
+	image_click = NULL;
 	icon = NULL;
-	iconOver = NULL;
-	iconHold = NULL;
-	iconClick = NULL;
+	icon_hover = NULL;
+	icon_hold = NULL;
+	icon_click = NULL;
 
 	for(int i=0; i < 3; i++)
 	{
 		label[i] = NULL;
-		labelOver[i] = NULL;
-		labelHold[i] = NULL;
-		labelClick[i] = NULL;
+		label_hover[i] = NULL;
+		label_hold[i] = NULL;
+		label_click[i] = NULL;
 	}
 
-	soundOver = NULL;
-	soundHold = NULL;
-	soundClick = NULL;
+	sound_hover = NULL;
+	sound_hold = NULL;
+	sound_click = NULL;
 	tooltip = NULL;
 	selectable = true;
 	holdable = false;
@@ -44,124 +44,124 @@ GuiButton::GuiButton(int w, int h)
 }
 
 /**
- * Destructor for the GuiButton class.
+ * Destructor for the gui_button class.
  */
-GuiButton::~GuiButton()
+gui_button::~gui_button()
 {
 }
 
-void GuiButton::SetImage(GuiImage* img)
+void gui_button::set_image(gui_image* img)
 {
 	image = img;
-	if(img) img->SetParent(this);
+	if(img) img->set_parent(this);
 }
-void GuiButton::SetImageOver(GuiImage* img)
+void gui_button::set_image_hover(gui_image* img)
 {
-	imageOver = img;
-	if(img) img->SetParent(this);
+	image_hover = img;
+	if(img) img->set_parent(this);
 }
-void GuiButton::SetImageHold(GuiImage* img)
+void gui_button::set_image_hold(gui_image* img)
 {
-	imageHold = img;
-	if(img) img->SetParent(this);
+	image_hold = img;
+	if(img) img->set_parent(this);
 }
-void GuiButton::SetImageClick(GuiImage* img)
+void gui_button::set_image_click(gui_image* img)
 {
-	imageClick = img;
-	if(img) img->SetParent(this);
+	image_click = img;
+	if(img) img->set_parent(this);
 }
-void GuiButton::SetIcon(GuiImage* img)
+void gui_button::set_icon(gui_image* img)
 {
 	icon = img;
-	if(img) img->SetParent(this);
+	if(img) img->set_parent(this);
 }
-void GuiButton::SetIconOver(GuiImage* img)
+void gui_button::set_icon_hover(gui_image* img)
 {
-	iconOver = img;
-	if(img) img->SetParent(this);
+	icon_hover = img;
+	if(img) img->set_parent(this);
 }
-void GuiButton::SetIconHold(GuiImage* img)
+void gui_button::set_icon_hold(gui_image* img)
 {
-	iconHold = img;
-	if(img) img->SetParent(this);
+	icon_hold = img;
+	if(img) img->set_parent(this);
 }
-void GuiButton::SetIconClick(GuiImage* img)
+void gui_button::set_icon_click(gui_image* img)
 {
-	iconClick = img;
-	if(img) img->SetParent(this);
+	icon_click = img;
+	if(img) img->set_parent(this);
 }
-void GuiButton::SetLabel(GuiText* txt, int n)
+void gui_button::set_label(gui_text* txt, int n)
 {
 	label[n] = txt;
-	if(txt) txt->SetParent(this);
+	if(txt) txt->set_parent(this);
 }
-void GuiButton::SetLabelOver(GuiText* txt, int n)
+void gui_button::set_label_hover(gui_text* txt, int n)
 {
-	labelOver[n] = txt;
-	if(txt) txt->SetParent(this);
+	label_hover[n] = txt;
+	if(txt) txt->set_parent(this);
 }
-void GuiButton::SetLabelHold(GuiText* txt, int n)
+void gui_button::set_label_hold(gui_text* txt, int n)
 {
-	labelHold[n] = txt;
-	if(txt) txt->SetParent(this);
+	label_hold[n] = txt;
+	if(txt) txt->set_parent(this);
 }
-void GuiButton::SetLabelClick(GuiText* txt, int n)
+void gui_button::set_label_click(gui_text* txt, int n)
 {
-	labelClick[n] = txt;
-	if(txt) txt->SetParent(this);
+	label_click[n] = txt;
+	if(txt) txt->set_parent(this);
 }
-void GuiButton::SetSoundOver(GuiSound * snd)
+void gui_button::set_sound_hover(gui_sound * snd)
 {
-	soundOver = snd;
+	sound_hover = snd;
 }
-void GuiButton::SetSoundHold(GuiSound * snd)
+void gui_button::set_sound_hold(gui_sound * snd)
 {
-	soundHold = snd;
+	sound_hold = snd;
 }
-void GuiButton::SetSoundClick(GuiSound * snd)
+void gui_button::set_sound_click(gui_sound * snd)
 {
-	soundClick = snd;
+	sound_click = snd;
 }
-void GuiButton::SetTooltip(GuiTooltip* t)
+void gui_button::set_tooltip(gui_tooltip* t)
 {
 	tooltip = t;
 	if(t)
-		tooltip->SetParent(this);
+		tooltip->set_parent(this);
 }
 
 /**
  * Draw the button on screen
  */
-void GuiButton::Draw()
+void gui_button::Draw()
 {
-	if(!this->IsVisible())
+	if(!this->is_visible())
 		return;
 
 	if(state == STATE_SELECTED || state == STATE_HELD)
 	{
-		if(imageOver)
-			imageOver->Draw();
+		if(image_hover)
+			image_hover->Draw();
 		else if(image) // draw image
 			image->Draw();
 
-		if(iconOver)
-			iconOver->Draw();
+		if(icon_hover)
+			icon_hover->Draw();
 		else if(icon) // draw icon
 			icon->Draw();
 
 		// draw text
-		if(labelOver[0])
-			labelOver[0]->Draw();
+		if(label_hover[0])
+			label_hover[0]->Draw();
 		else if(label[0])
 			label[0]->Draw();
 			
-		if(labelOver[1])
-			labelOver[1]->Draw();	
+		if(label_hover[1])
+			label_hover[1]->Draw();	
 		else if(label[1])
 			label[1]->Draw();
 			
-		if(labelOver[2])
-			labelOver[2]->Draw();
+		if(label_hover[2])
+			label_hover[2]->Draw();
 		else if(label[2])
 			label[2]->Draw();
 	}
@@ -181,33 +181,33 @@ void GuiButton::Draw()
 			label[2]->Draw();
 	}
 
-	this->UpdateEffects();
+	this->update_effects();
 }
 
-void GuiButton::DrawTooltip()
+void gui_button::draw_tool_tip()
 {
 	if(tooltip)
-		tooltip->DrawTooltip();
+		tooltip->draw_tool_tip();
 }
 
-void GuiButton::ResetText()
+void gui_button::reset_text()
 {
 	for(int i=0; i<3; i++)
 	{
 		if(label[i])
-			label[i]->ResetText();
-		if(labelOver[i])
-			labelOver[i]->ResetText();
+			label[i]->reset_text();
+		if(label_hover[i])
+			label_hover[i]->reset_text();
 	}
 	if(tooltip)
-		tooltip->ResetText();
+		tooltip->reset_text();
 }
 
-void GuiButton::Update(GuiTrigger * t)
+void gui_button::Update(gui_trigger * t)
 {
 	if(state == STATE_CLICKED || state == STATE_DISABLED || !t)
 		return;
-	else if(parentElement && parentElement->GetState() == STATE_DISABLED)
+	else if(parentElement && parentElement->get_state() == STATE_DISABLED)
 		return;
 
 	#ifdef HW_RVL
@@ -223,8 +223,8 @@ void GuiButton::Update(GuiTrigger * t)
 				if(this->Rumble())
 					rumbleRequest[t->chan] = 1;
 
-				if(soundOver)
-					soundOver->Play();
+				if(sound_hover)
+					sound_hover->Play();
 
 				if(effectsOver && !effects)
 				{
@@ -281,8 +281,8 @@ void GuiButton::Update(GuiTrigger * t)
 							{
 								this->SetState(STATE_CLICKED, t->chan);
 
-								if(soundClick)
-									soundClick->Play();
+								if(sound_click)
+									sound_click->Play();
 							}
 						}
 						else if(trigger[i]->type == TRIGGER_BUTTON_ONLY)
@@ -352,6 +352,6 @@ void GuiButton::Update(GuiTrigger * t)
 		}
 	}
 
-	if(updateCB)
-		updateCB(this);
+	if(update_cb)
+		update_cb(this);
 }

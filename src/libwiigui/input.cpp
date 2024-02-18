@@ -15,13 +15,12 @@
 #include <unistd.h>
 #include <wiiuse/wpad.h>
 
-#include "demo_menu.h"
 #include "video.h"
 #include "input.h"
 #include "libwiigui/gui.h"
 
 int rumbleRequest[4] = {0,0,0,0};
-GuiTrigger userInput[4];
+gui_trigger userInput[4];
 static int rumbleCount[4] = {0,0,0,0};
 
 /****************************************************************************
@@ -49,18 +48,19 @@ void UpdatePads()
 }
 
 /****************************************************************************
- * SetupPads
+ * setup_pads
  *
  * Sets up userInput triggers for use
  ***************************************************************************/
-void SetupPads()
+void setup_pads()
 {
 	PAD_Init();
 	WPAD_Init();
 
 	// read wiimote accelerometer and IR data
-	WPAD_SetDataFormat(WPAD_CHAN_ALL,WPAD_FMT_BTNS_ACC_IR);
+	WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
 	WPAD_SetVRes(WPAD_CHAN_ALL, screenwidth, screenheight);
+	WPAD_SetMotionPlus(-1, 1);
 
 	for(int i=0; i < 4; i++)
 	{
@@ -70,10 +70,10 @@ void SetupPads()
 }
 
 /****************************************************************************
- * ShutoffRumble
+ * shutoff_rumble
  ***************************************************************************/
 
-void ShutoffRumble()
+void shutoff_rumble()
 {
 	for(int i=0;i<4;i++)
 	{

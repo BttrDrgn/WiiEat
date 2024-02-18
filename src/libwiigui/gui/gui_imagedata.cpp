@@ -11,9 +11,9 @@
 #include "../gui.h"
 
 /**
- * Constructor for the GuiImageData class.
+ * Constructor for the gui_image_data class.
  */
-GuiImageData::GuiImageData(const u8 * i, int maxw, int maxh)
+gui_image_data::gui_image_data(const u8 * i, int maxw, int maxh)
 {
 	data = NULL;
 	width = 0;
@@ -24,9 +24,9 @@ GuiImageData::GuiImageData(const u8 * i, int maxw, int maxh)
 }
 
 /**
- * Destructor for the GuiImageData class.
+ * Destructor for the gui_image_data class.
  */
-GuiImageData::~GuiImageData()
+gui_image_data::~gui_image_data()
 {
 	if(data)
 	{
@@ -35,17 +35,17 @@ GuiImageData::~GuiImageData()
 	}
 }
 
-u8 * GuiImageData::GetImage()
+u8 * gui_image_data::GetImage()
 {
 	return data;
 }
 
-int GuiImageData::GetWidth()
+int gui_image_data::GetWidth()
 {
 	return width;
 }
 
-int GuiImageData::GetHeight()
+int gui_image_data::GetHeight()
 {
 	return height;
 }

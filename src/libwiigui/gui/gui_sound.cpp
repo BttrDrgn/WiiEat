@@ -11,9 +11,9 @@
 #include "../gui.h"
 
 /**
- * Constructor for the GuiSound class.
+ * Constructor for the gui_sound class.
  */
-GuiSound::GuiSound(const u8 * s, s32 l, int t)
+gui_sound::gui_sound(const u8 * s, s32 l, int t)
 {
 	sound = s;
 	length = l;
@@ -24,9 +24,9 @@ GuiSound::GuiSound(const u8 * s, s32 l, int t)
 }
 
 /**
- * Destructor for the GuiSound class.
+ * Destructor for the gui_sound class.
  */
-GuiSound::~GuiSound()
+gui_sound::~gui_sound()
 {
 	#ifndef NO_SOUND
 	if(type == SOUND_OGG)
@@ -34,7 +34,7 @@ GuiSound::~GuiSound()
 	#endif
 }
 
-void GuiSound::Play()
+void gui_sound::Play()
 {
 	#ifndef NO_SOUND
 	int vol;
@@ -61,7 +61,7 @@ void GuiSound::Play()
 	#endif
 }
 
-void GuiSound::Stop()
+void gui_sound::Stop()
 {
 	#ifndef NO_SOUND
 	if(voice < 0)
@@ -80,7 +80,7 @@ void GuiSound::Stop()
 	#endif
 }
 
-void GuiSound::Pause()
+void gui_sound::Pause()
 {
 	#ifndef NO_SOUND
 	if(voice < 0)
@@ -99,7 +99,7 @@ void GuiSound::Pause()
 	#endif
 }
 
-void GuiSound::Resume()
+void gui_sound::Resume()
 {
 	#ifndef NO_SOUND
 	if(voice < 0)
@@ -118,7 +118,7 @@ void GuiSound::Resume()
 	#endif
 }
 
-bool GuiSound::IsPlaying()
+bool gui_sound::IsPlaying()
 {
 	if(ASND_StatusVoice(voice) == SND_WORKING || ASND_StatusVoice(voice) == SND_WAITING)
 		return true;
@@ -126,7 +126,7 @@ bool GuiSound::IsPlaying()
 		return false;
 }
 
-void GuiSound::SetVolume(int vol)
+void gui_sound::SetVolume(int vol)
 {
 	#ifndef NO_SOUND
 	volume = vol;
@@ -149,7 +149,7 @@ void GuiSound::SetVolume(int vol)
 	#endif
 }
 
-void GuiSound::SetLoop(bool l)
+void gui_sound::SetLoop(bool l)
 {
 	loop = l;
 }

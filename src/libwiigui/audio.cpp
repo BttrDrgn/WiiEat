@@ -11,11 +11,11 @@
 #include <asndlib.h>
 
 /****************************************************************************
- * InitAudio
+ * init_audio
  *
  * Initializes the Wii's audio subsystem
  ***************************************************************************/
-void InitAudio()
+void init_audio()
 {
 	AUDIO_Init(NULL);
 	ASND_Init();

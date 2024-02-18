@@ -17,9 +17,9 @@ static u64 now[4];
 static u32 delay[4];
 
 /**
- * Constructor for the GuiTrigger class.
+ * Constructor for the gui_trigger class.
  */
-GuiTrigger::GuiTrigger()
+gui_trigger::gui_trigger()
 {
 	chan = -1;
 	memset(&wpaddata, 0, sizeof(WPADData));
@@ -28,9 +28,9 @@ GuiTrigger::GuiTrigger()
 }
 
 /**
- * Destructor for the GuiTrigger class.
+ * Destructor for the gui_trigger class.
  */
-GuiTrigger::~GuiTrigger()
+gui_trigger::~gui_trigger()
 {
 }
 
@@ -39,7 +39,7 @@ GuiTrigger::~GuiTrigger()
  * - Element is selected
  * - Trigger button is pressed
  */
-void GuiTrigger::SetSimpleTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
+void gui_trigger::set_simple_trigger(s32 ch, u32 wiibtns, u16 gcbtns)
 {
 	type = TRIGGER_SIMPLE;
 	chan = ch;
@@ -52,7 +52,7 @@ void GuiTrigger::SetSimpleTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
  * - Element is selected
  * - Trigger button is pressed and held
  */
-void GuiTrigger::SetHeldTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
+void gui_trigger::SetHeldTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
 {
 	type = TRIGGER_HELD;
 	chan = ch;
@@ -64,7 +64,7 @@ void GuiTrigger::SetHeldTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
  * Sets a button trigger. Requires:
  * - Trigger button is pressed
  */
-void GuiTrigger::SetButtonOnlyTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
+void gui_trigger::set_button_only_trigger(s32 ch, u32 wiibtns, u16 gcbtns)
 {
 	type = TRIGGER_BUTTON_ONLY;
 	chan = ch;
@@ -77,7 +77,7 @@ void GuiTrigger::SetButtonOnlyTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
  * - Trigger button is pressed
  * - Parent window is in focus
  */
-void GuiTrigger::SetButtonOnlyInFocusTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
+void gui_trigger::SetButtonOnlyInFocusTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
 {
 	type = TRIGGER_BUTTON_ONLY_IN_FOCUS;
 	chan = ch;
@@ -91,7 +91,7 @@ void GuiTrigger::SetButtonOnlyInFocusTrigger(s32 ch, u32 wiibtns, u16 gcbtns)
  * Get X/Y value from Wii Joystick (classic, nunchuk) input
  ***************************************************************************/
 
-s8 GuiTrigger::WPAD_Stick(u8 stick, int axis)
+s8 gui_trigger::WPAD_Stick(u8 stick, int axis)
 {
 	#ifdef HW_RVL
 
@@ -143,17 +143,17 @@ s8 GuiTrigger::WPAD_Stick(u8 stick, int axis)
 	#endif
 }
 
-s8 GuiTrigger::WPAD_StickX(u8 stick)
+s8 gui_trigger::WPAD_StickX(u8 stick)
 {
 	return WPAD_Stick(stick, 0);
 }
 
-s8 GuiTrigger::WPAD_StickY(u8 stick)
+s8 gui_trigger::WPAD_StickY(u8 stick)
 {
 	return WPAD_Stick(stick, 1);
 }
 
-bool GuiTrigger::Left()
+bool gui_trigger::Left()
 {
 	u32 wiibtn = WPAD_BUTTON_LEFT;
 
@@ -186,7 +186,7 @@ bool GuiTrigger::Left()
 	return false;
 }
 
-bool GuiTrigger::Right()
+bool gui_trigger::Right()
 {
 	u32 wiibtn = WPAD_BUTTON_RIGHT;
 
@@ -219,7 +219,7 @@ bool GuiTrigger::Right()
 	return false;
 }
 
-bool GuiTrigger::Up()
+bool gui_trigger::Up()
 {
 	u32 wiibtn = WPAD_BUTTON_UP;
 
@@ -252,7 +252,7 @@ bool GuiTrigger::Up()
 	return false;
 }
 
-bool GuiTrigger::Down()
+bool gui_trigger::Down()
 {
 	u32 wiibtn = WPAD_BUTTON_DOWN;
 

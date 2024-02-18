@@ -15,17 +15,17 @@ static GXColor presetColor = (GXColor){255, 255, 255, 255};
 static int currentSize = 0;
 static int presetSize = 0;
 static int presetMaxWidth = 0;
-static int presetAlignmentHor = 0;
-static int presetAlignmentVert = 0;
+static int preset_alignmentHor = 0;
+static int preset_alignmentVert = 0;
 static u16 presetStyle = 0;
 
 #define TEXT_SCROLL_DELAY			8
 #define	TEXT_SCROLL_INITIAL_DELAY	6
 
 /**
- * Constructor for the GuiText class.
+ * Constructor for the gui_text class.
  */
-GuiText::GuiText(const char * t, int s, GXColor c)
+gui_text::gui_text(const char * t, int s, GXColor c)
 {
 	origText = NULL;
 	text = NULL;
@@ -41,7 +41,7 @@ GuiText::GuiText(const char * t, int s, GXColor c)
 	textScrollInitialDelay = TEXT_SCROLL_INITIAL_DELAY;
 	textScrollDelay = TEXT_SCROLL_DELAY;
 
-	alignmentHor = ALIGN_CENTRE;
+	alignmentHor = ALIGN_CENTER;
 	alignmentVert = ALIGN_MIDDLE;
 
 	if(t)
@@ -55,9 +55,9 @@ GuiText::GuiText(const char * t, int s, GXColor c)
 }
 
 /**
- * Constructor for the GuiText class, uses presets
+ * Constructor for the gui_text class, uses presets
  */
-GuiText::GuiText(const char * t)
+gui_text::gui_text(const char * t)
 {
 	origText = NULL;
 	text = NULL;
@@ -73,8 +73,8 @@ GuiText::GuiText(const char * t)
 	textScrollInitialDelay = TEXT_SCROLL_INITIAL_DELAY;
 	textScrollDelay = TEXT_SCROLL_DELAY;
 
-	alignmentHor = presetAlignmentHor;
-	alignmentVert = presetAlignmentVert;
+	alignmentHor = preset_alignmentHor;
+	alignmentVert = preset_alignmentVert;
 
 	if(t)
 	{
@@ -87,9 +87,9 @@ GuiText::GuiText(const char * t)
 }
 
 /**
- * Destructor for the GuiText class.
+ * Destructor for the gui_text class.
  */
-GuiText::~GuiText()
+gui_text::~gui_text()
 {
 	if(origText)
 		free(origText);
@@ -104,7 +104,7 @@ GuiText::~GuiText()
 	}
 }
 
-void GuiText::SetText(const char * t)
+void gui_text::SetText(const char * t)
 {
 	if(origText)
 		free(origText);
@@ -131,7 +131,7 @@ void GuiText::SetText(const char * t)
 	}
 }
 
-void GuiText::SetWText(wchar_t * t)
+void gui_text::SetWText(wchar_t * t)
 {
 	if(origText)
 		free(origText);
@@ -155,7 +155,7 @@ void GuiText::SetWText(wchar_t * t)
 		text = wcsdup(t);
 }
 
-int GuiText::GetLength()
+int gui_text::GetLength()
 {
 	if(!text)
 		return 0;
@@ -163,22 +163,22 @@ int GuiText::GetLength()
 	return wcslen(text);
 }
 
-void GuiText::SetPresets(int sz, GXColor c, int w, u16 s, int h, int v)
+void gui_text::SetPresets(int sz, GXColor c, int w, u16 s, int h, int v)
 {
 	presetSize = sz;
 	presetColor = c;
 	presetStyle = s;
 	presetMaxWidth = w;
-	presetAlignmentHor = h;
-	presetAlignmentVert = v;
+	preset_alignmentHor = h;
+	preset_alignmentVert = v;
 }
 
-void GuiText::SetFontSize(int s)
+void gui_text::SetFontSize(int s)
 {
 	size = s;
 }
 
-void GuiText::SetMaxWidth(int width)
+void gui_text::SetMaxWidth(int width)
 {
 	maxWidth = width;
 
@@ -194,7 +194,7 @@ void GuiText::SetMaxWidth(int width)
 	textDynNum = 0;
 }
 
-int GuiText::GetTextWidth()
+int gui_text::GetTextWidth()
 {
 	if(!text)
 		return 0;
@@ -211,7 +211,7 @@ int GuiText::GetTextWidth()
 	return fontSystem[size]->getWidth(text);
 }
 
-void GuiText::SetWrap(bool w, int width)
+void gui_text::SetWrap(bool w, int width)
 {
 	wrap = w;
 	maxWidth = width;
@@ -228,7 +228,7 @@ void GuiText::SetWrap(bool w, int width)
 	textDynNum = 0;
 }
 
-void GuiText::SetScroll(int s)
+void gui_text::SetScroll(int s)
 {
 	if(textScroll == s)
 		return;
@@ -250,18 +250,18 @@ void GuiText::SetScroll(int s)
 	textScrollDelay = TEXT_SCROLL_DELAY;
 }
 
-void GuiText::SetColor(GXColor c)
+void gui_text::SetColor(GXColor c)
 {
 	color = c;
 	alpha = c.a;
 }
 
-void GuiText::SetStyle(u16 s)
+void gui_text::SetStyle(u16 s)
 {
 	style = s;
 }
 
-void GuiText::SetAlignment(int hor, int vert)
+void gui_text::set_alignment(int hor, int vert)
 {
 	style = 0;
 
@@ -294,7 +294,7 @@ void GuiText::SetAlignment(int hor, int vert)
 	alignmentVert = vert;
 }
 
-void GuiText::ResetText()
+void gui_text::reset_text()
 {
 	if(!origText)
 		return;
@@ -319,12 +319,12 @@ void GuiText::ResetText()
 /**
  * Draw the text on screen
  */
-void GuiText::Draw()
+void gui_text::Draw()
 {
 	if(!text)
 		return;
 
-	if(!this->IsVisible())
+	if(!this->is_visible())
 		return;
 
 	GXColor c = color;
@@ -346,7 +346,7 @@ void GuiText::Draw()
 	if(maxWidth == 0)
 	{
 		fontSystem[currentSize]->drawText(this->GetLeft(), this->GetTop(), text, c, style);
-		this->UpdateEffects();
+		this->update_effects();
 		return;
 	}
 
@@ -476,5 +476,5 @@ void GuiText::Draw()
 		}
 		fontSystem[currentSize]->drawText(this->GetLeft(), this->GetTop(), textDyn[0], c, style);
 	}
-	this->UpdateEffects();
+	this->update_effects();
 }

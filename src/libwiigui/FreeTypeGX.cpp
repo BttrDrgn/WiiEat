@@ -28,7 +28,7 @@ static FT_GlyphSlot ftSlot;		/**< FreeType reusable FT_GlyphSlot glyph container
 
 FreeTypeGX *fontSystem[MAX_FONT_SIZE+1];
 
-void InitFreeType(uint8_t* fontBuffer, FT_Long bufferSize)
+void init_free_type(uint8_t* fontBuffer, FT_Long bufferSize)
 {
 	FT_Init_FreeType(&ftLibrary);
 	FT_New_Memory_Face(ftLibrary, (FT_Byte *)fontBuffer, bufferSize, 0, &ftFace);
@@ -38,7 +38,7 @@ void InitFreeType(uint8_t* fontBuffer, FT_Long bufferSize)
 		fontSystem[i] = NULL;
 }
 
-void DeinitFreeType()
+void Deinit_free_type()
 {
 	ClearFontData();
 	FT_Done_FreeType(ftLibrary);

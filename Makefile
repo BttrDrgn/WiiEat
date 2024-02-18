@@ -15,11 +15,12 @@ include $(DEVKITPPC)/wii_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	libwiigui-demo
+TARGET		:=	boot
 BUILD		:=	build
-BIN			:=	$(BUILD)/bin
+BIN			:=	dist/apps/WiiEat
 SOURCES		:=	src $(wildcard src/**) $(wildcard src/**/**) assets $(wildcard assets/**)
 INCLUDES	:=	src
+PCH			:= 	stdafx.hpp
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -95,7 +96,7 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib) \
 
 #---------------------------------------------------------------------------------
 $(BUILD):
-	@echo $(OUTPUT)
+	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
 	@[ -d $(BIN) ] || mkdir -p $(BIN)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 

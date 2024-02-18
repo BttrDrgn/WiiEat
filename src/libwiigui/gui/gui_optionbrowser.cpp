@@ -24,77 +24,77 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	selectedItem = 0;
 	focus = 0; // allow focus
 
-	trigA = new GuiTrigger;
-	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-	trig2 = new GuiTrigger;
-	trig2->SetSimpleTrigger(-1, WPAD_BUTTON_2, 0);
+	trig_a = new gui_trigger;
+	trig_a->set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	trig2 = new gui_trigger;
+	trig2->set_simple_trigger(-1, WPAD_BUTTON_2, 0);
 
-	btnSoundOver = new GuiSound(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
+	btn_sound_hover = new gui_sound(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	btnsound_click = new gui_sound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 
-	bgOptions = new GuiImageData(bg_options_png);
-	bgOptionsImg = new GuiImage(bgOptions);
-	bgOptionsImg->SetParent(this);
-	bgOptionsImg->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+	bgOptions = new gui_image_data(bg_options_png);
+	bgOptionsImg = new gui_image(bgOptions);
+	bgOptionsImg->set_parent(this);
+	bgOptionsImg->set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
 
-	bgOptionsEntry = new GuiImageData(bg_options_entry_png);
+	bgOptionsEntry = new gui_image_data(bg_options_entry_png);
 
-	scrollbar = new GuiImageData(scrollbar_png);
-	scrollbarImg = new GuiImage(scrollbar);
-	scrollbarImg->SetParent(this);
-	scrollbarImg->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
-	scrollbarImg->SetPosition(0, 30);
+	scrollbar = new gui_image_data(scrollbar_png);
+	scrollbarImg = new gui_image(scrollbar);
+	scrollbarImg->set_parent(this);
+	scrollbarImg->set_alignment(ALIGN_RIGHT, ALIGN_TOP);
+	scrollbarImg->set_position(0, 30);
 
-	arrowDown = new GuiImageData(scrollbar_arrowdown_png);
-	arrowDownImg = new GuiImage(arrowDown);
-	arrowDownOver = new GuiImageData(scrollbar_arrowdown_over_png);
-	arrowDownOverImg = new GuiImage(arrowDownOver);
-	arrowUp = new GuiImageData(scrollbar_arrowup_png);
-	arrowUpImg = new GuiImage(arrowUp);
-	arrowUpOver = new GuiImageData(scrollbar_arrowup_over_png);
-	arrowUpOverImg = new GuiImage(arrowUpOver);
+	arrowDown = new gui_image_data(scrollbar_arrowdown_png);
+	arrowDownImg = new gui_image(arrowDown);
+	arrowDownOver = new gui_image_data(scrollbar_arrowdown_over_png);
+	arrowDownOverImg = new gui_image(arrowDownOver);
+	arrowUp = new gui_image_data(scrollbar_arrowup_png);
+	arrowUpImg = new gui_image(arrowUp);
+	arrowUpOver = new gui_image_data(scrollbar_arrowup_over_png);
+	arrowUpOverImg = new gui_image(arrowUpOver);
 
-	arrowUpBtn = new GuiButton(arrowUpImg->GetWidth(), arrowUpImg->GetHeight());
-	arrowUpBtn->SetParent(this);
-	arrowUpBtn->SetImage(arrowUpImg);
-	arrowUpBtn->SetImageOver(arrowUpOverImg);
-	arrowUpBtn->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
+	arrowUpBtn = new gui_button(arrowUpImg->GetWidth(), arrowUpImg->GetHeight());
+	arrowUpBtn->set_parent(this);
+	arrowUpBtn->set_image(arrowUpImg);
+	arrowUpBtn->set_image_hover(arrowUpOverImg);
+	arrowUpBtn->set_alignment(ALIGN_RIGHT, ALIGN_TOP);
 	arrowUpBtn->SetSelectable(false);
-	arrowUpBtn->SetTrigger(trigA);
-	arrowUpBtn->SetSoundOver(btnSoundOver);
-	arrowUpBtn->SetSoundClick(btnSoundClick);
+	arrowUpBtn->set_trigger(trig_a);
+	arrowUpBtn->set_sound_hover(btn_sound_hover);
+	arrowUpBtn->set_sound_click(btnsound_click);
 
-	arrowDownBtn = new GuiButton(arrowDownImg->GetWidth(), arrowDownImg->GetHeight());
-	arrowDownBtn->SetParent(this);
-	arrowDownBtn->SetImage(arrowDownImg);
-	arrowDownBtn->SetImageOver(arrowDownOverImg);
-	arrowDownBtn->SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+	arrowDownBtn = new gui_button(arrowDownImg->GetWidth(), arrowDownImg->GetHeight());
+	arrowDownBtn->set_parent(this);
+	arrowDownBtn->set_image(arrowDownImg);
+	arrowDownBtn->set_image_hover(arrowDownOverImg);
+	arrowDownBtn->set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 	arrowDownBtn->SetSelectable(false);
-	arrowDownBtn->SetTrigger(trigA);
-	arrowDownBtn->SetSoundOver(btnSoundOver);
-	arrowDownBtn->SetSoundClick(btnSoundClick);
+	arrowDownBtn->set_trigger(trig_a);
+	arrowDownBtn->set_sound_hover(btn_sound_hover);
+	arrowDownBtn->set_sound_click(btnsound_click);
 
 	for(int i=0; i<PAGESIZE; i++)
 	{
-		optionTxt[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
-		optionTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
-		optionTxt[i]->SetPosition(8,0);
+		optionTxt[i] = new gui_text(NULL, 20, (GXColor){0, 0, 0, 0xff});
+		optionTxt[i]->set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		optionTxt[i]->set_position(8,0);
 
-		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
-		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
-		optionVal[i]->SetPosition(250,0);
+		optionVal[i] = new gui_text(NULL, 20, (GXColor){0, 0, 0, 0xff});
+		optionVal[i]->set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		optionVal[i]->set_position(250,0);
 
-		optionBg[i] = new GuiImage(bgOptionsEntry);
+		optionBg[i] = new gui_image(bgOptionsEntry);
 
-		optionBtn[i] = new GuiButton(512,30);
-		optionBtn[i]->SetParent(this);
-		optionBtn[i]->SetLabel(optionTxt[i], 0);
-		optionBtn[i]->SetLabel(optionVal[i], 1);
-		optionBtn[i]->SetImageOver(optionBg[i]);
-		optionBtn[i]->SetPosition(2,30*i+3);
-		optionBtn[i]->SetTrigger(trigA);
-		optionBtn[i]->SetTrigger(trig2);
-		optionBtn[i]->SetSoundClick(btnSoundClick);
+		optionBtn[i] = new gui_button(512,30);
+		optionBtn[i]->set_parent(this);
+		optionBtn[i]->set_label(optionTxt[i], 0);
+		optionBtn[i]->set_label(optionVal[i], 1);
+		optionBtn[i]->set_image_hover(optionBg[i]);
+		optionBtn[i]->set_position(2,30*i+3);
+		optionBtn[i]->set_trigger(trig_a);
+		optionBtn[i]->set_trigger(trig2);
+		optionBtn[i]->set_sound_click(btnsound_click);
 	}
 }
 
@@ -121,10 +121,10 @@ GuiOptionBrowser::~GuiOptionBrowser()
 	delete arrowUp;
 	delete arrowUpOver;
 
-	delete trigA;
+	delete trig_a;
 	delete trig2;
-	delete btnSoundOver;
-	delete btnSoundClick;
+	delete btn_sound_hover;
+	delete btnsound_click;
 
 	for(int i=0; i<PAGESIZE; i++)
 	{
@@ -138,13 +138,13 @@ GuiOptionBrowser::~GuiOptionBrowser()
 void GuiOptionBrowser::SetCol1Position(int x)
 {
 	for(int i=0; i<PAGESIZE; i++)
-		optionTxt[i]->SetPosition(x,0);
+		optionTxt[i]->set_position(x,0);
 }
 
 void GuiOptionBrowser::SetCol2Position(int x)
 {
 	for(int i=0; i<PAGESIZE; i++)
-		optionVal[i]->SetPosition(x,0);
+		optionVal[i]->set_position(x,0);
 }
 
 void GuiOptionBrowser::SetFocus(int f)
@@ -177,7 +177,7 @@ int GuiOptionBrowser::GetClickedOption()
 	int found = -1;
 	for(int i=0; i<PAGESIZE; i++)
 	{
-		if(optionBtn[i]->GetState() == STATE_CLICKED)
+		if(optionBtn[i]->get_state() == STATE_CLICKED)
 		{
 			optionBtn[i]->SetState(STATE_SELECTED);
 			found = optionIndex[i];
@@ -211,7 +211,7 @@ int GuiOptionBrowser::FindMenuItem(int currentItem, int direction)
  */
 void GuiOptionBrowser::Draw()
 {
-	if(!this->IsVisible())
+	if(!this->is_visible())
 		return;
 
 	bgOptionsImg->Draw();
@@ -233,7 +233,7 @@ void GuiOptionBrowser::Draw()
 	arrowUpBtn->Draw();
 	arrowDownBtn->Draw();
 
-	this->UpdateEffects();
+	this->update_effects();
 }
 
 void GuiOptionBrowser::TriggerUpdate()
@@ -241,7 +241,7 @@ void GuiOptionBrowser::TriggerUpdate()
 	listChanged = true;
 }
 
-void GuiOptionBrowser::ResetText()
+void GuiOptionBrowser::reset_text()
 {
 	int next = listOffset;
 
@@ -249,7 +249,7 @@ void GuiOptionBrowser::ResetText()
 	{
 		if(next >= 0)
 		{
-			optionBtn[i]->ResetText();
+			optionBtn[i]->reset_text();
 			next = this->FindMenuItem(next, 1);
 		}
 		else
@@ -257,7 +257,7 @@ void GuiOptionBrowser::ResetText()
 	}
 }
 
-void GuiOptionBrowser::Update(GuiTrigger * t)
+void GuiOptionBrowser::Update(gui_trigger * t)
 {
 	if(state == STATE_DISABLED || !t)
 		return;
@@ -276,7 +276,7 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 		{
 			if(next >= 0)
 			{
-				if(optionBtn[i]->GetState() == STATE_DISABLED)
+				if(optionBtn[i]->get_state() == STATE_DISABLED)
 				{
 					optionBtn[i]->SetVisible(true);
 					optionBtn[i]->SetState(STATE_DEFAULT);
@@ -297,9 +297,9 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 
 	for(int i=0; i<PAGESIZE; ++i)
 	{
-		if(i != selectedItem && optionBtn[i]->GetState() == STATE_SELECTED)
+		if(i != selectedItem && optionBtn[i]->get_state() == STATE_SELECTED)
 			optionBtn[i]->ResetState();
-		else if(focus && i == selectedItem && optionBtn[i]->GetState() == STATE_DEFAULT)
+		else if(focus && i == selectedItem && optionBtn[i]->get_state() == STATE_DEFAULT)
 			optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);
 
 		int currChan = t->chan;
@@ -310,7 +310,7 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 		optionBtn[i]->Update(t);
 		t->chan = currChan;
 
-		if(optionBtn[i]->GetState() == STATE_SELECTED)
+		if(optionBtn[i]->get_state() == STATE_SELECTED)
 			selectedItem = i;
 	}
 
@@ -318,7 +318,7 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 	if(!focus)
 		return; // skip navigation
 
-	if(t->Down() || arrowDownBtn->GetState() == STATE_CLICKED)
+	if(t->Down() || arrowDownBtn->get_state() == STATE_CLICKED)
 	{
 		next = this->FindMenuItem(optionIndex[selectedItem], 1);
 
@@ -330,7 +330,7 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 				listOffset = this->FindMenuItem(listOffset, 1);
 				listChanged = true;
 			}
-			else if(optionBtn[selectedItem+1]->IsVisible())
+			else if(optionBtn[selectedItem+1]->is_visible())
 			{
 				optionBtn[selectedItem]->ResetState();
 				optionBtn[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
@@ -339,7 +339,7 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 		}
 		arrowDownBtn->ResetState();
 	}
-	else if(t->Up() || arrowUpBtn->GetState() == STATE_CLICKED)
+	else if(t->Up() || arrowUpBtn->get_state() == STATE_CLICKED)
 	{
 		prev = this->FindMenuItem(optionIndex[selectedItem], -1);
 
@@ -361,6 +361,6 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 		arrowUpBtn->ResetState();
 	}
 
-	if(updateCB)
-		updateCB(this);
+	if(update_cb)
+		update_cb(this);
 }

@@ -12,19 +12,26 @@
 #include <gccore.h>
 
 // Fonts
-#include "font_ttf.h"
+#include "font_bold_ttf.h"
+#include "font_medium_ttf.h"
 
 // Languages
 #include "en_lang.h"
 
 // Sounds
-#include "bg_music_ogg.h"
 #include "button_over_pcm.h"
 #include "button_click_pcm.h"
 
 // Images
+#include "wiieat_logo_png.h"
+#include "input_box_png.h"
+#include "input_box_hover_png.h"
+#include "circle_button_hover_png.h"
+#include "circle_button_png.h"
+#include "button_small_png.h"
+#include "button_small_over_png.h"
 #include "button_png.h"
-#include "button_over_png.h"
+#include "button_hover_png.h"
 #include "button_large_png.h"
 #include "button_large_over_png.h"
 #include "dialogue_box_png.h"

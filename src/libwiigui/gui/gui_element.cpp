@@ -38,7 +38,7 @@ GuiElement::GuiElement()
 	holdable = false;
 	visible = true;
 	focus = -1; // cannot be focused
-	updateCB = NULL;
+	update_cb = NULL;
 	yoffsetDyn = 0;
 	xoffsetDyn = 0;
 	alphaDyn = -1;
@@ -62,7 +62,7 @@ GuiElement::~GuiElement()
 {
 }
 
-void GuiElement::SetParent(GuiElement * e)
+void GuiElement::set_parent(GuiElement * e)
 {
 	parentElement = e;
 }
@@ -92,7 +92,7 @@ int GuiElement::GetLeft()
 		case ALIGN_LEFT:
 			x = pLeft;
 			break;
-		case ALIGN_CENTRE:
+		case ALIGN_CENTER:
 			x = pLeft + pWidth/2.0 - (width*xscale)/2.0;
 			break;
 		case ALIGN_RIGHT:
@@ -191,7 +191,7 @@ void GuiElement::SetSize(int w, int h)
 	height = h;
 }
 
-bool GuiElement::IsVisible()
+bool GuiElement::is_visible()
 {
 	return visible;
 }
@@ -219,23 +219,23 @@ int GuiElement::GetAlpha()
 	return a;
 }
 
-void GuiElement::SetScale(float s)
+void GuiElement::set_scale(float s)
 {
 	xscale = s;
 	yscale = s;
 }
 
-void GuiElement::SetScaleX(float s)
+void GuiElement::set_scale_x(float s)
 {
 	xscale = s;
 }
 
-void GuiElement::SetScaleY(float s)
+void GuiElement::set_scale_y(float s)
 {
 	yscale = s;
 }
 
-void GuiElement::SetScale(int mw, int mh)
+void GuiElement::set_scale(int mw, int mh)
 {
 	xscale = 1.0f;
 	if(width > mw || height > mh)
@@ -278,12 +278,12 @@ float GuiElement::GetScaleY()
 	return s;
 }
 
-int GuiElement::GetState()
+int GuiElement::get_state()
 {
 	return state;
 }
 
-int GuiElement::GetStateChan()
+int GuiElement::get_stateChan()
 {
 	return stateChan;
 }
@@ -354,7 +354,7 @@ int GuiElement::IsFocused()
 	return focus;
 }
 
-void GuiElement::SetTrigger(GuiTrigger * t)
+void GuiElement::set_trigger(gui_trigger * t)
 {
 	if(!trigger[0])
 		trigger[0] = t;
@@ -366,7 +366,7 @@ void GuiElement::SetTrigger(GuiTrigger * t)
 		trigger[0] = t;
 }
 
-void GuiElement::SetTrigger(u8 i, GuiTrigger * t)
+void GuiElement::set_trigger(u8 i, gui_trigger * t)
 {
 	trigger[i] = t;
 }
@@ -425,7 +425,7 @@ void GuiElement::SetEffectGrow()
 	SetEffectOnOver(EFFECT_SCALE, 4, 110);
 }
 
-void GuiElement::UpdateEffects()
+void GuiElement::update_effects()
 {
 	if(effects & (EFFECT_SLIDE_IN | EFFECT_SLIDE_OUT))
 	{
@@ -533,24 +533,24 @@ void GuiElement::UpdateEffects()
 	}
 }
 
-void GuiElement::Update(GuiTrigger * t)
+void GuiElement::Update(gui_trigger * t)
 {
-	if(updateCB)
-		updateCB(this);
+	if(update_cb)
+		update_cb(this);
 }
 
 void GuiElement::SetUpdateCallback(UpdateCallback u)
 {
-	updateCB = u;
+	update_cb = u;
 }
 
-void GuiElement::SetPosition(int xoff, int yoff)
+void GuiElement::set_position(int xoff, int yoff)
 {
 	xoffset = xoff;
 	yoffset = yoff;
 }
 
-void GuiElement::SetAlignment(int hor, int vert)
+void GuiElement::set_alignment(int hor, int vert)
 {
 	alignmentHor = hor;
 	alignmentVert = vert;
@@ -561,7 +561,7 @@ int GuiElement::GetSelected()
 	return -1;
 }
 
-void GuiElement::ResetText()
+void GuiElement::reset_text()
 {
 }
 
@@ -569,7 +569,7 @@ void GuiElement::Draw()
 {
 }
 
-void GuiElement::DrawTooltip()
+void GuiElement::draw_tool_tip()
 {
 }
 

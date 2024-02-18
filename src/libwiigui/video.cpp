@@ -99,21 +99,22 @@ ResetVideo_Menu()
 }
 
 /****************************************************************************
- * InitVideo
+ * init_video
  *
  * This function MUST be called at startup.
  * - also sets up menu video mode
  ***************************************************************************/
 
-void
-InitVideo ()
+void init_video ()
 {
 	VIDEO_Init();
 	vmode = VIDEO_GetPreferredMode(NULL); // get default video mode
 
 	// widescreen fix
 	if(CONF_GetAspectRatio() == CONF_ASPECT_16_9)
-		vmode->viWidth = VI_MAX_WIDTH_PAL;
+	{
+		vmode->viWidth = VI_MAX_WIDTH_NTSC;
+	}
 
 	VIDEO_Configure (vmode);
 
@@ -155,11 +156,11 @@ InitVideo ()
 }
 
 /****************************************************************************
- * StopGX
+ * stop_gx
  *
  * Stops GX (when exiting)
  ***************************************************************************/
-void StopGX()
+void stop_gx()
 {
 	GX_AbortFrame();
 	GX_Flush();
