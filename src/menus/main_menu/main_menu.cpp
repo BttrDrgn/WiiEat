@@ -170,7 +170,7 @@ static void OnScreenKeyboard(char * var, u16 maxlen)
 	menus::resume_gui();
 }
 
-menus::state MenuMain()
+menus::state main_menu::update()
 {
 	menus::state menu = menus::state::MENU_NONE;
 
@@ -339,7 +339,7 @@ void main_menu::initialize(menus::state menu)
 
 			case menus::state::MENU_MAIN:
 			default:
-				menus::current_menu = MenuMain();
+				menus::current_menu = main_menu::update();
 				break;
 		}
 	}

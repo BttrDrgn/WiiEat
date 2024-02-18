@@ -19,6 +19,7 @@ class main_menu
 {
     public:
         static void initialize(menus::state menu);
+        static menus::state update();
 };
 
 #endif
