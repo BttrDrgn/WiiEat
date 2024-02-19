@@ -301,6 +301,9 @@ menus::state main_menu::update()
 		}
 		else if(login_btn.get_state() == STATE_CLICKED)
 		{
+			char err[CURL_ERROR_SIZE + 1] = {0};
+			net::http_request("https://media-cdn.grubhub.com/image/upload/v1595285513/pcizrfonnwrelygiynw2.png", "GET", {}, (char*)&err);
+
 			login_btn.reset_state();
 		}
 		else if(console_btn.get_state() == STATE_CLICKED)

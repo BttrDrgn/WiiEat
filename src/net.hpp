@@ -3,13 +3,27 @@
 
 #include <main.hpp>
 #include <utils/format.hpp>
+#include <vector>
+#include <string>
 
 class net
 {
     public:
+        struct header
+        {
+            const char* key;
+            const char* value;
+
+            header(const char* k, const char* v)
+            {
+                key = k;
+                value = v;
+            }
+        };
+
         struct memory
         {
-            char *response;
+            char* response;
             size_t size;
         };
 
@@ -34,7 +48,7 @@ class net
             return realsize;
         }
 
-        static char* http_request(char* url, char* method, char* err)
+        static char* http_request(char* url, char* method, const std::vector<header> &headers, char* err)
         {
             if(offline) return "OFFLINE";
 
@@ -67,9 +81,16 @@ class net
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
             curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, err);
-            curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
             curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, cb);
             curl_easy_setopt(curl, CURLOPT_HEADERDATA, (void*)&chunk);
+
+            struct curl_slist *headerlist = NULL;
+            for (const auto &header : headers)
+            {
+                std::string header_string = format::va("%s: %s", header.key, header.value);
+                headerlist = curl_slist_append(headerlist, header_string.data());
+            }
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
 
             CURLcode res = curl_easy_perform(curl);
             if (res == CURLE_OK)
