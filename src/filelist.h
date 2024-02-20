@@ -22,13 +22,14 @@
 #include "button_click_pcm.h"
 
 // Images
+#include "keyboard_background_png.h"
 #include "wiieat_logo_png.h"
 #include "input_box_png.h"
 #include "input_box_hover_png.h"
 #include "circle_button_hover_png.h"
 #include "circle_button_png.h"
 #include "button_small_png.h"
-#include "button_small_over_png.h"
+#include "button_small_hover_png.h"
 #include "button_png.h"
 #include "button_hover_png.h"
 #include "button_large_png.h"

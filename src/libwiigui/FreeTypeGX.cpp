@@ -45,7 +45,7 @@ void Deinit_free_type()
 	ftLibrary = NULL;
 }
 
-void ChangeFontSize(FT_UInt pixelSize)
+void change_font_size(FT_UInt pixelSize)
 {
 	FT_Set_Pixel_Sizes(ftFace, 0, pixelSize);
 }
@@ -391,7 +391,7 @@ int16_t FreeTypeGX::getStyleOffsetHeight(ftgxDataOffset *offset, uint16_t format
  * @param textStyle	Flags which specify any styling which should be applied to the rendered string.
  * @return The number of characters printed.
  */
-uint16_t FreeTypeGX::drawText(int16_t x, int16_t y, wchar_t *text, GXColor color, uint16_t textStyle)
+uint16_t FreeTypeGX::draw_text(int16_t x, int16_t y, wchar_t *text, GXColor color, uint16_t textStyle)
 {
 	uint16_t x_pos = x, printed = 0;
 	uint16_t x_offset = 0, y_offset = 0;
@@ -401,7 +401,7 @@ uint16_t FreeTypeGX::drawText(int16_t x, int16_t y, wchar_t *text, GXColor color
 
 	if(textStyle & FTGX_JUSTIFY_MASK)
 	{
-		x_offset = this->getStyleOffsetWidth(this->getWidth(text), textStyle);
+		x_offset = this->getStyleOffsetWidth(this->get_width(text), textStyle);
 	}
 	if(textStyle & FTGX_ALIGN_MASK)
 	{
@@ -442,7 +442,7 @@ uint16_t FreeTypeGX::drawText(int16_t x, int16_t y, wchar_t *text, GXColor color
 	if(textStyle & FTGX_STYLE_MASK)
 	{
 		this->getOffset(text, &offset);
-		this->drawTextFeature(x + x_offset, y + y_offset, this->getWidth(text), &offset, textStyle, color);
+		this->draw_textFeature(x + x_offset, y + y_offset, this->get_width(text), &offset, textStyle, color);
 	}
 
 	return printed;
@@ -451,12 +451,12 @@ uint16_t FreeTypeGX::drawText(int16_t x, int16_t y, wchar_t *text, GXColor color
 /**
  * \overload
  */
-uint16_t FreeTypeGX::drawText(int16_t x, int16_t y, wchar_t const *text, GXColor color, uint16_t textStyle)
+uint16_t FreeTypeGX::draw_text(int16_t x, int16_t y, wchar_t const *text, GXColor color, uint16_t textStyle)
 {
-	return this->drawText(x, y, (wchar_t *)text, color, textStyle);
+	return this->draw_text(x, y, (wchar_t *)text, color, textStyle);
 }
 
-void FreeTypeGX::drawTextFeature(int16_t x, int16_t y, uint16_t width, ftgxDataOffset *offsetData, uint16_t format, GXColor color)
+void FreeTypeGX::draw_textFeature(int16_t x, int16_t y, uint16_t width, ftgxDataOffset *offsetData, uint16_t format, GXColor color)
 {
 	uint16_t featureHeight = this->ftPointSize >> 4 > 0 ? this->ftPointSize >> 4 : 1;
 
@@ -476,7 +476,7 @@ void FreeTypeGX::drawTextFeature(int16_t x, int16_t y, uint16_t width, ftgxDataO
  * @param text	NULL terminated string to calculate.
  * @return The width of the text string in pixels.
  */
-uint16_t FreeTypeGX::getWidth(wchar_t *text)
+uint16_t FreeTypeGX::get_width(wchar_t *text)
 {
 	uint16_t strWidth = 0;
 	FT_Vector pairDelta;
@@ -513,9 +513,9 @@ uint16_t FreeTypeGX::getWidth(wchar_t *text)
  *
  * \overload
  */
-uint16_t FreeTypeGX::getWidth(wchar_t const *text)
+uint16_t FreeTypeGX::get_width(wchar_t const *text)
 {
-	return this->getWidth((wchar_t *)text);
+	return this->get_width((wchar_t *)text);
 }
 
 /**
@@ -527,7 +527,7 @@ uint16_t FreeTypeGX::getWidth(wchar_t const *text)
  * @param text	NULL terminated string to calculate.
  * @return The height of the text string in pixels.
  */
-uint16_t FreeTypeGX::getHeight(wchar_t *text)
+uint16_t FreeTypeGX::get_height(wchar_t *text)
 {
 	ftgxDataOffset offset;
 	this->getOffset(text, &offset);
@@ -538,9 +538,9 @@ uint16_t FreeTypeGX::getHeight(wchar_t *text)
  *
  * \overload
  */
-uint16_t FreeTypeGX::getHeight(wchar_t const *text)
+uint16_t FreeTypeGX::get_height(wchar_t const *text)
 {
-	return this->getHeight((wchar_t *)text);
+	return this->get_height((wchar_t *)text);
 }
 
 /**

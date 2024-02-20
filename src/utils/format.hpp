@@ -2,6 +2,8 @@
 #define _FORMAT_H_
 
 #include <string>
+#include <cstdarg>
+#include <cstring>
 
 class format
 {
@@ -22,6 +24,21 @@ class format
                 *str = tolower((unsigned char)*str);
                 str++;
             }
+        }
+
+        static char* get_n_chars(const char* str, int n)
+        {
+            char* result = (char*)malloc((n + 1) * sizeof(char));
+            if (result == NULL)
+            {
+                return NULL;
+            }
+            
+            strncpy(result, str, n);
+            
+            result[n] = '\0';
+            
+            return result;
         }
 };
 

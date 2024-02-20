@@ -13,7 +13,10 @@ class menus
         {
             MENU_EXIT = -1,
             MENU_NONE,
+            MENU_CANCEL,
             MENU_MAIN,
+            MENU_ADDRESS,
+            MENU_RESTAURANT,
             MENU_CONSOLE,
         };
 
@@ -59,6 +62,8 @@ class menus
             prev_menu = current_menu;
             return next_menu;
         }
+
+        static void keyboard(char* var, u16 maxlen);
 };
 
 #endif

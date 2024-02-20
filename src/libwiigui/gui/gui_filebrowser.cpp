@@ -62,7 +62,7 @@ GuiFileBrowser::GuiFileBrowser(int w, int h)
 	scrollbarBoxOver = new gui_image_data(scrollbar_box_over_png);
 	scrollbarBoxOverImg = new gui_image(scrollbarBoxOver);
 
-	arrowUpBtn = new gui_button(arrowUpImg->GetWidth(), arrowUpImg->GetHeight());
+	arrowUpBtn = new gui_button(arrowUpImg->get_width(), arrowUpImg->get_height());
 	arrowUpBtn->set_parent(this);
 	arrowUpBtn->set_image(arrowUpImg);
 	arrowUpBtn->set_image_hover(arrowUpOverImg);
@@ -75,7 +75,7 @@ GuiFileBrowser::GuiFileBrowser(int w, int h)
 	arrowUpBtn->set_sound_hover(btn_sound_hover);
 	arrowUpBtn->set_sound_click(btnsound_click);
 
-	arrowDownBtn = new gui_button(arrowDownImg->GetWidth(), arrowDownImg->GetHeight());
+	arrowDownBtn = new gui_button(arrowDownImg->get_width(), arrowDownImg->get_height());
 	arrowDownBtn->set_parent(this);
 	arrowDownBtn->set_image(arrowDownImg);
 	arrowDownBtn->set_image_hover(arrowDownOverImg);
@@ -87,7 +87,7 @@ GuiFileBrowser::GuiFileBrowser(int w, int h)
 	arrowDownBtn->set_sound_hover(btn_sound_hover);
 	arrowDownBtn->set_sound_click(btnsound_click);
 
-	scrollbarBoxBtn = new gui_button(scrollbarBoxImg->GetWidth(), scrollbarBoxImg->GetHeight());
+	scrollbarBoxBtn = new gui_button(scrollbarBoxImg->get_width(), scrollbarBoxImg->get_height());
 	scrollbarBoxBtn->set_parent(this);
 	scrollbarBoxBtn->set_image(scrollbarBoxImg);
 	scrollbarBoxBtn->set_image_hover(scrollbarBoxOverImg);
@@ -104,7 +104,7 @@ GuiFileBrowser::GuiFileBrowser(int w, int h)
 		fileListText[i] = new gui_text(NULL, 20, (GXColor){0, 0, 0, 0xff});
 		fileListText[i]->set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		fileListText[i]->set_position(5,0);
-		fileListText[i]->SetMaxWidth(512);
+		fileListText[i]->set_max_width(512);
 
 		fileListBg[i] = new gui_image(bgFileSelectionEntry);
 		fileListFolder[i] = new gui_image(fileFolder);
@@ -239,7 +239,7 @@ void GuiFileBrowser::Update(gui_trigger * t)
 		)
 	{
 		scrollbarBoxBtn->set_position(0,0);
-		positionWiimote = t->wpad->ir.y - 60 - scrollbarBoxBtn->GetTop();
+		positionWiimote = t->wpad->ir.y - 60 - scrollbarBoxBtn->get_top();
 
 		if(positionWiimote < scrollbarBoxBtn->GetMinY())
 			positionWiimote = scrollbarBoxBtn->GetMinY();
@@ -385,9 +385,9 @@ void GuiFileBrowser::Update(gui_trigger * t)
 		}
 
 		if(selectedItem == i)
-			fileListText[i]->SetScroll(SCROLL_HORIZONTAL);
+			fileListText[i]->set_scroll(SCROLL_HORIZONTAL);
 		else
-			fileListText[i]->SetScroll(SCROLL_NONE);
+			fileListText[i]->set_scroll(SCROLL_NONE);
 	}
 
 	// update the location of the scroll box based on the position in the file list

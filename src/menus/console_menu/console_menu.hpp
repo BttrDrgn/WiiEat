@@ -10,7 +10,7 @@
 #include "libwiigui/gui.h"
 #include "libwiigui/input.h"
 
-#define LINES 13
+#define LINES 15
 
 class console_menu
 {

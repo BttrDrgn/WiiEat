@@ -18,12 +18,9 @@ menus::state console_menu::update()
 	gui_trigger trig_a;
 	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
-	gui_trigger trig_home;
-	trig_home.set_button_only_trigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
-
 	for(int i = 0; i < LINES; ++i)
     {
-		lines[i] = new gui_text("", 22, (GXColor){0, 0, 0, 255});
+		lines[i] = new gui_text("", 18, (GXColor){0, 0, 0, 255});
 		lines[i]->set_alignment(ALIGN_LEFT, ALIGN_CENTER);
 		lines[i]->set_position(32, 32 + i * 25);
 		w.append(lines[i]);
@@ -32,7 +29,7 @@ menus::state console_menu::update()
 	gui_text exit_btn_txt("X", 22, (GXColor){0, 0, 0, 255});
 	gui_image exit_btn_img(&circle_btn);
 	gui_image exit_btn_img_hover(&circle_btn_hover);
-	gui_button exit_btn(circle_btn.GetWidth(), circle_btn.GetHeight());
+	gui_button exit_btn(circle_btn.get_width(), circle_btn.get_height());
 	exit_btn.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 	exit_btn.set_position(-35, -35);
 	exit_btn.set_label(&exit_btn_txt);
@@ -40,14 +37,13 @@ menus::state console_menu::update()
 	exit_btn.set_image_hover(&exit_btn_img_hover);
 	exit_btn.set_sound_hover(&btn_sound_hover);
 	exit_btn.set_trigger(&trig_a);
-	exit_btn.set_trigger(&trig_home);
 	exit_btn.set_scale(0.75f);
 	w.append(&exit_btn);
 
 	gui_text up_btn_txt("^", 22, (GXColor){0, 0, 0, 255});
 	gui_image up_btn_img(&circle_btn);
 	gui_image up_btn_img_hover(&circle_btn_hover);
-	gui_button up_btn(circle_btn.GetWidth(), circle_btn.GetHeight());
+	gui_button up_btn(circle_btn.get_width(), circle_btn.get_height());
 	up_btn.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 	up_btn.set_position(-35, -200);
 	up_btn.set_label(&up_btn_txt);
@@ -61,7 +57,7 @@ menus::state console_menu::update()
 	gui_text down_btn_txt("V", 22, (GXColor){0, 0, 0, 255});
 	gui_image down_btn_img(&circle_btn);
 	gui_image down_btn_img_hover(&circle_btn_hover);
-	gui_button down_btn(circle_btn.GetWidth(), circle_btn.GetHeight());
+	gui_button down_btn(circle_btn.get_width(), circle_btn.get_height());
 	down_btn.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 	down_btn.set_position(-35, -145);
 	down_btn.set_label(&down_btn_txt);
@@ -71,6 +67,13 @@ menus::state console_menu::update()
 	down_btn.set_trigger(&trig_a);
 	down_btn.set_scale(0.75f);
 	w.append(&down_btn);
+
+	gui_trigger trig_home;
+	trig_home.set_button_only_trigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
+	gui_button home_btn(0, 0);
+	home_btn.set_position(-1000, -1000);
+	home_btn.set_trigger(&trig_home);
+	w.append(&home_btn);
 
 	menus::halt_gui();
 	menus::main_window->append(&w);
@@ -93,7 +96,12 @@ menus::state console_menu::update()
 			needs_update = false;
 		}
 
-		if(exit_btn.get_state() == STATE_CLICKED)
+		if(home_btn.get_state() == STATE_CLICKED)
+		{
+			menu = home_menu::update();
+			if(menu == menus::state::MENU_CANCEL) menu = menus::state::MENU_NONE;
+		}
+		else if(exit_btn.get_state() == STATE_CLICKED)
 		{
 			menu = menus::prev_menu;
 			menus::prev_menu = menus::state::MENU_CONSOLE;

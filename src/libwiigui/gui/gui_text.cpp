@@ -11,13 +11,13 @@
 #include "../gui.h"
 #include "../gettext.h"
 
-static GXColor presetColor = (GXColor){255, 255, 255, 255};
+static GXColor preset_color = (GXColor){255, 255, 255, 255};
 static int currentSize = 0;
 static int presetSize = 0;
-static int presetMaxWidth = 0;
+static int preset_max_width = 0;
 static int preset_alignmentHor = 0;
 static int preset_alignmentVert = 0;
-static u16 presetStyle = 0;
+static u16 preset_style = 0;
 
 #define TEXT_SCROLL_DELAY			8
 #define	TEXT_SCROLL_INITIAL_DELAY	6
@@ -62,10 +62,10 @@ gui_text::gui_text(const char * t)
 	origText = NULL;
 	text = NULL;
 	size = presetSize;
-	color = presetColor;
-	alpha = presetColor.a;
-	style = presetStyle;
-	maxWidth = presetMaxWidth;
+	color = preset_color;
+	alpha = preset_color.a;
+	style = preset_style;
+	maxWidth = preset_max_width;
 	wrap = false;
 	textDynNum = 0;
 	textScroll = SCROLL_NONE;
@@ -166,9 +166,9 @@ int gui_text::GetLength()
 void gui_text::SetPresets(int sz, GXColor c, int w, u16 s, int h, int v)
 {
 	presetSize = sz;
-	presetColor = c;
-	presetStyle = s;
-	presetMaxWidth = w;
+	preset_color = c;
+	preset_style = s;
+	preset_max_width = w;
 	preset_alignmentHor = h;
 	preset_alignmentVert = v;
 }
@@ -178,7 +178,7 @@ void gui_text::SetFontSize(int s)
 	size = s;
 }
 
-void gui_text::SetMaxWidth(int width)
+void gui_text::set_max_width(int width)
 {
 	maxWidth = width;
 
@@ -201,14 +201,14 @@ int gui_text::GetTextWidth()
 
 	if(currentSize != size)
 	{
-		ChangeFontSize(size);
+		change_font_size(size);
 
 		if(!fontSystem[size])
 			fontSystem[size] = new FreeTypeGX(size);
 
 		currentSize = size;
 	}
-	return fontSystem[size]->getWidth(text);
+	return fontSystem[size]->get_width(text);
 }
 
 void gui_text::SetWrap(bool w, int width)
@@ -228,7 +228,7 @@ void gui_text::SetWrap(bool w, int width)
 	textDynNum = 0;
 }
 
-void gui_text::SetScroll(int s)
+void gui_text::set_scroll(int s)
 {
 	if(textScroll == s)
 		return;
@@ -250,13 +250,13 @@ void gui_text::SetScroll(int s)
 	textScrollDelay = TEXT_SCROLL_DELAY;
 }
 
-void gui_text::SetColor(GXColor c)
+void gui_text::set_color(GXColor c)
 {
 	color = c;
 	alpha = c.a;
 }
 
-void gui_text::SetStyle(u16 s)
+void gui_text::set_style(u16 s)
 {
 	style = s;
 }
@@ -328,16 +328,16 @@ void gui_text::Draw()
 		return;
 
 	GXColor c = color;
-	c.a = this->GetAlpha();
+	c.a = this->get_alpha();
 
-	int newSize = size*this->GetScale();
+	int newSize = size*this->get_scale();
 
 	if(newSize > MAX_FONT_SIZE)
 		newSize = MAX_FONT_SIZE;
 
 	if(newSize != currentSize)
 	{
-		ChangeFontSize(newSize);
+		change_font_size(newSize);
 		if(!fontSystem[newSize])
 			fontSystem[newSize] = new FreeTypeGX(newSize);
 		currentSize = newSize;
@@ -345,7 +345,7 @@ void gui_text::Draw()
 
 	if(maxWidth == 0)
 	{
-		fontSystem[currentSize]->drawText(this->GetLeft(), this->GetTop(), text, c, style);
+		fontSystem[currentSize]->draw_text(this->get_left(), this->get_top(), text, c, style);
 		this->update_effects();
 		return;
 	}
@@ -371,7 +371,7 @@ void gui_text::Draw()
 
 				if(text[ch] == ' ' || ch == textlen-1)
 				{
-					if(fontSystem[currentSize]->getWidth(textDyn[linenum]) > maxWidth)
+					if(fontSystem[currentSize]->get_width(textDyn[linenum]) > maxWidth)
 					{
 						if(lastSpace >= 0)
 						{
@@ -405,11 +405,11 @@ void gui_text::Draw()
 		if(alignmentVert == ALIGN_MIDDLE)
 			voffset = (lineheight >> 1) * (1-textDynNum);
 
-		int left = this->GetLeft();
-		int top  = this->GetTop() + voffset;
+		int left = this->get_left();
+		int top  = this->get_top() + voffset;
 
 		for(int i=0; i < textDynNum; ++i)
-			fontSystem[currentSize]->drawText(left, top+i*lineheight, textDyn[i], c, style);
+			fontSystem[currentSize]->draw_text(left, top+i*lineheight, textDyn[i], c, style);
 	}
 	else
 	{
@@ -419,13 +419,13 @@ void gui_text::Draw()
 			textDyn[0] = wcsdup(text);
 			int len = wcslen(textDyn[0]);
 
-			while(fontSystem[currentSize]->getWidth(textDyn[0]) > maxWidth)
+			while(fontSystem[currentSize]->get_width(textDyn[0]) > maxWidth)
 				textDyn[0][--len] = 0;
 		}
 
 		if(textScroll == SCROLL_HORIZONTAL)
 		{
-			if(fontSystem[currentSize]->getWidth(text) > maxWidth && (FrameTimer % textScrollDelay == 0))
+			if(fontSystem[currentSize]->get_width(text) > maxWidth && (FrameTimer % textScrollDelay == 0))
 			{
 				if(textScrollInitialDelay)
 				{
@@ -451,22 +451,22 @@ void gui_text::Draw()
 						dynlen += 2;
 					}
 
-					if(fontSystem[currentSize]->getWidth(textDyn[0]) > maxWidth)
+					if(fontSystem[currentSize]->get_width(textDyn[0]) > maxWidth)
 					{
-						while(fontSystem[currentSize]->getWidth(textDyn[0]) > maxWidth)
+						while(fontSystem[currentSize]->get_width(textDyn[0]) > maxWidth)
 							textDyn[0][--dynlen] = 0;
 					}
 					else
 					{
 						int i = 0;
 
-						while(fontSystem[currentSize]->getWidth(textDyn[0]) < maxWidth && dynlen+1 < textlen)
+						while(fontSystem[currentSize]->get_width(textDyn[0]) < maxWidth && dynlen+1 < textlen)
 						{
 							textDyn[0][dynlen] = text[i++];
 							textDyn[0][++dynlen] = 0;
 						}
 
-						if(fontSystem[currentSize]->getWidth(textDyn[0]) > maxWidth)
+						if(fontSystem[currentSize]->get_width(textDyn[0]) > maxWidth)
 							textDyn[0][dynlen-2] = 0;
 						else
 							textDyn[0][dynlen-1] = 0;
@@ -474,7 +474,7 @@ void gui_text::Draw()
 				}
 			}
 		}
-		fontSystem[currentSize]->drawText(this->GetLeft(), this->GetTop(), textDyn[0], c, style);
+		fontSystem[currentSize]->draw_text(this->get_left(), this->get_top(), textDyn[0], c, style);
 	}
 	this->update_effects();
 }

@@ -244,13 +244,13 @@ class gui_element
 		//!\return Pointer to parent element
 		gui_element * GetParent();
 		//!Gets the current leftmost coordinate of the element
-		//!Considers horizontal alignment, x offset, width, and parent element's GetLeft() / GetWidth() values
+		//!Considers horizontal alignment, x offset, width, and parent element's get_left() / get_width() values
 		//!\return left coordinate
-		int GetLeft();
+		int get_left();
 		//!Gets the current topmost coordinate of the element
-		//!Considers vertical alignment, y offset, height, and parent element's GetTop() / GetHeight() values
+		//!Considers vertical alignment, y offset, height, and parent element's get_top() / get_height() values
 		//!\return top coordinate
-		int GetTop();
+		int get_top();
 		//!Sets the minimum y offset of the element
 		//!\param y Y offset
 		void SetMinY(int y);
@@ -277,10 +277,10 @@ class gui_element
 		int GetMaxX();
 		//!Gets the current width of the element. Does not currently consider the scale
 		//!\return width
-		int GetWidth();
+		int get_width();
 		//!Gets the height of the element. Does not currently consider the scale
 		//!\return height
-		int GetHeight();
+		int get_height();
 		//!Sets the size (width/height) of the element
 		//!\param w Width of element
 		//!\param h Height of element
@@ -316,9 +316,9 @@ class gui_element
 		//!\param a alpha value
 		void SetAlpha(int a);
 		//!Gets the element's alpha value
-		//!Considers alpha, alphaDyn, and the parent element's GetAlpha() value
+		//!Considers alpha, alphaDyn, and the parent element's get_alpha() value
 		//!\return alpha
-		int GetAlpha();
+		int get_alpha();
 		//!Sets the element's x and y scale
 		//!\param s scale (1 is 100%)
 		void set_scale(float s);
@@ -333,14 +333,14 @@ class gui_element
 		//!\param h Maximum height
 		void set_scale(int w, int h);
 		//!Gets the element's current scale
-		//!Considers scale, scaleDyn, and the parent element's GetScale() value
-		float GetScale();
+		//!Considers scale, scaleDyn, and the parent element's get_scale() value
+		float get_scale();
 		//!Gets the element's current x scale
-		//!Considers scale, scaleDyn, and the parent element's GetScale() value
-		float GetScaleX();
+		//!Considers scale, scaleDyn, and the parent element's get_scale() value
+		float get_scaleX();
 		//!Gets the element's current y scale
-		//!Considers scale, scaleDyn, and the parent element's GetScale() value
-		float GetScaleY();
+		//!Considers scale, scaleDyn, and the parent element's get_scale() value
+		float get_scaleY();
 		//!Set a new gui_trigger for the element
 		//!\param t Pointer to gui_trigger
 		void set_trigger(gui_trigger * t);
@@ -365,7 +365,7 @@ class gui_element
 		//!\param t Target amount of the effect (usage varies on effect)
 		void SetEffectOnOver(int e, int a, int t=0);
 		//!Shortcut to SetEffectOnOver(EFFECT_SCALE, 4, 110)
-		void SetEffectGrow();
+		void set_effect_grow();
 		//!Gets the current element effects
 		//!\return element effects
 		int GetEffect();
@@ -548,10 +548,10 @@ class gui_image_data
 		u8 * get_image();
 		//!Gets the image width
 		//!\return image width
-		int GetWidth();
+		int get_width();
 		//!Gets the image height
 		//!\return image height
-		int GetHeight();
+		int get_height();
 	protected:
 		u8 * data; //!< Image data
 		int height; //!< Height of image
@@ -662,22 +662,22 @@ class gui_text : public gui_element
 		void SetFontSize(int s);
 		//!Sets the maximum width of the drawn texture image
 		//!\param w Maximum width
-		void SetMaxWidth(int w);
+		void set_max_width(int w);
 		//!Gets the width of the text when rendered
 		int GetTextWidth();
 		//!Enables/disables text scrolling
 		//!\param s Scrolling on/off
-		void SetScroll(int s);
+		void set_scroll(int s);
 		//!Enables/disables text wrapping
 		//!\param w Wrapping on/off
 		//!\param width Maximum width (0 to disable)
 		void SetWrap(bool w, int width = 0);
 		//!Sets the font color
 		//!\param c Font color
-		void SetColor(GXColor c);
+		void set_color(GXColor c);
 		//!Sets the FreeTypeGX style attributes
 		//!\param s Style attributes
-		void SetStyle(u16 s);
+		void set_style(u16 s);
 		//!Sets the text alignment
 		//!\param hor Horizontal alignment (ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
 		//!\param vert Vertical alignment (ALIGN_TOP, ALIGN_BOTTOM, ALIGN_MIDDLE)
@@ -712,7 +712,7 @@ class gui_tooltip : public gui_element
 		//!Destructor
 		~gui_tooltip();
 		//!Gets the element's current scale
-		float GetScale();
+		float get_scale();
 		//!Sets the text of the gui_tooltip element
 		//!\param t Text
 		void set_text(const char * t);
@@ -826,7 +826,7 @@ typedef struct _keytype {
 class gui_keyboard : public gui_window
 {
 	public:
-		gui_keyboard(char * t, u32 m);
+		gui_keyboard(char * t, u32 m, gui_image* bg_image = NULL);
 		~gui_keyboard();
 		void Update(gui_trigger * t);
 		char kbtextstr[256];

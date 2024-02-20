@@ -40,12 +40,12 @@ u8 * gui_image_data::get_image()
 	return data;
 }
 
-int gui_image_data::GetWidth()
+int gui_image_data::get_width()
 {
 	return width;
 }
 
-int gui_image_data::GetHeight()
+int gui_image_data::get_height()
 {
 	return height;
 }

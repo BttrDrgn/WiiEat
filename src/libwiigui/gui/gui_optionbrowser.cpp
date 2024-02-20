@@ -54,7 +54,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	arrowUpOver = new gui_image_data(scrollbar_arrowup_over_png);
 	arrowUpOverImg = new gui_image(arrowUpOver);
 
-	arrowUpBtn = new gui_button(arrowUpImg->GetWidth(), arrowUpImg->GetHeight());
+	arrowUpBtn = new gui_button(arrowUpImg->get_width(), arrowUpImg->get_height());
 	arrowUpBtn->set_parent(this);
 	arrowUpBtn->set_image(arrowUpImg);
 	arrowUpBtn->set_image_hover(arrowUpOverImg);
@@ -64,7 +64,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	arrowUpBtn->set_sound_hover(btn_sound_hover);
 	arrowUpBtn->set_sound_click(btnsound_click);
 
-	arrowDownBtn = new gui_button(arrowDownImg->GetWidth(), arrowDownImg->GetHeight());
+	arrowDownBtn = new gui_button(arrowDownImg->get_width(), arrowDownImg->get_height());
 	arrowDownBtn->set_parent(this);
 	arrowDownBtn->set_image(arrowDownImg);
 	arrowDownBtn->set_image_hover(arrowDownOverImg);

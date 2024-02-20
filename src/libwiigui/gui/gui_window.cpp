@@ -299,8 +299,8 @@ void gui_window::MoveSelectionHor(int dir)
 
 	if(selected >= 0)
 	{
-		left = _elements.at(selected)->GetLeft();
-		top = _elements.at(selected)->GetTop();
+		left = _elements.at(selected)->get_left();
+		top = _elements.at(selected)->get_top();
 	}
 
 	
@@ -311,11 +311,11 @@ void gui_window::MoveSelectionHor(int dir)
 		{
 			if(_elements.at(i)->IsSelectable())
 			{
-				if(_elements.at(i)->GetLeft()*dir > left*dir && _elements.at(i)->GetTop() == top)
+				if(_elements.at(i)->get_left()*dir > left*dir && _elements.at(i)->get_top() == top)
 				{
 					if(found == -1)
 						found = int(i);
-					else if(_elements.at(i)->GetLeft()*dir < _elements.at(found)->GetLeft()*dir)
+					else if(_elements.at(i)->get_left()*dir < _elements.at(found)->get_left()*dir)
 						found = int(i); // this is a better match
 				}
 			}
@@ -332,15 +332,15 @@ void gui_window::MoveSelectionHor(int dir)
 		{
 			if(_elements.at(i)->IsSelectable())
 			{
-				if(_elements.at(i)->GetTop()*dir > top*dir)
+				if(_elements.at(i)->get_top()*dir > top*dir)
 				{
 					if(found == -1)
 						found = i;
-					else if(_elements.at(i)->GetTop()*dir < _elements.at(found)->GetTop()*dir)
+					else if(_elements.at(i)->get_top()*dir < _elements.at(found)->get_top()*dir)
 						found = i; // this is a better match
-					else if(_elements.at(i)->GetTop()*dir == _elements.at(found)->GetTop()*dir
+					else if(_elements.at(i)->get_top()*dir == _elements.at(found)->get_top()*dir
 						&&
-						_elements.at(i)->GetLeft()*dir < _elements.at(found)->GetLeft()*dir)
+						_elements.at(i)->get_left()*dir < _elements.at(found)->get_left()*dir)
 						found = i; // this is a better match
 				}
 			}
@@ -368,8 +368,8 @@ void gui_window::MoveSelectionVert(int dir)
 
 	if(selected >= 0)
 	{
-		left = _elements.at(selected)->GetLeft();
-		top = _elements.at(selected)->GetTop();
+		left = _elements.at(selected)->get_left();
+		top = _elements.at(selected)->get_top();
 	}
 
 	// look for a button above/below, with the least horizontal difference
@@ -380,16 +380,16 @@ void gui_window::MoveSelectionVert(int dir)
 		{
 			if(_elements.at(i)->IsSelectable())
 			{
-				if(_elements.at(i)->GetTop()*dir > top*dir)
+				if(_elements.at(i)->get_top()*dir > top*dir)
 				{
 					if(found == -1)
 						found = i;
-					else if(_elements.at(i)->GetTop()*dir < _elements.at(found)->GetTop()*dir)
+					else if(_elements.at(i)->get_top()*dir < _elements.at(found)->get_top()*dir)
 						found = i; // this is a better match
-					else if(_elements.at(i)->GetTop()*dir == _elements.at(found)->GetTop()*dir
+					else if(_elements.at(i)->get_top()*dir == _elements.at(found)->get_top()*dir
 							&&
-							abs(_elements.at(i)->GetLeft() - left) <
-							abs(_elements.at(found)->GetLeft() - left))
+							abs(_elements.at(i)->get_left() - left) <
+							abs(_elements.at(found)->get_left() - left))
 						found = i;
 				}
 			}

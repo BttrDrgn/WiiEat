@@ -25,8 +25,9 @@ static char * GetDisplayText(char * t)
  * Constructor for the gui_keyboard class.
  */
 
-gui_keyboard::gui_keyboard(char * t, u32 max)
+gui_keyboard::gui_keyboard(char * t, u32 max, gui_image* bg_image)
 {
+	const int y_offset = 135;
 	width = 540;
 	height = 400;
 	shift = 0;
@@ -95,6 +96,11 @@ gui_keyboard::gui_keyboard(char * t, u32 max)
 	};
 	memcpy(keys, thekeys, sizeof(thekeys));
 
+	if(bg_image != NULL)
+	{
+    	this->append(bg_image);
+	}
+
 	keyTextbox = new gui_image_data(keyboard_textbox_png);
 	keyTextboxImg = new gui_image(keyTextbox);
 	keyTextboxImg->set_alignment(ALIGN_CENTER, ALIGN_TOP);
@@ -124,7 +130,7 @@ gui_keyboard::gui_keyboard(char * t, u32 max)
 	keyBackImg = new gui_image(keyMedium);
 	keyBackOverImg = new gui_image(keyMediumOver);
 	keyBackText = new gui_text("Back", 20, (GXColor){0, 0, 0, 0xff});
-	keyBack = new gui_button(keyMedium->GetWidth(), keyMedium->GetHeight());
+	keyBack = new gui_button(keyMedium->get_width(), keyMedium->get_height());
 	keyBack->set_image(keyBackImg);
 	keyBack->set_image_hover(keyBackOverImg);
 	keyBack->set_label(keyBackText);
@@ -132,14 +138,14 @@ gui_keyboard::gui_keyboard(char * t, u32 max)
 	keyBack->set_sound_click(keysound_click);
 	keyBack->set_trigger(trig_a);
 	keyBack->set_trigger(trig2);
-	keyBack->set_position(10*42+40, 0*42+80);
-	keyBack->SetEffectGrow();
+	keyBack->set_position(10*42+40, 0*42+y_offset);
+	keyBack->set_effect_grow();
 	this->append(keyBack);
 
 	keyCapsImg = new gui_image(keyMedium);
 	keyCapsOverImg = new gui_image(keyMediumOver);
 	keyCapsText = new gui_text("Caps", 20, (GXColor){0, 0, 0, 0xff});
-	keyCaps = new gui_button(keyMedium->GetWidth(), keyMedium->GetHeight());
+	keyCaps = new gui_button(keyMedium->get_width(), keyMedium->get_height());
 	keyCaps->set_image(keyCapsImg);
 	keyCaps->set_image_hover(keyCapsOverImg);
 	keyCaps->set_label(keyCapsText);
@@ -147,14 +153,14 @@ gui_keyboard::gui_keyboard(char * t, u32 max)
 	keyCaps->set_sound_click(keysound_click);
 	keyCaps->set_trigger(trig_a);
 	keyCaps->set_trigger(trig2);
-	keyCaps->set_position(0, 2*42+80);
-	keyCaps->SetEffectGrow();
+	keyCaps->set_position(0, 2*42+y_offset);
+	keyCaps->set_effect_grow();
 	this->append(keyCaps);
 
 	keyShiftImg = new gui_image(keyMedium);
 	keyShiftOverImg = new gui_image(keyMediumOver);
 	keyShiftText = new gui_text("Shift", 20, (GXColor){0, 0, 0, 0xff});
-	keyShift = new gui_button(keyMedium->GetWidth(), keyMedium->GetHeight());
+	keyShift = new gui_button(keyMedium->get_width(), keyMedium->get_height());
 	keyShift->set_image(keyShiftImg);
 	keyShift->set_image_hover(keyShiftOverImg);
 	keyShift->set_label(keyShiftText);
@@ -162,22 +168,22 @@ gui_keyboard::gui_keyboard(char * t, u32 max)
 	keyShift->set_sound_click(keysound_click);
 	keyShift->set_trigger(trig_a);
 	keyShift->set_trigger(trig2);
-	keyShift->set_position(21, 3*42+80);
-	keyShift->SetEffectGrow();
+	keyShift->set_position(21, 3*42+y_offset);
+	keyShift->set_effect_grow();
 	this->append(keyShift);
 
 	keySpaceImg = new gui_image(keyLarge);
 	keySpaceOverImg = new gui_image(keyLargeOver);
-	keySpace = new gui_button(keyLarge->GetWidth(), keyLarge->GetHeight());
+	keySpace = new gui_button(keyLarge->get_width(), keyLarge->get_height());
 	keySpace->set_image(keySpaceImg);
 	keySpace->set_image_hover(keySpaceOverImg);
 	keySpace->set_sound_hover(keysound_hover);
 	keySpace->set_sound_click(keysound_click);
 	keySpace->set_trigger(trig_a);
 	keySpace->set_trigger(trig2);
-	keySpace->set_position(0, 4*42+80);
+	keySpace->set_position(0, 4*42+y_offset);
 	keySpace->set_alignment(ALIGN_CENTER, ALIGN_TOP);
-	keySpace->SetEffectGrow();
+	keySpace->set_effect_grow();
 	this->append(keySpace);
 
 	char txt[2] = { 0, 0 };
@@ -194,7 +200,7 @@ gui_keyboard::gui_keyboard(char * t, u32 max)
 				keyTxt[i][j] = new gui_text(txt, 20, (GXColor){0, 0, 0, 0xff});
 				keyTxt[i][j]->set_alignment(ALIGN_CENTER, ALIGN_BOTTOM);
 				keyTxt[i][j]->set_position(0, -10);
-				keyBtn[i][j] = new gui_button(key->GetWidth(), key->GetHeight());
+				keyBtn[i][j] = new gui_button(key->get_width(), key->get_height());
 				keyBtn[i][j]->set_image(keyImg[i][j]);
 				keyBtn[i][j]->set_image_hover(keyImgOver[i][j]);
 				keyBtn[i][j]->set_sound_hover(keysound_hover);
@@ -202,8 +208,8 @@ gui_keyboard::gui_keyboard(char * t, u32 max)
 				keyBtn[i][j]->set_trigger(trig_a);
 				keyBtn[i][j]->set_trigger(trig2);
 				keyBtn[i][j]->set_label(keyTxt[i][j]);
-				keyBtn[i][j]->set_position(j*42+21*i+40, i*42+80);
-				keyBtn[i][j]->SetEffectGrow();
+				keyBtn[i][j]->set_position(j*42+21*i+40, i*42+y_offset);
+				keyBtn[i][j]->set_effect_grow();
 				this->append(keyBtn[i][j]);
 			}
 		}

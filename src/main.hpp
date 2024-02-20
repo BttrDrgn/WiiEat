@@ -21,14 +21,18 @@
 #include <gctypes.h>
 #include <wiisocket.h>
 #include <fat.h>
-#include <net.hpp>
+#include <net/net.hpp>
+#include <api/api.hpp>
 #include <vector>
 #include <string>
 #include <filelist.h>
 
-#include "fs.hpp"
+#include <fs/fs.hpp>
 #include "menus/main_menu/main_menu.hpp"
+#include "menus/restaurant_menu/restaurant_menu.hpp"
 #include "menus/console_menu/console_menu.hpp"
+#include "menus/address_menu/address_menu.hpp"
+#include "menus/home_menu/home_menu.hpp"
 #include "libwiigui/FreeTypeGX.h"
 #include "libwiigui/video.h"
 #include "libwiigui/audio.h"

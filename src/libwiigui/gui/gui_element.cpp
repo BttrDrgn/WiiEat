@@ -72,7 +72,7 @@ gui_element * gui_element::GetParent()
 	return parentElement;
 }
 
-int gui_element::GetLeft()
+int gui_element::get_left()
 {
 	int x = 0;
 	int pWidth = 0;
@@ -80,8 +80,8 @@ int gui_element::GetLeft()
 
 	if(parentElement)
 	{
-		pWidth = parentElement->GetWidth();
-		pLeft = parentElement->GetLeft();
+		pWidth = parentElement->get_width();
+		pLeft = parentElement->get_left();
 	}
 
 	if(effects & (EFFECT_SLIDE_IN | EFFECT_SLIDE_OUT))
@@ -103,7 +103,7 @@ int gui_element::GetLeft()
 	return x + xoffset;
 }
 
-int gui_element::GetTop()
+int gui_element::get_top()
 {
 	int y = 0;
 	int pHeight = 0;
@@ -111,8 +111,8 @@ int gui_element::GetTop()
 
 	if(parentElement)
 	{
-		pHeight = parentElement->GetHeight();
-		pTop = parentElement->GetTop();
+		pHeight = parentElement->get_height();
+		pTop = parentElement->get_top();
 	}
 
 	if(effects & (EFFECT_SLIDE_IN | EFFECT_SLIDE_OUT))
@@ -174,12 +174,12 @@ int gui_element::GetMaxY()
 	return ymax;
 }
 
-int gui_element::GetWidth()
+int gui_element::get_width()
 {
 	return width;
 }
 
-int gui_element::GetHeight()
+int gui_element::get_height()
 {
 	return height;
 }
@@ -206,7 +206,7 @@ void gui_element::SetAlpha(int a)
 	alpha = a;
 }
 
-int gui_element::GetAlpha()
+int gui_element::get_alpha()
 {
 	int a = alpha;
 
@@ -214,7 +214,7 @@ int gui_element::GetAlpha()
 		a = alphaDyn;
 
 	if(parentElement)
-		a *= float(parentElement->GetAlpha())/255.0f;
+		a *= float(parentElement->get_alpha())/255.0f;
 
 	return a;
 }
@@ -248,32 +248,32 @@ void gui_element::set_scale(int mw, int mh)
 	yscale = xscale;
 }
 
-float gui_element::GetScale()
+float gui_element::get_scale()
 {
 	float s = xscale * scaleDyn;
 
 	if(parentElement)
-		s *= parentElement->GetScale();
+		s *= parentElement->get_scale();
 
 	return s;
 }
 
-float gui_element::GetScaleX()
+float gui_element::get_scaleX()
 {
 	float s = xscale * scaleDyn;
 
 	if(parentElement)
-		s *= parentElement->GetScale();
+		s *= parentElement->get_scale();
 
 	return s;
 }
 
-float gui_element::GetScaleY()
+float gui_element::get_scaleY()
 {
 	float s = yscale * scaleDyn;
 
 	if(parentElement)
-		s *= parentElement->GetScaleY();
+		s *= parentElement->get_scaleY();
 
 	return s;
 }
@@ -420,7 +420,7 @@ void gui_element::SetEffectOnOver(int eff, int amount, int target)
 	effectTargetOver = target;
 }
 
-void gui_element::SetEffectGrow()
+void gui_element::set_effect_grow()
 {
 	SetEffectOnOver(EFFECT_SCALE, 4, 110);
 }
@@ -575,8 +575,8 @@ void gui_element::draw_tool_tip()
 
 bool gui_element::IsInside(int x, int y)
 {
-	if(unsigned(x - this->GetLeft())  < unsigned(width)
-	&& unsigned(y - this->GetTop())  < unsigned(height))
+	if(unsigned(x - this->get_left())  < unsigned(width)
+	&& unsigned(y - this->get_top())  < unsigned(height))
 		return true;
 	return false;
 }
