@@ -12,7 +12,11 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth_code.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth_refresh.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\confirmation_code
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\confirmation_code\confirmation_code.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\confirmation_code\confirmation_code_resp.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\cjson\cJSON.c
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\cjson\cJSON.h
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\fs\fs.cpp
@@ -41,6 +45,7 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\gui\gui_file
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\gui\gui_image.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\gui\gui_imagedata.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\gui\gui_keyboard.cpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\gui\gui_num_keyboard.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\gui\gui_optionbrowser.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\gui\gui_sound.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\gui\gui_text.cpp
@@ -68,7 +73,6 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\utils\format.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\fonts
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images
-C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\lang
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\logo
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\fonts\font.ttf
@@ -111,7 +115,6 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\scrollbar_ar
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\scrollbar_arrowup_over.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\scrollbar_box.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\scrollbar_box_over.png
-C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\lang\en.lang
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\logo\wiieat_logo.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds\bg_music.ogg
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds\button_click.pcm

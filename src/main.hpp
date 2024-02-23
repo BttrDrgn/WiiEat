@@ -38,7 +38,6 @@
 #include "libwiigui/audio.h"
 #include "libwiigui/input.h"
 
-
 class main
 {
     public:

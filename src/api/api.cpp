@@ -2,98 +2,190 @@
 #include <main.hpp>
 
 std::string api::access_token;
+std::string api::ud_id;
+std::string api::csrf_token;
+
+char api::address[ADDRESS_LEN] = "";
+char api::city[CITY_LEN] = "";
+char api::state[STATE_LEN] = "";
+char api::zip[ZIP_LEN] = "";
 
 std::unordered_map<char*, char*> api::endpoints =
 {
     { "auth", "https://api-gtm.grubhub.com/auth" },
-    { "geocode", "https://api-gtm.grubhub.com/auth" },
+    { "confirmation_code", "https://api-gtm.grubhub.com/auth/confirmation_code" },
+    { "geocode", "https://api-gtm.grubhub.com/geocode" },
 };
 
-std::vector<net::header> default_headers = 
+bool api::request_access(const std::string& url, const std::string& method)
 {
-    { "Accept", "*/*" },
-    { "Accept-Encoding", "gzip, deflate, br" },
-    { "Accept-Language", "en-US,en;q=0.9" },
-    { "Access-Control-Request-Headers", "authorization,content-type,cache-control,if-modified-since" },
-    { "Access-Control-Request-Method", "GET,POST" },
-    { "Origin", "https://www.grubhub.com" },
-    { "Referer", "https://www.grubhub.com/" },
-    { "Sec-Fetch-Dest", "empty" },
-    { "Sec-Fetch-Mode", "cors" },
-    { "Sec-Fetch-Site", "same-site" },
-    { "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" }
-};
+    std::vector<net::header> headers = 
+    {
+        { "Accept", "*/*"},
+        { "Access-Control-Request-Headers", "authorization,content-type,if-modified-since"},
+        { "Access-Control-Request-Method", method.c_str()},
+    };
 
-bool api::request_access(char* endpoint, char* query)
-{
-    auto resp = net::http_request(api::endpoints[endpoint], query, "OPTIONS", default_headers, nullptr);
+    auto resp = net::http_request(url, "OPTIONS", headers);
     return resp.status_code == 200;
 }
 
-net::response api::request(char* endpoint, char* query, char* method)
+bool save_token(const std::string& json)
 {
-    net::response resp;
+    cJSON* root = cJSON_Parse(json.c_str());
+    if(!root) return false;
 
-    if(api::request_access(endpoint, query))
+    auto session_handle = cJSON_GetObjectItem(root, "session_handle");
+
+    if(!session_handle)
     {
-        resp = net::http_request(api::endpoints[endpoint], query, method, default_headers, nullptr);
+        cJSON_Delete(root);
+        return false;
+    }
+    else
+    {
+        api::access_token = cJSON_GetObjectItem(session_handle, "access_token")->valuestring;
+        const char* refresh_token = cJSON_GetObjectItem(session_handle, "refresh_token")->valuestring;
+        if(refresh_token)
+        {
+            fs::write_file("sd://WiiEat/refresh_token", refresh_token);
+        }
+
+        auto claims_arr = cJSON_GetObjectItem(root, "claims");
+        if (claims_arr || cJSON_IsArray(claims_arr))
+        {
+            auto claim_obj = cJSON_GetArrayItem(claims_arr, 0);
+            api::ud_id = cJSON_GetObjectItem(claim_obj, "ud_id")->valuestring;
+            if(api::ud_id != "")
+            {
+                fs::write_file("sd://WiiEat/ud_id", api::ud_id);
+            }
+        }
     }
 
-    return resp;
+    cJSON_Delete(root);
+
+    return true;
 }
 
-bool api::auth_request(char* email, char* password)
+api::error api::auth_request(char* email, char* password)
 {
     auth auth_login(email, password);
     cJSON* json = auth_login.serialize();
     char* serialized = cJSON_Print(json);
-    auto resp = api::request("auth", serialized, "POST");
+    net::response resp;
 
-    if(resp.status_code == 200)
+    if(api::request_access(api::endpoints["auth"], "POST"))
     {
-        auto root = cJSON_Parse(resp.body.c_str());
-        if(!root) return false;
-
-        auto session_handle = cJSON_GetObjectItem(root, "session_handle");
-        if(!session_handle)
+        std::vector<net::header> headers = 
         {
-            cJSON_Delete(root);
-            return false;
-        }
-        
-        api::access_token = cJSON_GetObjectItem(session_handle, "access_token")->valuestring;
-        fs::write_file("sd://WiiEat/refresh_token", cJSON_GetObjectItem(session_handle, "refresh_token")->valuestring);
-        cJSON_Delete(root);
-    }
-    
+            { "Accept", "*/*"},
+        };
 
-    return resp.status_code == 200 && api::access_token != "";
+        resp = net::http_request(api::endpoints["auth"], "POST", headers, serialized);
+
+        if(resp.status_code == 463)
+        {
+            return api::error::EMAIL_2FA;
+        }
+        else if(resp.status_code == 200)
+        {
+            if(!save_token(resp.body))
+            {
+                return api::error::BAD_JSON;
+            }
+
+            return api::error::NONE;
+        }
+        else if(resp.status_code == 403)
+        {
+            return api::error::UNAUTHORIZED;
+        }
+    }
+
+    return api::error::UNKNOWN;
 }
 
-bool api::auth_request(const char* refresh_token)
+api::error api::auth_code_request(char* email, char* code)
 {
-    auth_refresh auth_login(refresh_token);
+    auth_code auth_login(code, api::csrf_token, email);
     cJSON* json = auth_login.serialize();
     char* serialized = cJSON_Print(json);
-    auto resp = api::request("auth", serialized, "POST");
+    net::response resp;
 
-    if(resp.status_code == 200)
+    if(api::request_access(api::endpoints["auth"], "POST"))
     {
-        auto root = cJSON_Parse(resp.body.c_str());
-        if(!root) return false;
-
-        auto session_handle = cJSON_GetObjectItem(root, "session_handle");
-        if(!session_handle)
+        std::vector<net::header> headers = 
         {
-            cJSON_Delete(root);
-            return false;
+            { "Accept", "*/*"},
+        };
+
+        resp = net::http_request(api::endpoints["auth"], "POST", headers, serialized);
+
+        if(resp.status_code == 200)
+        {
+            if(!save_token(resp.body))
+            {
+                return api::error::BAD_JSON;
+            }
+
+            return api::error::NONE;
         }
-        
-        api::access_token = cJSON_GetObjectItem(session_handle, "access_token")->valuestring;
-        fs::write_file("sd://WiiEat/refresh_token", cJSON_GetObjectItem(session_handle, "refresh_token")->valuestring);
-        cJSON_Delete(root);
+        else if(resp.status_code == 401)
+        {
+            return api::error::UNAUTHORIZED;
+        }
+    }
+
+    return api::error::UNKNOWN;
+}
+
+api::error api::confirmation_code_request(char* email)
+{
+    confirmation_code conf_code(email);
+    cJSON* json = conf_code.serialize();
+    char* serialized = cJSON_Print(json);
+    net::response resp;
+
+    if(api::request_access(api::endpoints["confirmation_code"], "POST"))
+    {
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "*/*"},
+            { "Access-Control-Request-Headers", "authorization,content-type"},
+            { "Access-Control-Request-Method", "POST" },
+        };
+
+        resp = net::http_request(api::endpoints["confirmation_code"], "POST", headers, serialized);
+
+        if(resp.status_code == 200)
+        {
+            cJSON* root = cJSON_Parse(resp.body.c_str());
+            if(!root) return api::error::UNKNOWN;
+
+            api::csrf_token = cJSON_GetObjectItem(root, "csrf_token")->valuestring;
+
+            return api::error::NONE;
+        }
     }
     
+    return api::error::UNKNOWN;
+};
 
-    return resp.status_code == 200 && api::access_token != "";
+
+api::error api::geocode_request(char* address, char* city, char* state, char* zip)
+{
+    auto full_address = format::va("%s, %s, %s %s", address, city, state, zip);
+    auto url = format::va("%s?address=%s", api::endpoints["geocode"], full_address.c_str());
+
+    if(api::request_access(url, "GET"))
+    {
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", format::va("Bearer %s", api::access_token).c_str() },
+        };
+
+        auto resp = net::http_request(url, "GET", headers);
+    }
 }

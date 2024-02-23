@@ -200,65 +200,6 @@ static char * memfgets(char * dst, int maxlen, char * src)
 	return ++newline;
 }
 
-bool LoadLanguage()
-{
-	char line[200];
-	char *lastID = NULL;
-	
-	char *file, *eof;
-
-	file = (char *)en_lang; eof = file + en_lang_size;
-
-	gettextCleanUp();
-
-	while (file && file < eof)
-	{
-		file = memfgets(line, sizeof(line), file);
-
-		if(!file)
-			break;
-
-		// lines starting with # are comments
-		if (line[0] == '#')
-			continue;
-
-		if (strncmp(line, "msgid \"", 7) == 0)
-		{
-			char *msgid, *end;
-			if (lastID)
-			{
-				free(lastID);
-				lastID = NULL;
-			}
-			msgid = &line[7];
-			end = strrchr(msgid, '"');
-			if (end && end - msgid > 1)
-			{
-				*end = 0;
-				lastID = strdup(msgid);
-			}
-		}
-		else if (strncmp(line, "msgstr \"", 8) == 0)
-		{
-			char *msgstr, *end;
-
-			if (lastID == NULL)
-				continue;
-
-			msgstr = &line[8];
-			end = strrchr(msgstr, '"');
-			if (end && end - msgstr > 1)
-			{
-				*end = 0;
-				setMSG(lastID, msgstr);
-			}
-			free(lastID);
-			lastID = NULL;
-		}
-	}
-	return true;
-}
-
 const char *gettext(const char *msgid)
 {
 	MSG *msg = findMSG(hash_string(msgid));

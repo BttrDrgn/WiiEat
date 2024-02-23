@@ -6,110 +6,23 @@ char email_address[MAX_BUF_LEN];
 char password[MAX_BUF_LEN];
 char visible_password[MAX_BUF_LEN];
 
-int WindowPrompt(const char *title, const char *msg, const char *btn1Label, const char* btn2Label = "")
+bool main_menu::initialized = false;
+
+void main_menu::initialize()
 {
-	int choice = -1;
-	bool has_btn_2 = strcmp(btn2Label, "");
-
-	gui_window promptWindow(448,288);
-	promptWindow.set_alignment(ALIGN_CENTER, ALIGN_MIDDLE);
-	promptWindow.set_position(0, -10);
-	gui_sound btn_sound_hover(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	gui_image_data button(button_small_png);
-	gui_image_data button_hover(button_small_hover_png);
-	gui_trigger trig_a;
-	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-
-	gui_image_data dialogBox(dialogue_box_png);
-	gui_image dialogBoxImg(&dialogBox);
-
-	gui_text titleTxt(title, 26, (GXColor){0, 0, 0, 255});
-	titleTxt.set_alignment(ALIGN_CENTER, ALIGN_TOP);
-	titleTxt.set_position(0,40);
-	gui_text msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
-	msgTxt.set_alignment(ALIGN_CENTER, ALIGN_MIDDLE);
-	msgTxt.set_position(0,-20);
-	msgTxt.SetWrap(true, 400);
-
-	gui_text btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
-	gui_image btn1Img(&button);
-	gui_image btn1ImgOver(&button_hover);
-	gui_button btn1(button.get_width(), button.get_height());
-
-	if(has_btn_2)
-	{
-		btn1.set_alignment(ALIGN_LEFT, ALIGN_BOTTOM);
-		btn1.set_position(20, -25);
-	}
-	else
-	{
-		btn1.set_alignment(ALIGN_CENTER, ALIGN_BOTTOM);
-		btn1.set_position(0, -25);
-	}
-
-	btn1.set_label(&btn1Txt);
-	btn1.set_image(&btn1Img);
-	btn1.set_image_hover(&btn1ImgOver);
-	btn1.set_sound_hover(&btn_sound_hover);
-	btn1.set_trigger(&trig_a);
-	btn1.set_state(STATE_SELECTED);
-	btn1.set_effect_grow();
-
-	gui_button btn2;
-	if(has_btn_2)
-	{
-		gui_text btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
-		gui_image btn2Img(&button);
-		gui_image btn2ImgOver(&button_hover);
-		gui_button btn2(button.get_width(), button.get_height());
-		btn2.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
-		btn2.set_position(-20, -25);
-		btn2.set_label(&btn2Txt);
-		btn2.set_image(&btn2Img);
-		btn2.set_image_hover(&btn2ImgOver);
-		btn2.set_sound_hover(&btn_sound_hover);
-		btn2.set_trigger(&trig_a);
-		btn2.set_effect_grow();
-		promptWindow.append(&btn2);
-	}
-
-	promptWindow.append(&dialogBoxImg);
-	promptWindow.append(&titleTxt);
-	promptWindow.append(&msgTxt);
-	promptWindow.append(&btn1);
-
-	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
-	menus::halt_gui();
-	menus::main_window->set_state(STATE_DISABLED);
-	menus::main_window->append(&promptWindow);
-	menus::main_window->change_focus(&promptWindow);
-	menus::resume_gui();
-
-	while(choice == -1)
-	{
-		usleep(100);
-
-		if(btn1.get_state() == STATE_CLICKED)
-		{
-			choice = 1;
-		}
-		else if(has_btn_2 && btn2.get_state() == STATE_CLICKED)
-		{
-			choice = 0;
-		}
-	}
-
-	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
-	while(promptWindow.GetEffect() > 0) usleep(100);
-	menus::halt_gui();
-	menus::main_window->remove(&promptWindow);
-	menus::main_window->set_state(STATE_DEFAULT);
-	menus::resume_gui();
-	return choice;
+	memset(email_address, '\0', MAX_BUF_LEN);
+	memset(password, '\0', MAX_BUF_LEN);
+	memset(visible_password, '\0', MAX_BUF_LEN);
+	main_menu::initialized = true;
 }
 
 menus::state main_menu::update()
 {
+	if(!main_menu::initialized)
+	{
+		main_menu::initialize();
+	}
+
 	menus::state menu = menus::state::MENU_NONE;
 
 	gui_window w(screen_width, screen_height);
@@ -165,12 +78,12 @@ menus::state main_menu::update()
 
 	gui_text email_text("Email:", 24, (GXColor){0, 0, 0, 255});
 	email_text.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	email_text.set_position(-150, 175);
+	email_text.set_position(-150, 190);
 	w.append(&email_text);
 
 	gui_text email_prompt_text(email_address, 18, (GXColor){0, 0, 0, 255});
 	email_prompt_text.set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
-	email_prompt_text.set_position(25, 0);
+	email_prompt_text.set_position(45, 0);
 	email_prompt_text.set_max_width(15 * 20);
 	gui_image email_prompt_img(&input_box);
 	gui_image email_prompt_img_hover(&input_box_hover);
@@ -188,12 +101,12 @@ menus::state main_menu::update()
 
 	gui_text password_txt("Password:", 24, (GXColor){0, 0, 0, 255});
 	password_txt.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	password_txt.set_position(-175, 250);
+	password_txt.set_position(-175, 265);
 	w.append(&password_txt);
 
 	gui_text password_prompt_txt(visible_password, 18, (GXColor){0, 0, 0, 255});
 	password_prompt_txt.set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
-	password_prompt_txt.set_position(25, 0);
+	password_prompt_txt.set_position(45, 0);
 	password_prompt_txt.set_max_width(15 * 20);
 	gui_image password_promptImg(&input_box);
 	gui_image password_prompt_img_hover(&input_box_hover);
@@ -253,14 +166,70 @@ menus::state main_menu::update()
 		}
 		else if(login_btn.get_state() == STATE_CLICKED)
 		{
-			if(!api::auth_request(email_address, password))
+			auto err = api::auth_request(email_address, password);
+			if(err != api::error::NONE && err != api::error::EMAIL_2FA && err != api::error::UNAUTHORIZED)
 			{
-				WindowPrompt
+				menus::window_prompt
 				(
 					"Invalid Login",
 					"Unable to login to the Grubhub account using the provided credentials.",
 					"Ok"
 				);
+			}
+			else if(err == api::error::UNAUTHORIZED)
+			{
+				menus::window_prompt
+				(
+					"Unauthorized",
+					"Your account might have been temporarily blocked. Please try to access grubhub.com and login to unblock your account.",
+					"Ok"
+				);
+			}
+			else if(err == api::error::EMAIL_2FA)
+			{
+				auto choice = menus::window_prompt
+				(
+					"Email Verification",
+					"GrubHub is requiring you verify your email to login.",
+					"Send",
+					"Back"
+				);
+
+				if(choice == 1)
+				{
+					api::confirmation_code_request(email_address);
+
+				retry:
+					char code[7];
+					memset(code, '\0', 7);
+					menus::num_keyboard(code, 7);
+
+					err = api::auth_code_request(email_address, code);
+					if(err == api::error::NONE)
+					{
+						menu = menus::next(menus::state::MENU_ADDRESS);
+					}
+					else
+					{
+						choice = menus::window_prompt
+						(
+							"Email Verification Failed",
+							"The code you entered was not correct.",
+							"Retry",
+							"Back"
+						);
+
+						if(choice == 1)
+						{
+							goto retry;
+						}
+					}
+				}
+				else
+				{
+					login_btn.reset_state();
+					continue;
+				}
 			}
 			else
 			{

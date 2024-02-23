@@ -1,10 +1,5 @@
 #include "address_menu.hpp"
 
-char address_menu::address[ADDRESS_LEN];
-char address_menu::city[CITY_LEN];
-char address_menu::state[STATE_LEN];
-char address_menu::zip[ZIP_LEN];
-
 menus::state address_menu::update()
 {
     menus::state menu = menus::state::MENU_NONE;
@@ -37,10 +32,10 @@ menus::state address_menu::update()
 
 	gui_text address_txt("Address:", 24, (GXColor){0, 0, 0, 255});
 	address_txt.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	address_txt.set_position(-150, 175);
+	address_txt.set_position(-150, 190);
 	w.append(&address_txt);
 
-	gui_text address_prompt_txt(address_menu::address, 18, (GXColor){0, 0, 0, 255});
+	gui_text address_prompt_txt(api::address, 18, (GXColor){0, 0, 0, 255});
 	address_prompt_txt.set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
 	address_prompt_txt.set_position(25, 0);
 	address_prompt_txt.set_max_width(15 * 20);
@@ -60,10 +55,10 @@ menus::state address_menu::update()
 
 	gui_text city_txt("City:", 24, (GXColor){0, 0, 0, 255});
 	city_txt.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	city_txt.set_position(-125, 250);
+	city_txt.set_position(-125, 265);
 	w.append(&city_txt);
 
-	gui_text city_prompt_txt(address_menu::city, 18, (GXColor){0, 0, 0, 255});
+	gui_text city_prompt_txt(api::city, 18, (GXColor){0, 0, 0, 255});
 	city_prompt_txt.set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
 	city_prompt_txt.set_position(25, 0);
 	city_prompt_txt.set_max_width(15 * 20);
@@ -83,10 +78,10 @@ menus::state address_menu::update()
 
 	gui_text state_txt("State:", 24, (GXColor){0, 0, 0, 255});
 	state_txt.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	state_txt.set_position(125, 250);
+	state_txt.set_position(125, 265);
 	w.append(&state_txt);
 
-	gui_text state_prompt_txt(address_menu::state, 18, (GXColor){0, 0, 0, 255});
+	gui_text state_prompt_txt(api::state, 18, (GXColor){0, 0, 0, 255});
 	state_prompt_txt.set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
 	state_prompt_txt.set_position(25, 0);
 	state_prompt_txt.set_max_width(15 * 20);
@@ -106,10 +101,10 @@ menus::state address_menu::update()
 
 	gui_text zip_txt("Zip:", 24, (GXColor){0, 0, 0, 255});
 	zip_txt.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
-	zip_txt.set_position(-125, 325);
+	zip_txt.set_position(-125, 340);
 	w.append(&zip_txt);
 
-	gui_text zip_prompt_txt(address_menu::zip, 18, (GXColor){0, 0, 0, 255});
+	gui_text zip_prompt_txt(api::zip, 18, (GXColor){0, 0, 0, 255});
 	zip_prompt_txt.set_alignment(ALIGN_LEFT, ALIGN_MIDDLE);
 	zip_prompt_txt.set_position(25, 0);
 	zip_prompt_txt.set_max_width(15 * 20);
@@ -163,27 +158,39 @@ menus::state address_menu::update()
 		}
 		else if(address_prompt.get_state() == STATE_CLICKED)
 		{
-			menus::keyboard(address_menu::address, ADDRESS_LEN);
+			menus::keyboard(api::address, ADDRESS_LEN);
 			menu = menus::current_menu;
 		}
 		else if(city_prompt.get_state() == STATE_CLICKED)
 		{
-			menus::keyboard(address_menu::city, CITY_LEN);
+			menus::keyboard(api::city, CITY_LEN);
 			menu = menus::current_menu;
 		}
 		else if(state_prompt.get_state() == STATE_CLICKED)
 		{
-			menus::keyboard(address_menu::state, STATE_LEN);
+			menus::keyboard(api::state, STATE_LEN);
 			menu = menus::current_menu;
 		}
 		else if(zip_prompt.get_state() == STATE_CLICKED)
 		{
-			menus::keyboard(address_menu::zip, ZIP_LEN);
+			menus::keyboard(api::zip, ZIP_LEN);
 			menu = menus::current_menu;
 		}
 		else if(save_btn.get_state() == STATE_CLICKED)
 		{
-			menu = menus::state::MENU_RESTAURANT;
+			// if(!api::geocode_request(api::address, api::city, api::state, api::zip))
+			// {
+			// 	menus::window_prompt
+			// 	(
+			// 		"Unable to save",
+			// 		"Grubhub denied access to /geocode",
+			// 		"Ok"
+			// 	);
+			// }
+			// else
+			// {
+			// 	menu = menus::state::MENU_RESTAURANT;
+			// }
 		}
 	}
 

@@ -314,7 +314,7 @@ class gui_element
 		int get_stateChan();
 		//!Sets the element's alpha value
 		//!\param a alpha value
-		void SetAlpha(int a);
+		void set_alpha(int a);
 		//!Gets the element's alpha value
 		//!Considers alpha, alphaDyn, and the parent element's get_alpha() value
 		//!\return alpha
@@ -353,22 +353,23 @@ class gui_element
 		bool Rumble();
 		//!Sets whether or not the element is requesting a rumble event
 		//!\param r true if requesting rumble, false if not
-		void SetRumble(bool r);
+		void set_rumble(bool r);
 		//!Set an effect for the element
 		//!\param e Effect to enable
 		//!\param a Amount of the effect (usage varies on effect)
 		//!\param t Target amount of the effect (usage varies on effect)
-		void SetEffect(int e, int a, int t=0);
+		void set_effect(int e, int a, int t=0);
 		//!Sets an effect to be enabled on wiimote cursor over
 		//!\param e Effect to enable
 		//!\param a Amount of the effect (usage varies on effect)
 		//!\param t Target amount of the effect (usage varies on effect)
-		void SetEffectOnOver(int e, int a, int t=0);
-		//!Shortcut to SetEffectOnOver(EFFECT_SCALE, 4, 110)
+		void set_effect_on_hover(int e, int a, int t=0);
+		//!Shortcut to set_effect_on_hover(EFFECT_SCALE, 4, 110)
 		void set_effect_grow();
+		void set_effect_shrink();
 		//!Gets the current element effects
 		//!\return element effects
-		int GetEffect();
+		int get_effect();
 		//!Checks whether the specified coordinates are within the element's boundaries
 		//!\param x X coordinate
 		//!\param y Y coordinate
@@ -612,11 +613,11 @@ class gui_image : public gui_element
 		//!Directly modifies the image data to create a color-striped effect
 		//!Alters the RGB values by the specified amount
 		//!\param s Amount to increment/decrement the RGB values in the image
-		void ColorStripe(int s);
+		void color_stripe(int s);
 		//!Sets a stripe effect on the image, overlaying alpha blended rectangles
 		//!Does not alter the image data
 		//!\param s Alpha amount to draw over the image
-		void SetStripe(int s);
+		void set_stripe(int s);
 	protected:
 		int imgType; //!< Type of image data (IMAGE_TEXTURE, IMAGE_COLOR, IMAGE_DATA)
 		u8 * image; //!< Poiner to image data. May be shared with gui_image_data data
@@ -867,6 +868,40 @@ class gui_keyboard : public gui_window
 		gui_trigger * trig_a;
 		gui_trigger * trig2;
 		Key keys[4][11]; // two chars = less space than one pointer
+};
+
+//!On-screen keyboard
+class gui_num_keyboard : public gui_window
+{
+	public:
+		gui_num_keyboard(char * t, u32 m, gui_image* bg_image = NULL);
+		~gui_num_keyboard();
+		void Update(gui_trigger * t);
+		char kbtextstr[256];
+	protected:
+		u32 kbtextmaxlen;
+		gui_text * kbText;
+		gui_image * keyTextboxImg;
+		gui_text * keyBackText;
+		gui_image * keyBackImg;
+		gui_image * keyBackOverImg;
+		gui_button * keyBack;
+		gui_button * keyBtn[4][3];
+		gui_image * keyImg[4][3];
+		gui_image * keyImgOver[4][3];
+		gui_text * keyTxt[4][3];
+		gui_image_data * keyTextbox;
+		gui_image_data * key;
+		gui_image_data * keyOver;
+		gui_image_data * keyMedium;
+		gui_image_data * keyMediumOver;
+		gui_image_data * keyLarge;
+		gui_image_data * keyLargeOver;
+		gui_sound * keysound_hover;
+		gui_sound * keysound_click;
+		gui_trigger * trig_a;
+		gui_trigger * trig2;
+		Key keys[4][3]; // two chars = less space than one pointer
 };
 
 typedef struct _optionlist {

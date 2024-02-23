@@ -20,9 +20,9 @@ menus::state console_menu::update()
 
 	for(int i = 0; i < LINES; ++i)
     {
-		lines[i] = new gui_text("", 18, (GXColor){0, 0, 0, 255});
+		lines[i] = new gui_text("", 12, (GXColor){0, 0, 0, 255});
 		lines[i]->set_alignment(ALIGN_LEFT, ALIGN_CENTER);
-		lines[i]->set_position(32, 32 + i * 25);
+		lines[i]->set_position(32, 25 + i * 20);
 		w.append(lines[i]);
     }
 

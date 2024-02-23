@@ -40,6 +40,28 @@ class format
             
             return result;
         }
+
+        static std::string replace(const char* original, const char* find, const char* replace)
+        {
+            std::string original_str(original);
+            std::string find_str(find);
+
+            // Find the first occurrence of the substring to replace
+            size_t pos = original_str.find(find_str);
+
+            // While there are occurrences of the substring to replace
+            while (pos != std::string::npos)
+            {
+                // Replace the substring with the replacement string
+                original_str.replace(pos, find_str.length(), replace);
+                
+                // Find the next occurrence of the substring to replace
+                pos = original_str.find(find_str, pos + strlen(replace));
+            }
+
+            // Return the modified string
+            return original_str;
+        }
 };
 
 #endif

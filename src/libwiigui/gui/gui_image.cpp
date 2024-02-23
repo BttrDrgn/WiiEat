@@ -150,12 +150,12 @@ void gui_image::SetPixel(int x, int y, GXColor color)
 	*(image+offset+33) = color.b;
 }
 
-void gui_image::SetStripe(int s)
+void gui_image::set_stripe(int s)
 {
 	stripe = s;
 }
 
-void gui_image::ColorStripe(int shift)
+void gui_image::color_stripe(int shift)
 {
 	GXColor color;
 	int x, y=0;

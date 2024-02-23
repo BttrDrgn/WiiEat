@@ -25,7 +25,7 @@ static char * GetDisplayText(char * t)
  * Constructor for the gui_keyboard class.
  */
 
-gui_keyboard::gui_keyboard(char * t, u32 max, gui_image* bg_image)
+gui_keyboard::gui_keyboard(char* t, u32 max, gui_image* bg_image)
 {
 	const int y_offset = 135;
 	width = 540;
@@ -36,6 +36,7 @@ gui_keyboard::gui_keyboard(char * t, u32 max, gui_image* bg_image)
 	focus = 0; // allow focus
 	alignmentHor = ALIGN_CENTER;
 	alignmentVert = ALIGN_MIDDLE;
+	memset(kbtextstr, '\0', 255);
 	snprintf(kbtextstr, 255, "%s", t);
 	kbtextmaxlen = max;
 

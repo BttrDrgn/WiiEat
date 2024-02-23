@@ -14,9 +14,6 @@
 // Fonts
 #include "font_ttf.h"
 
-// Languages
-#include "en_lang.h"
-
 // Sounds
 #include "button_over_pcm.h"
 #include "button_click_pcm.h"

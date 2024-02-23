@@ -16,6 +16,8 @@
 class main_menu
 {
     public:
+        static bool initialized;
+        static void initialize();
         static menus::state update();
 };
 

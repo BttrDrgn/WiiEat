@@ -201,7 +201,7 @@ void gui_element::SetVisible(bool v)
 	visible = v;
 }
 
-void gui_element::SetAlpha(int a)
+void gui_element::set_alpha(int a)
 {
 	alpha = a;
 }
@@ -376,17 +376,17 @@ bool gui_element::Rumble()
 	return rumble;
 }
 
-void gui_element::SetRumble(bool r)
+void gui_element::set_rumble(bool r)
 {
 	rumble = r;
 }
 
-int gui_element::GetEffect()
+int gui_element::get_effect()
 {
 	return effects;
 }
 
-void gui_element::SetEffect(int eff, int amount, int target)
+void gui_element::set_effect(int eff, int amount, int target)
 {
 	if(eff & EFFECT_SLIDE_IN)
 	{
@@ -413,7 +413,7 @@ void gui_element::SetEffect(int eff, int amount, int target)
 	effectTarget = target;
 }
 
-void gui_element::SetEffectOnOver(int eff, int amount, int target)
+void gui_element::set_effect_on_hover(int eff, int amount, int target)
 {
 	effectsOver |= eff;
 	effectAmountOver = amount;
@@ -422,7 +422,12 @@ void gui_element::SetEffectOnOver(int eff, int amount, int target)
 
 void gui_element::set_effect_grow()
 {
-	SetEffectOnOver(EFFECT_SCALE, 4, 110);
+	set_effect_on_hover(EFFECT_SCALE, 4, 110);
+}
+
+void gui_element::set_effect_shrink()
+{
+	set_effect_on_hover(EFFECT_SCALE, -4, 110);
 }
 
 void gui_element::update_effects()

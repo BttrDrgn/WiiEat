@@ -3,6 +3,7 @@
 #include <menus/console_menu/console_menu.hpp>
 
 bool net::offline = true;
+std::string net::user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
 
 void net::initialize()
 {
@@ -43,65 +44,8 @@ void net::initialize()
     offline = false;
 }
 
-net::response net::http_request(std::string url, char* query, const char* method, std::vector<net::header> headers, char* err)
-{
-    CURL* curl = curl_easy_init();
-    net::response response;
+//
 
-    if (!curl)
-    {
-        err = "curl easy init failed";
-        return response;
-    }
-
-    if(!strcmp(method, "GET"))
-    {
-        if(strcmp(query, ""))
-        {
-            url = format::va("%s?%s", url, query);
-        }
-    }
-    else if(!strcmp(method, "POST"))
-    {
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, query);
-
-        headers.emplace_back("Content-Type", "application/json");
-    }
-
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
-    curl_easy_setopt(curl, CURLOPT_URL, url.data());
-    curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, err);
-
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, net::write_callback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &(response.body));
-
-    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, net::header_callback);
-    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &(response.headers));
-
-    struct curl_slist *headerlist = NULL;
-    for (const auto &header : headers)
-    {
-        std::string header_string = format::va("%s: %s", header.key, header.value);
-        headerlist = curl_slist_append(headerlist, header_string.data());
-    }
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
-
-    CURLcode res = curl_easy_perform(curl);
-
-    if (res == CURLE_OK)
-    {
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &(response.status_code));
-    }
-
-    curl_slist_free_all(headerlist);
-    curl_easy_cleanup(curl);
-
-    console_menu::write_line(format::va("[%s] %i : %s", method, response.status_code, url.data()));
-    return response;
-}
 
 size_t net::write_callback(void* contents, size_t size, size_t nmemb, std::string* body)
 {
@@ -115,6 +59,65 @@ size_t net::header_callback(void* contents, size_t size, size_t nmemb, std::stri
     size_t totalSize = size * nmemb;
     headers->append(static_cast<char*>(contents), totalSize);
     return totalSize;
+}
+
+net::response net::http_request(const std::string& url, const std::string& method,
+            std::vector<net::header> headers, const std::string& post_data)
+{
+    CURL* curl = curl_easy_init();
+    response response;
+    if (!curl) return response;
+
+    struct curl_slist* headerlist = nullptr;
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
+
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &(response.body));
+
+    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
+    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &(response.headers));
+
+    if(method == "POST")
+    {
+        headers.emplace_back("Content-Type", "application/json");
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data.c_str());
+    }
+
+    headers.emplace_back("User-Agent", net::user_agent.c_str());
+    headers.emplace_back("Accept-Encoding", "gzip, deflate, br, zstd");
+    headers.emplace_back("Accept-Language", "en-US,en;q=0.9");
+    headers.emplace_back("Origin", "https://www.grubhub.com");
+    headers.emplace_back("Referer", "https://www.grubhub.com/");
+    headers.emplace_back("Sec-Ch-Ua", "\"Not A(Brand\";v=\"99\", \"Google Chrome\";v=\"121\", \"Chromium\";v=\"121\"");
+    headers.emplace_back("Sec-Ch-Ua-Platform", "\"Windows\"" );
+    headers.emplace_back("Sec-Fetch-Dest", "empty");
+    headers.emplace_back("Sec-Fetch-Mode", "cors");
+    headers.emplace_back("Sec-Fetch-Site", "same-site");
+
+    for (const auto& header : headers)
+    {
+        std::string header_string = format::va("%s: %s", header.key, header.value);
+        headerlist = curl_slist_append(headerlist, header_string.c_str());
+    }
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+
+    CURLcode res = curl_easy_perform(curl);
+
+    if (res == CURLE_OK)
+    {
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &(response.status_code));
+        console_menu::write_line(format::va("[%s] %i %s", method.c_str(), response.status_code, url.c_str()));
+    }
+
+    curl_slist_free_all(headerlist);
+    curl_easy_cleanup(curl);
+
+    return response;
 }
 
 char* net::generate_query_string(const std::unordered_map<char*, char*>& queryable)

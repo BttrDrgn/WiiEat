@@ -206,3 +206,179 @@ void menus::keyboard(char* var, u16 maxlen)
     menus::main_window->set_state(STATE_DEFAULT);
     menus::resume_gui();
 }
+
+void menus::num_keyboard(char* var, u16 maxlen)
+{
+    gui_image_data bg(keyboard_background_png);
+    gui_image bg_img(&bg);
+    bg_img.set_alignment(ALIGN_MIDDLE, ALIGN_MIDDLE);
+    bg_img.set_scale(3.0f);
+    gui_num_keyboard keyboard(var, maxlen, &bg_img);
+
+    gui_sound btn_sound_hover(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+    gui_image_data button(button_small_png);
+    gui_image_data button_hover(button_small_hover_png);
+    gui_trigger trig_a;
+    trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+
+    gui_text cancelBtnTxt("Quit", 22, (GXColor){0, 0, 0, 255});
+    gui_image cancelBtnImg(&button);
+    gui_image cancelBtnImgOver(&button_hover);
+    gui_button cancelBtn(button.get_width(), button.get_height());
+    cancelBtn.set_alignment(ALIGN_LEFT, ALIGN_BOTTOM);
+    cancelBtn.set_position(25, -25);
+    cancelBtn.set_label(&cancelBtnTxt);
+    cancelBtn.set_image(&cancelBtnImg);
+    cancelBtn.set_image_hover(&cancelBtnImgOver);
+    cancelBtn.set_sound_hover(&btn_sound_hover);
+    cancelBtn.set_trigger(&trig_a);
+    cancelBtn.set_effect_grow();
+    keyboard.append(&cancelBtn);
+
+    gui_text okBtnTxt("OK", 22, (GXColor){0, 0, 0, 255});
+    gui_image okBtnImg(&button);
+    gui_image okBtnImgOver(&button_hover);
+    gui_button okBtn(button.get_width(), button.get_height());
+    okBtn.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+    okBtn.set_position(-25, -25);
+    okBtn.set_label(&okBtnTxt);
+    okBtn.set_image(&okBtnImg);
+    okBtn.set_image_hover(&okBtnImgOver);
+    okBtn.set_sound_hover(&btn_sound_hover);
+    okBtn.set_trigger(&trig_a);
+    okBtn.set_effect_grow();
+    keyboard.append(&okBtn);
+
+    menus::halt_gui();
+    menus::main_window->set_state(STATE_DISABLED);
+    menus::main_window->append(&keyboard);
+    menus::main_window->change_focus(&keyboard);
+    menus::resume_gui();
+
+    int save = -1;
+    while(save == -1)
+    {
+        usleep(100);
+
+        if(okBtn.get_state() == STATE_CLICKED)
+        {
+            save = 1;
+        }
+        else if(cancelBtn.get_state() == STATE_CLICKED)
+        {
+            save = 0;
+        }
+    }
+
+    if(save)
+    {
+        snprintf(var, maxlen, "%s", keyboard.kbtextstr);
+    }
+
+    menus::halt_gui();
+    menus::main_window->remove(&keyboard);
+    menus::main_window->set_state(STATE_DEFAULT);
+    menus::resume_gui();
+}
+
+int menus::window_prompt(const char *title, const char *msg, const char *btn1Label, const char* btn2Label)
+{
+	int choice = -1;
+	bool has_btn_2 = strcmp(btn2Label, "");
+
+	gui_window prompt_window(448,288);
+	prompt_window.set_alignment(ALIGN_CENTER, ALIGN_MIDDLE);
+	prompt_window.set_position(0, -10);
+	gui_sound btn_sound_hover(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	gui_image_data button(button_small_png);
+	gui_image_data button_hover(button_small_hover_png);
+	gui_trigger trig_a;
+	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+
+	gui_image_data dialogBox(dialogue_box_png);
+	gui_image dialogBoxImg(&dialogBox);
+	prompt_window.append(&dialogBoxImg);
+
+	gui_text titleTxt(title, 26, (GXColor){0, 0, 0, 255});
+	titleTxt.set_alignment(ALIGN_CENTER, ALIGN_TOP);
+	titleTxt.set_position(0,40);
+	prompt_window.append(&titleTxt);
+
+	gui_text msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
+	msgTxt.set_alignment(ALIGN_CENTER, ALIGN_MIDDLE);
+	msgTxt.set_position(0,-20);
+	msgTxt.SetWrap(true, 400);
+	prompt_window.append(&msgTxt);
+
+	gui_text btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
+	gui_image btn1Img(&button);
+	gui_image btn1ImgOver(&button_hover);
+	gui_button btn1(button.get_width(), button.get_height());
+	btn1.set_label(&btn1Txt);
+	btn1.set_image(&btn1Img);
+	btn1.set_image_hover(&btn1ImgOver);
+	btn1.set_sound_hover(&btn_sound_hover);
+	btn1.set_trigger(&trig_a);
+	btn1.set_state(STATE_SELECTED);
+	btn1.set_effect_grow();
+
+	if(has_btn_2)
+	{
+		btn1.set_alignment(ALIGN_LEFT, ALIGN_BOTTOM);
+		btn1.set_position(20, -25);
+	}
+	else
+	{
+		btn1.set_alignment(ALIGN_CENTER, ALIGN_BOTTOM);
+		btn1.set_position(0, -25);
+	}
+	prompt_window.append(&btn1);
+
+	gui_button btn2(button.get_width(), button.get_height());
+	gui_text btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
+
+	if(has_btn_2)
+	{
+		gui_image btn2Img(&button);
+		gui_image btn2ImgOver(&button_hover);
+		btn2.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+		btn2.set_position(-20, -25);
+		btn2.set_label(&btn2Txt);
+		btn2.set_image(&btn2Img);
+		btn2.set_image_hover(&btn2ImgOver);
+		btn2.set_sound_hover(&btn_sound_hover);
+		btn2.set_trigger(&trig_a);
+		btn2.set_state(STATE_SELECTED);
+		btn2.set_effect_grow();
+		prompt_window.append(&btn2);
+	}
+
+	prompt_window.set_effect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
+	menus::halt_gui();
+	menus::main_window->set_state(STATE_DISABLED);
+	menus::main_window->append(&prompt_window);
+	menus::main_window->change_focus(&prompt_window);
+	menus::resume_gui();
+
+	while(choice == -1)
+	{
+		usleep(100);
+
+		if(btn1.get_state() == STATE_CLICKED)
+		{
+			choice = 1;
+		}
+		else if(btn2Label && btn2.get_state() == STATE_CLICKED)
+		{
+			choice = 0;
+		}
+	}
+
+	prompt_window.set_effect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+	while(prompt_window.get_effect() > 0) usleep(100);
+	menus::halt_gui();
+	menus::main_window->remove(&prompt_window);
+	menus::main_window->set_state(STATE_DEFAULT);
+	menus::resume_gui();
+	return choice;
+}
