@@ -25,7 +25,7 @@ INCLUDES	:=	src
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS		=	-g -O2 -Wall $(MACHDEP) $(INCLUDE) `freetype-config --cflags`
+CFLAGS		=	-g -O2 -Wall $(MACHDEP) $(INCLUDE) `freetype-config --cflags` -fpermissive
 CXXFLAGS	=	$(CFLAGS)
 LDFLAGS		=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 

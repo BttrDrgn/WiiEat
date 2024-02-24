@@ -33,6 +33,12 @@ class api
             double longitude;
         };
 
+        struct img_data
+        {
+            uint8_t* data;
+            size_t size;
+        };
+
         static char address[ADDRESS_LEN];
         static char city[CITY_LEN];
         static char state[STATE_LEN];
@@ -42,6 +48,7 @@ class api
         static std::string ud_id;
         static std::string csrf_token;
         static coordinates coords;
+        static std::string geohash;
         static std::unordered_map<char*, char*> endpoints;
 
         static bool request_access(const std::string& url, const std::string& method);
@@ -54,6 +61,12 @@ class api
 
         //geocode
         static api::error geocode_request(char* address, char* city, char* state, char* zip);
+
+        //restaurants
+        static api::error restaurants_request();
+
+        //download
+        static img_data download_image(const std::string& url);
 };
 
 #endif /* API */

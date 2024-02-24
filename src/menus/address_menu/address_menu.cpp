@@ -143,6 +143,7 @@ menus::state address_menu::update()
 	home_btn.set_trigger(&trig_home);
 	w.append(&home_btn);
 
+	w.set_effect(EFFECT_FADE, 25);
 	menus::halt_gui();
 	menus::main_window->append(&w);
 	menus::resume_gui();
@@ -158,39 +159,50 @@ menus::state address_menu::update()
 		}
 		else if(address_prompt.get_state() == STATE_CLICKED)
 		{
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+
 			menus::keyboard(api::address, ADDRESS_LEN);
 			menu = menus::current_menu;
 		}
 		else if(city_prompt.get_state() == STATE_CLICKED)
 		{
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+
 			menus::keyboard(api::city, CITY_LEN);
 			menu = menus::current_menu;
 		}
 		else if(state_prompt.get_state() == STATE_CLICKED)
 		{
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+
 			menus::keyboard(api::state, STATE_LEN);
 			menu = menus::current_menu;
 		}
 		else if(zip_prompt.get_state() == STATE_CLICKED)
 		{
-			menus::keyboard(api::zip, ZIP_LEN);
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+
+			menus::num_keyboard(api::zip, ZIP_LEN);
 			menu = menus::current_menu;
 		}
 		else if(save_btn.get_state() == STATE_CLICKED)
 		{
-			// if(!api::geocode_request(api::address, api::city, api::state, api::zip))
-			// {
-			// 	menus::window_prompt
-			// 	(
-			// 		"Unable to save",
-			// 		"Grubhub denied access to /geocode",
-			// 		"Ok"
-			// 	);
-			// }
-			// else
-			// {
-			// 	menu = menus::state::MENU_RESTAURANT;
-			// }
+			auto err = api::geocode_request(api::address, api::city, api::state, api::zip);
+			if(err != api::error::NONE)
+			{
+				menu = menus::state::MENU_RESTAURANT;
+
+				w.set_effect(EFFECT_FADE, -25);
+				while(w.get_effect() > 0) usleep(100);
+			}
+			else
+			{
+
+			}
 		}
 	}
 

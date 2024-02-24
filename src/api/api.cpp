@@ -1,9 +1,12 @@
 #include "api.hpp"
 #include <main.hpp>
+#include <geohash/geohash.h>
 
 std::string api::access_token;
 std::string api::ud_id;
 std::string api::csrf_token;
+std::string api::geohash;
+api::coordinates api::coords;
 
 char api::address[ADDRESS_LEN] = "";
 char api::city[CITY_LEN] = "";
@@ -106,6 +109,44 @@ api::error api::auth_request(char* email, char* password)
     return api::error::UNKNOWN;
 }
 
+api::error api::auth_request(const char* refresh_token)
+{
+    auth_refresh auth_login(refresh_token);
+    cJSON* json = auth_login.serialize();
+    char* serialized = cJSON_Print(json);
+    net::response resp;
+
+    if(api::request_access(api::endpoints["auth"], "POST"))
+    {
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "*/*"},
+        };
+
+        resp = net::http_request(api::endpoints["auth"], "POST", headers, serialized);
+
+        if(resp.status_code == 463)
+        {
+            return api::error::EMAIL_2FA;
+        }
+        else if(resp.status_code == 200)
+        {
+            if(!save_token(resp.body))
+            {
+                return api::error::BAD_JSON;
+            }
+
+            return api::error::NONE;
+        }
+        else if(resp.status_code == 403)
+        {
+            return api::error::UNAUTHORIZED;
+        }
+    }
+
+    return api::error::UNKNOWN;
+}
+
 api::error api::auth_code_request(char* email, char* code)
 {
     auth_code auth_login(code, api::csrf_token, email);
@@ -160,7 +201,7 @@ api::error api::confirmation_code_request(char* email)
 
         if(resp.status_code == 200)
         {
-            cJSON* root = cJSON_Parse(resp.body.c_str());
+            auto root = cJSON_Parse(resp.body.c_str());
             if(!root) return api::error::UNKNOWN;
 
             api::csrf_token = cJSON_GetObjectItem(root, "csrf_token")->valuestring;
@@ -187,5 +228,54 @@ api::error api::geocode_request(char* address, char* city, char* state, char* zi
         };
 
         auto resp = net::http_request(url, "GET", headers);
+        if(resp.status_code == 200)
+        {
+            auto root = cJSON_Parse(resp.body.c_str());
+            if(!root) return api::error::BAD_JSON;
+
+            auto root_arr = cJSON_GetArrayItem(root, 0);
+            if(!root_arr) 
+            {
+                cJSON_Delete(root);
+                return api::error::BAD_JSON;
+            }
+
+            auto coordinates = cJSON_GetObjectItem(root_arr, "coordinates");
+            api::coords.latitude = cJSON_GetObjectItem(coordinates, "latitude")->valuedouble;
+            api::coords.longitude  = cJSON_GetObjectItem(coordinates, "longitude")->valuedouble;
+
+            api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 6);
+
+            cJSON_Delete(root);
+
+            return api::error::NONE;
+        }
     }
+
+    return api::error::UNKNOWN;
+}
+
+api::error api::restaurants_request()
+{
+
+}
+
+api::img_data api::download_image(const std::string& url)
+{
+    api::img_data img = { 0, 0 };
+
+    auto resp = net::http_request(url, "GET", {});
+    if(resp.status_code == 200)
+    {
+        size_t total_size = resp.body.size();
+        img.data = (uint8_t*)malloc(total_size);
+
+        if(img.data)
+        {
+            memcpy(img.data, resp.body.data(), total_size);
+            img.size = total_size;
+        }
+    }
+
+    return img;
 }

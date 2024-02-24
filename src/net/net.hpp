@@ -1,7 +1,7 @@
 #ifndef _NET_H_
 #define _NET_H_
 
-#include <utils/format.hpp>
+#include <format/format.hpp>
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -33,7 +33,7 @@ class net
         static size_t write_callback(void* contents, size_t size, size_t nmemb, std::string* body);
         static size_t header_callback(void* contents, size_t size, size_t nmemb, std::string* headers);
 
-        static net::response http_request(const std::string& url, const std::string& method,
+        static net::response http_request(std::string url, const std::string& method,
             std::vector<net::header> headers, const std::string& post_data = "");
             
         static char* generate_query_string(const std::unordered_map<char*, char*>& queryable);

@@ -1,6 +1,6 @@
 #include "menus.hpp"
 #include "../main.hpp"
-#include <utils/format.hpp>
+#include <format/format.hpp>
 
 bool menus::gui_halt = true;
 lwp_t menus::gui_thread = LWP_THREAD_NULL;
@@ -175,6 +175,7 @@ void menus::keyboard(char* var, u16 maxlen)
     okBtn.set_effect_grow();
     keyboard.append(&okBtn);
 
+	keyboard.set_effect(EFFECT_FADE, 30);
     menus::halt_gui();
     menus::main_window->set_state(STATE_DISABLED);
     menus::main_window->append(&keyboard);
@@ -200,6 +201,9 @@ void menus::keyboard(char* var, u16 maxlen)
     {
         snprintf(var, maxlen, "%s", keyboard.kbtextstr);
     }
+
+    keyboard.set_effect(EFFECT_FADE, -30);
+	while(keyboard.get_effect() > 0) usleep(100);
 
     menus::halt_gui();
     menus::main_window->remove(&keyboard);
@@ -249,6 +253,7 @@ void menus::num_keyboard(char* var, u16 maxlen)
     okBtn.set_effect_grow();
     keyboard.append(&okBtn);
 
+	keyboard.set_effect(EFFECT_FADE, 30);
     menus::halt_gui();
     menus::main_window->set_state(STATE_DISABLED);
     menus::main_window->append(&keyboard);
@@ -274,6 +279,9 @@ void menus::num_keyboard(char* var, u16 maxlen)
     {
         snprintf(var, maxlen, "%s", keyboard.kbtextstr);
     }
+
+    keyboard.set_effect(EFFECT_FADE, -30);
+	while(keyboard.get_effect() > 0) usleep(100);
 
     menus::halt_gui();
     menus::main_window->remove(&keyboard);

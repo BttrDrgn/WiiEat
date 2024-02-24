@@ -1,8 +1,6 @@
 #include "home_menu.hpp"
 #include <main.hpp>
 
-#define FADE_SPEED 25
-
 menus::state home_menu::update()
 {
 	menus::state menu = menus::state::MENU_NONE;
@@ -59,7 +57,7 @@ menus::state home_menu::update()
 	home_btn.set_trigger(&trig_home);
 	home.append(&home_btn);
 
-	home.set_effect(EFFECT_FADE, FADE_SPEED);
+	home.set_effect(EFFECT_FADE, 25);
 	menus::halt_gui();
 	menus::main_window->set_state(STATE_DISABLED);
 	menus::main_window->append(&home);
@@ -76,7 +74,22 @@ menus::state home_menu::update()
 		}
 		else if(quit_btn.get_state() == STATE_CLICKED)
 		{
-			menu = menus::state::MENU_EXIT;
+			auto choice = menus::window_prompt
+			(
+				"Return",
+				"Are you sure you want to return to the Homebrew Channel?",
+				"Yes",
+				"No"
+			);
+
+			if(choice == 1)
+			{
+				menu = menus::state::MENU_EXIT;
+			}
+			else
+			{
+				quit_btn.reset_state();
+			}
 		}
 #ifdef DEBUG
 		else if(console_btn.get_state() == STATE_CLICKED)
@@ -86,7 +99,7 @@ menus::state home_menu::update()
 #endif
 	}
 
-	home.set_effect(EFFECT_FADE, -FADE_SPEED);
+	home.set_effect(EFFECT_FADE, -25);
 	while(home.get_effect() > 0) usleep(100);
 
 	menus::halt_gui();

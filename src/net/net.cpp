@@ -61,7 +61,7 @@ size_t net::header_callback(void* contents, size_t size, size_t nmemb, std::stri
     return totalSize;
 }
 
-net::response net::http_request(const std::string& url, const std::string& method,
+net::response net::http_request(std::string url, const std::string& method,
             std::vector<net::header> headers, const std::string& post_data)
 {
     CURL* curl = curl_easy_init();
@@ -70,6 +70,7 @@ net::response net::http_request(const std::string& url, const std::string& metho
 
     struct curl_slist* headerlist = nullptr;
 
+    url = format::replace(url.c_str(), " ", "%20");
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -111,8 +112,10 @@ net::response net::http_request(const std::string& url, const std::string& metho
     if (res == CURLE_OK)
     {
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &(response.status_code));
-        console_menu::write_line(format::va("[%s] %i %s", method.c_str(), response.status_code, url.c_str()));
     }
+
+    console_menu::write_line(format::va("[%s] %i %s", method.c_str(), response.status_code, url.c_str()));
+    console_menu::write_line(response.body.data());
 
     curl_slist_free_all(headerlist);
     curl_easy_cleanup(curl);

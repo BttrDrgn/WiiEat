@@ -1,5 +1,7 @@
 #include "restaurant_menu.hpp"
 
+std::vector<restaurant*> restaurants;
+
 menus::state restaurant_menu::update()
 {
     menus::state menu = menus::state::MENU_NONE;
@@ -22,13 +24,42 @@ menus::state restaurant_menu::update()
 	gui_image_data logoImage(wiieat_logo_png);
 	gui_image logo(&logoImage);
 	logo.set_alignment(ALIGN_LEFT, ALIGN_TOP);
-	logo.set_position(50, 50);
+	logo.set_position(25, 25);
+	logo.set_scale(0.5f);
 	w.append(&logo);
 
-	gui_text powered_by_txt("Powered by Grubhub", 12, (GXColor){0x50, 0x50, 0x50, 255});
-	powered_by_txt.set_alignment(ALIGN_LEFT, ALIGN_TOP);
-	powered_by_txt.set_position(60, 100);
-	w.append(&powered_by_txt);
+	for(int i = 0; i < 4; ++i)
+	{
+		restaurants.emplace_back(new restaurant(format::va("Restaurant %i", i + 1)));
+		restaurants[i]->txt = new gui_text(restaurants[i]->name.c_str(), 24, (GXColor){0x0, 0x0, 0x0, 255});
+		restaurants[i]->btn_img = new gui_image(&btn);
+		restaurants[i]->btn_hover_img = new gui_image(&btn_hover);
+		restaurants[i]->btn = new gui_button(restaurants[i]->btn_img->get_width(), restaurants[i]->btn_img->get_height());
+		
+		restaurants[i]->btn->set_alignment(ALIGN_LEFT, ALIGN_CENTER);
+		restaurants[i]->btn->set_position(32, 76 + i * 64);
+		restaurants[i]->btn->set_label(restaurants[i]->txt);
+		restaurants[i]->btn->set_image(restaurants[i]->btn_img);
+		restaurants[i]->btn->set_image_hover(restaurants[i]->btn_hover_img);
+		restaurants[i]->btn->set_sound_hover(&btn_sound_hover);
+		restaurants[i]->btn->set_trigger(&trig_a);
+
+
+		w.append(restaurants[i]->btn);
+	}
+
+	// auto test_img = api::download_image("https://resize.sardo.work/?imageUrl=https://media-cdn.grubhub.com/image/upload/v1687457248/rkgnpcgpzhjpu8trbeze.png&width=96");
+	// fs::write_file("sd://test.png", test_img.data, test_img.size);
+
+	// if(test_img.data)
+	// {
+	// 	gui_image_data test_img_data(test_img.data);
+	// 	gui_image test(&test_img_data);
+	// 	test.set_alignment(ALIGN_LEFT, ALIGN_TOP);
+	// 	test.set_position(25, 25);
+	// 	test.set_scale(0.5f);
+	// 	w.append(&test);
+	// }
 
 	gui_trigger trig_home;
 	trig_home.set_button_only_trigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
@@ -52,6 +83,7 @@ menus::state restaurant_menu::update()
 		}
 	}
 
+	restaurants.clear();
 	menus::halt_gui();
 	menus::main_window->remove(&w);
 	return menu; 

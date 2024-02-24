@@ -1,12 +1,12 @@
-#ifndef _FS_H_
-#define _FS_H_
+#ifndef FS
+#define FS
 
 #include <string>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <sys/stat.h>
-#include <utils/format.hpp>
+#include <format/format.hpp>
 #define MAXPATH 256
 
 class fs
@@ -57,6 +57,31 @@ class fs
             return false;
         }
 
+        static bool read_file(const std::string& file, uint8_t*& data, size_t& size)
+        {
+            data = nullptr;
+            size = 0;
+
+            std::ifstream stream(file, std::ios::binary | std::ios::ate);
+            if (!stream.is_open()) return false;
+
+            // Get the file size
+            size = stream.tellg();
+            stream.seekg(0, std::ios::beg);
+
+            if (size > 0)
+            {
+                // Allocate memory for the buffer
+                data = new uint8_t[size];
+                // Read the file into the buffer
+                stream.read(reinterpret_cast<char*>(data), size);
+                stream.close();
+                return true;
+            }
+
+            return false;
+        }
+
         static bool write_file(const std::string& file, const std::string& data, const bool append = false)
         {
             const auto pos = file.find_last_of("/\\");
@@ -76,6 +101,26 @@ class fs
 
             return false;
         }
+
+        static bool write_file(const std::string& file, const uint8_t* buffer, size_t size, const bool append = false)
+        {
+            const auto pos = file.find_last_of("/\\");
+            if (pos != std::string::npos) {
+                // Create directory if it doesn't exist
+                create_directory(file.substr(0, pos));
+            }
+
+            std::ofstream stream(file, std::ios::binary | std::ofstream::out | (append ? std::ofstream::app : (std::ios_base::openmode)0));
+
+            if (stream.is_open()) {
+                // Write buffer to file
+                stream.write(reinterpret_cast<const char*>(buffer), size);
+                stream.close();
+                return true;
+            }
+
+            return false;
+        }
 };
 
-#endif
+#endif /* FS */

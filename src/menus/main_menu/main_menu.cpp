@@ -147,6 +147,7 @@ menus::state main_menu::update()
 	home_btn.set_trigger(&trig_home);
 	w.append(&home_btn);
 
+	w.set_effect(EFFECT_FADE, 25);
 	menus::halt_gui();
 	menus::main_window->append(&w);
 	menus::resume_gui();
@@ -208,6 +209,9 @@ menus::state main_menu::update()
 					if(err == api::error::NONE)
 					{
 						menu = menus::next(menus::state::MENU_ADDRESS);
+
+						w.set_effect(EFFECT_FADE, -25);
+						while(w.get_effect() > 0) usleep(100);
 					}
 					else
 					{
@@ -234,6 +238,9 @@ menus::state main_menu::update()
 			else
 			{
 				menu = menus::next(menus::state::MENU_ADDRESS);
+
+				w.set_effect(EFFECT_FADE, -25);
+				while(w.get_effect() > 0) usleep(100);
 			}
 		}
 		else if(console_btn.get_state() == STATE_CLICKED)
@@ -242,11 +249,17 @@ menus::state main_menu::update()
 		}
 		else if(email_prompt.get_state() == STATE_CLICKED)
 		{
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+			
 			menus::keyboard(email_address, MAX_BUF_LEN);
 			menu = menus::current_menu;
 		}
 		else if(password_prompt.get_state() == STATE_CLICKED)
 		{
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+			
 			menus::keyboard(password, MAX_BUF_LEN);
 
 			size_t len = strlen(password);
