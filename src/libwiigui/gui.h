@@ -140,6 +140,7 @@ class gui_sound
 		gui_sound(const u8 * s, s32 l, int t);
 		//!Destructor
 		~gui_sound();
+		s32 volume; //!< Sound volume (0-100)
 		//!Start sound playback
 		void Play();
 		//!Stop sound playback
@@ -157,13 +158,15 @@ class gui_sound
 		//!Set the sound to loop playback (only applies to OGG)
 		//!\param l Loop (true to loop)
 		void SetLoop(bool l);
+		//!Set start position in milliseconds
+		void SetStartPos(int pos);
 	protected:
 		const u8 * sound; //!< Pointer to the sound data
 		int type; //!< Sound format type (SOUND_PCM or SOUND_OGG)
 		s32 length; //!< Length of sound data
 		s32 voice; //!< Currently assigned ASND voice channel
-		s32 volume; //!< Sound volume (0-100)
 		bool loop; //!< Loop sound playback
+		int start_pos; //!< Loop sound playback
 };
 
 //!Menu input trigger management. Determine if action is neccessary based on input data by comparing controller input data to a specific trigger element.

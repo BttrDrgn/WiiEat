@@ -51,7 +51,7 @@ class api
         static std::string geohash;
         static std::unordered_map<char*, char*> endpoints;
 
-        static bool request_access(const std::string& url, const std::string& method);
+        static bool request_access(char* endpoint, const std::string& url, const std::string& method);
 
         //auth
         static api::error auth_request(char* email, char* password);
@@ -61,6 +61,8 @@ class api
 
         //geocode
         static api::error geocode_request(char* address, char* city, char* state, char* zip);
+        static bool is_address_complete();
+        static std::string get_full_address();
 
         //restaurants
         static api::error restaurants_request();

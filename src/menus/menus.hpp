@@ -1,10 +1,11 @@
-#ifndef _MENUS_H_
-#define _MENUS_H_
+#ifndef MENUS
+#define MENUS
 
 #include "libwiigui/gui.h"
 #include "libwiigui/input.h"
 #include "libwiigui/filebrowser.h"
 #include "filelist.h"
+#include <unordered_map>
 
 class menus
 {
@@ -28,6 +29,7 @@ class menus
         static gui_image_data* pointer[4];
         static gui_image* bg_img;
         static bool shutdown;
+        static gui_sound* current_song;
 
         static void initialize(state menu);
         static void update();
@@ -69,4 +71,4 @@ class menus
 
 };
 
-#endif
+#endif /* MENUS */

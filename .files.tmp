@@ -77,8 +77,13 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\fonts
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\logo
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\music
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\fonts\font.ttf
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\address_button.png
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\address_button_hover.png
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\basket_button.png
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\basket_button_hover.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\bg_file_selection.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\bg_file_selection_entry.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\bg_options.png
@@ -92,6 +97,8 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\button_small
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\circle_button.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\circle_button_hover.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\dialogue_box.png
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\exit_button.png
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\exit_button_hover.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\folder.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\input_box.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\input_box_hover.png
@@ -119,6 +126,8 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\scrollbar_ar
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\scrollbar_box.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\scrollbar_box_over.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\logo\wiieat_logo.png
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\music\legacyAlli_mash_up.ogg
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\music\license.txt
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds\bg_music.ogg
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds\button_click.pcm
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds\button_over.pcm

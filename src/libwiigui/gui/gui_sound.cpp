@@ -21,6 +21,7 @@ gui_sound::gui_sound(const u8 * s, s32 l, int t)
 	voice = -1;
 	volume = 100;
 	loop = false;
+	start_pos = 0;
 }
 
 /**
@@ -51,10 +52,8 @@ void gui_sound::Play()
 
 		case SOUND_OGG:
 		voice = 0;
-		if(loop)
-			PlayOgg((char *)sound, length, 0, OGG_INFINITE_TIME);
-		else
-			PlayOgg((char *)sound, length, 0, OGG_ONE_TIME);
+		if(loop) PlayOgg((char *)sound, length, start_pos, OGG_INFINITE_TIME);
+		else PlayOgg((char *)sound, length, start_pos, OGG_ONE_TIME);
 		SetVolumeOgg(255*(volume/100.0));
 		break;
 	}
@@ -152,4 +151,9 @@ void gui_sound::SetVolume(int vol)
 void gui_sound::SetLoop(bool l)
 {
 	loop = l;
+}
+
+void gui_sound::SetStartPos(int pos)
+{
+	start_pos = pos;
 }

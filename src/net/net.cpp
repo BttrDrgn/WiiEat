@@ -89,16 +89,17 @@ net::response net::http_request(std::string url, const std::string& method,
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data.c_str());
     }
 
-    headers.emplace_back("User-Agent", net::user_agent.c_str());
     headers.emplace_back("Accept-Encoding", "gzip, deflate, br, zstd");
     headers.emplace_back("Accept-Language", "en-US,en;q=0.9");
     headers.emplace_back("Origin", "https://www.grubhub.com");
     headers.emplace_back("Referer", "https://www.grubhub.com/");
     headers.emplace_back("Sec-Ch-Ua", "\"Not A(Brand\";v=\"99\", \"Google Chrome\";v=\"121\", \"Chromium\";v=\"121\"");
+    headers.emplace_back("Sec-Ch-Ua-Mobile", "?0" );
     headers.emplace_back("Sec-Ch-Ua-Platform", "\"Windows\"" );
     headers.emplace_back("Sec-Fetch-Dest", "empty");
     headers.emplace_back("Sec-Fetch-Mode", "cors");
     headers.emplace_back("Sec-Fetch-Site", "same-site");
+    headers.emplace_back("User-Agent", net::user_agent.c_str());
 
     for (const auto& header : headers)
     {
@@ -115,7 +116,6 @@ net::response net::http_request(std::string url, const std::string& method,
     }
 
     console_menu::write_line(format::va("[%s] %i %s", method.c_str(), response.status_code, url.c_str()));
-    console_menu::write_line(response.body.data());
 
     curl_slist_free_all(headerlist);
     curl_easy_cleanup(curl);

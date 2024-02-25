@@ -8,12 +8,13 @@ class restaurant
 {
     public:
         std::string name;
+        std::string id;
         gui_text* txt = 0;
         gui_image* btn_img = 0;
         gui_image* btn_hover_img = 0;
         gui_button* btn = 0;
 
-        restaurant(const std::string& name)
+        restaurant(const std::string& name, const std::string& id)
         {
             this->name = name;
         }

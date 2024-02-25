@@ -13,6 +13,9 @@ bool menus::shutdown = false;
 
 const gui_image_data* bg_img = NULL;
 const gui_image* bg = NULL;
+gui_sound* menus::current_song = NULL;
+
+int song_times[4] = { 0, 117415, 274087, 481337 };
 
 void menus::initialize(state menu)
 {
@@ -31,6 +34,13 @@ void menus::initialize(state menu)
 
 	menus::bg_img = new gui_image(screen_width, screen_height, (GXColor){0xE1, 0xE1, 0xE1, 0xFF});
 	menus::main_window->append(menus::bg_img);
+
+    srand(time(NULL));
+    menus::current_song = new gui_sound(legacyAlli_mash_up_ogg, legacyAlli_mash_up_ogg_size, SOUND_OGG);
+    menus::current_song->SetStartPos(song_times[rand() % 4]);
+    menus::current_song->SetVolume(50);
+    menus::current_song->SetLoop(true);
+    menus::current_song->Play();
 
 	menus::update();
     menus::shutdown_app();

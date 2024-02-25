@@ -48,13 +48,13 @@ menus::state main_menu::update()
 	powered_by_txt.set_position(60, 100);
 	w.append(&powered_by_txt);
 
-	gui_text exit_btn_txt("X", 22, (GXColor){0, 0, 0, 255});
-	gui_image exit_btn_img(&circle_btn);
-	gui_image exit_btn_img_hover(&circle_btn_hover);
-	gui_button exit_btn(circle_btn.get_width(), circle_btn.get_height());
+	gui_image_data exit_btn_img_data(exit_button_png);
+	gui_image_data exit_btn_hover_img_data(exit_button_hover_png);
+	gui_image exit_btn_img(&exit_btn_img_data);
+	gui_image exit_btn_img_hover(&exit_btn_hover_img_data);
+	gui_button exit_btn(exit_btn.get_width(), exit_btn.get_height());
 	exit_btn.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 	exit_btn.set_position(-35, -35);
-	exit_btn.set_label(&exit_btn_txt);
 	exit_btn.set_image(&exit_btn_img);
 	exit_btn.set_image_hover(&exit_btn_img_hover);
 	exit_btn.set_sound_hover(&btn_sound_hover);

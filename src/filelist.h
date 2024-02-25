@@ -6,8 +6,8 @@
  * Contains a list of all of the files in the images, fonts, sounds folders
  ***************************************************************************/
 
-#ifndef _FILELIST_H_
-#define _FILELIST_H_
+#ifndef FILELIST
+#define FILELIST
 
 #include <gccore.h>
 
@@ -18,7 +18,16 @@
 #include "button_over_pcm.h"
 #include "button_click_pcm.h"
 
+//music
+#include "legacyAlli_mash_up_ogg.h"
+
 // Images
+#include "address_button_png.h"
+#include "address_button_hover_png.h"
+#include "basket_button_png.h"
+#include "basket_button_hover_png.h"
+#include "exit_button_png.h"
+#include "exit_button_hover_png.h"
 #include "keyboard_background_png.h"
 #include "wiieat_logo_png.h"
 #include "input_box_png.h"
@@ -60,4 +69,4 @@
 #include "player3_grab_png.h"
 #include "player4_grab_png.h"
 
-#endif
+#endif /* FILELIST */

@@ -2,10 +2,10 @@
 #include <main.hpp>
 #include <geohash/geohash.h>
 
-std::string api::access_token;
-std::string api::ud_id;
-std::string api::csrf_token;
-std::string api::geohash;
+std::string api::access_token = "";
+std::string api::ud_id = "";
+std::string api::csrf_token = "";
+std::string api::geohash = "";
 api::coordinates api::coords;
 
 char api::address[ADDRESS_LEN] = "";
@@ -20,13 +20,21 @@ std::unordered_map<char*, char*> api::endpoints =
     { "geocode", "https://api-gtm.grubhub.com/geocode" },
 };
 
-bool api::request_access(const std::string& url, const std::string& method)
+std::unordered_map<char*, char*> access_control =
+{
+    { "auth", "authorization,content-type" },
+    { "confirmation_code", "" },
+    { "geocode", "authorization,cache-control,if-modified-since" },
+};
+
+bool api::request_access(char* endpoint, const std::string& url, const std::string& method)
 {
     std::vector<net::header> headers = 
     {
         { "Accept", "*/*"},
-        { "Access-Control-Request-Headers", "authorization,content-type,if-modified-since"},
+        { "Access-Control-Request-Headers", access_control[endpoint]},
         { "Access-Control-Request-Method", method.c_str()},
+        { "Cache-Control", "max-age=0"},
     };
 
     auto resp = net::http_request(url, "OPTIONS", headers);
@@ -71,6 +79,33 @@ bool save_token(const std::string& json)
     return true;
 }
 
+bool save_address(const std::string& full_address, const std::string& json)
+{
+    fs::write_file("sd://WiiEat/address", full_address);
+
+    auto root = cJSON_Parse(json.c_str());
+    if(!root) return false;
+
+    auto root_arr = cJSON_GetArrayItem(root, 0);
+    if(!root_arr) 
+    {
+        cJSON_Delete(root);
+        return false;
+    }
+
+    auto coordinates = cJSON_GetObjectItem(root_arr, "coordinates");
+    api::coords.latitude = cJSON_GetObjectItem(coordinates, "latitude")->valuedouble;
+    api::coords.longitude  = cJSON_GetObjectItem(coordinates, "longitude")->valuedouble;
+    api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 6);
+
+    fs::write_file("sd://WiiEat/coordinates", format::va("%f %f", api::coords.latitude, api::coords.longitude));
+    fs::write_file("sd://WiiEat/geohash", api::geohash);
+
+    cJSON_Delete(root);
+
+    return true;
+}
+
 api::error api::auth_request(char* email, char* password)
 {
     auth auth_login(email, password);
@@ -78,14 +113,15 @@ api::error api::auth_request(char* email, char* password)
     char* serialized = cJSON_Print(json);
     net::response resp;
 
-    if(api::request_access(api::endpoints["auth"], "POST"))
+    char* endpoint = "auth";
+    if(api::request_access(endpoint, api::endpoints[endpoint], "POST"))
     {
         std::vector<net::header> headers = 
         {
             { "Accept", "*/*"},
         };
 
-        resp = net::http_request(api::endpoints["auth"], "POST", headers, serialized);
+        resp = net::http_request(api::endpoints[endpoint], "POST", headers, serialized);
 
         if(resp.status_code == 463)
         {
@@ -116,14 +152,15 @@ api::error api::auth_request(const char* refresh_token)
     char* serialized = cJSON_Print(json);
     net::response resp;
 
-    if(api::request_access(api::endpoints["auth"], "POST"))
+    char* endpoint = "auth";
+    if(api::request_access(endpoint, api::endpoints[endpoint], "POST"))
     {
         std::vector<net::header> headers = 
         {
             { "Accept", "*/*"},
         };
 
-        resp = net::http_request(api::endpoints["auth"], "POST", headers, serialized);
+        resp = net::http_request(api::endpoints[endpoint], "POST", headers, serialized);
 
         if(resp.status_code == 463)
         {
@@ -154,14 +191,15 @@ api::error api::auth_code_request(char* email, char* code)
     char* serialized = cJSON_Print(json);
     net::response resp;
 
-    if(api::request_access(api::endpoints["auth"], "POST"))
+    char* endpoint = "auth";
+    if(api::request_access(endpoint, api::endpoints[endpoint], "POST"))
     {
         std::vector<net::header> headers = 
         {
             { "Accept", "*/*"},
         };
 
-        resp = net::http_request(api::endpoints["auth"], "POST", headers, serialized);
+        resp = net::http_request(api::endpoints[endpoint], "POST", headers, serialized);
 
         if(resp.status_code == 200)
         {
@@ -188,7 +226,8 @@ api::error api::confirmation_code_request(char* email)
     char* serialized = cJSON_Print(json);
     net::response resp;
 
-    if(api::request_access(api::endpoints["confirmation_code"], "POST"))
+    char* endpoint = "confirmation_code";
+    if(api::request_access(endpoint, api::endpoints[endpoint], "POST"))
     {
         std::vector<net::header> headers = 
         {
@@ -197,7 +236,7 @@ api::error api::confirmation_code_request(char* email)
             { "Access-Control-Request-Method", "POST" },
         };
 
-        resp = net::http_request(api::endpoints["confirmation_code"], "POST", headers, serialized);
+        resp = net::http_request(api::endpoints[endpoint], "POST", headers, serialized);
 
         if(resp.status_code == 200)
         {
@@ -216,38 +255,25 @@ api::error api::confirmation_code_request(char* email)
 
 api::error api::geocode_request(char* address, char* city, char* state, char* zip)
 {
+    char* endpoint = "geocode";
     auto full_address = format::va("%s, %s, %s %s", address, city, state, zip);
-    auto url = format::va("%s?address=%s", api::endpoints["geocode"], full_address.c_str());
+    auto url = format::va("%s?address=%s", api::endpoints[endpoint], full_address.c_str());
 
-    if(api::request_access(url, "GET"))
+    if(api::request_access(endpoint, url, "GET"))
     {
         std::vector<net::header> headers = 
         {
             { "Accept", "application/json"},
-            { "Authorization", format::va("Bearer %s", api::access_token).c_str() },
+            { "Authorization", format::va("Bearer %s", api::access_token.c_str()).c_str() },
         };
 
         auto resp = net::http_request(url, "GET", headers);
         if(resp.status_code == 200)
         {
-            auto root = cJSON_Parse(resp.body.c_str());
-            if(!root) return api::error::BAD_JSON;
-
-            auto root_arr = cJSON_GetArrayItem(root, 0);
-            if(!root_arr) 
+            if(!save_address(full_address, resp.body))
             {
-                cJSON_Delete(root);
                 return api::error::BAD_JSON;
             }
-
-            auto coordinates = cJSON_GetObjectItem(root_arr, "coordinates");
-            api::coords.latitude = cJSON_GetObjectItem(coordinates, "latitude")->valuedouble;
-            api::coords.longitude  = cJSON_GetObjectItem(coordinates, "longitude")->valuedouble;
-
-            api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 6);
-
-            cJSON_Delete(root);
-
             return api::error::NONE;
         }
     }
@@ -257,6 +283,21 @@ api::error api::geocode_request(char* address, char* city, char* state, char* zi
 
 api::error api::restaurants_request()
 {
+    /*
+    https://api-gtm.grubhub.com/restaurants/search/search_listing?
+    orderMethod=delivery
+    &locationMode=DELIVERY
+    &facetSet=umamiV6
+    &pageSize=0
+    &hideHateos=true
+    &searchMetrics=true
+    &location=POINT({lat} {lng})
+    &preciseLocation=true
+    &geohash={geohash}
+    &sortSetId=umamiv3
+    &countOmittingTimes=true
+    */
+
 
 }
 
@@ -278,4 +319,14 @@ api::img_data api::download_image(const std::string& url)
     }
 
     return img;
+}
+
+bool api::is_address_complete()
+{
+    return !strcmp(api::address, "") && !strcmp(api::city, "") && !strcmp(api::state, "") && !strcmp(api::zip, "") && api::geohash != "";
+}
+
+std::string api::get_full_address()
+{
+    return format::va("%s, %s, %s %s", api::address, api::city, api::state, api::zip);
 }
