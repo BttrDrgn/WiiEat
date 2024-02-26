@@ -343,7 +343,7 @@ void GuiFileBrowser::Update(gui_trigger * t)
 				if(fileList[i]->get_state() == STATE_DISABLED)
 					fileList[i]->set_state(STATE_DEFAULT);
 
-				fileList[i]->SetVisible(true);
+				fileList[i]->set_visible(true);
 
 				fileListText[i]->set_text(browserList[browser.pageIndex+i].displayname);
 
@@ -360,7 +360,7 @@ void GuiFileBrowser::Update(gui_trigger * t)
 			}
 			else
 			{
-				fileList[i]->SetVisible(false);
+				fileList[i]->set_visible(false);
 				fileList[i]->set_state(STATE_DISABLED);
 			}
 		}

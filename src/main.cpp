@@ -31,7 +31,21 @@ int main(int argc, char *argv[])
 		auto refresh_token = fs::read_file("sd://WiiEat/refresh_token");
 		if(api::auth_request(refresh_token.c_str()))
 		{
-			menus::initialize(menus::state::MENU_RESTAURANT);
+			if(api::load_address())
+			{
+				if(api::is_address_complete())
+				{
+					menus::initialize(menus::state::MENU_RESTAURANT);
+				}
+				else
+				{
+					menus::initialize(menus::state::MENU_ADDRESS);
+				}
+			}
+			else
+			{
+				menus::initialize(menus::state::MENU_ADDRESS);
+			}
 		}
 		else
 		{

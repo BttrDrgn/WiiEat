@@ -63,6 +63,7 @@ class api
         static api::error geocode_request(char* address, char* city, char* state, char* zip);
         static bool is_address_complete();
         static std::string get_full_address();
+        static bool load_address();
 
         //restaurants
         static api::error restaurants_request();

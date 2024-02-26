@@ -22,6 +22,10 @@
 #include "legacyAlli_mash_up_ogg.h"
 
 // Images
+#include "left_button_png.h"
+#include "left_button_hover_png.h"
+#include "right_button_png.h"
+#include "right_button_hover_png.h"
 #include "address_button_png.h"
 #include "address_button_hover_png.h"
 #include "basket_button_png.h"

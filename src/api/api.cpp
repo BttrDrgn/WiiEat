@@ -34,7 +34,6 @@ bool api::request_access(char* endpoint, const std::string& url, const std::stri
         { "Accept", "*/*"},
         { "Access-Control-Request-Headers", access_control[endpoint]},
         { "Access-Control-Request-Method", method.c_str()},
-        { "Cache-Control", "max-age=0"},
     };
 
     auto resp = net::http_request(url, "OPTIONS", headers);
@@ -84,21 +83,33 @@ bool save_address(const std::string& full_address, const std::string& json)
     fs::write_file("sd://WiiEat/address", full_address);
 
     auto root = cJSON_Parse(json.c_str());
-    if(!root) return false;
+    if(!root) 
+    {
+        console_menu::write_line("unable to parse geocode json");
+        return false;
+    }
 
     auto root_arr = cJSON_GetArrayItem(root, 0);
     if(!root_arr) 
     {
+        console_menu::write_line("unable find first element in root array");
         cJSON_Delete(root);
         return false;
     }
 
-    auto coordinates = cJSON_GetObjectItem(root_arr, "coordinates");
-    api::coords.latitude = cJSON_GetObjectItem(coordinates, "latitude")->valuedouble;
-    api::coords.longitude  = cJSON_GetObjectItem(coordinates, "longitude")->valuedouble;
-    api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 6);
+    auto temp_lat = cJSON_GetObjectItem(root_arr, "latitude")->valuestring;
+    auto temp_lng = cJSON_GetObjectItem(root_arr, "longitude")->valuestring;
+
+    if(!format::check_is_double(temp_lat, api::coords.latitude) || !format::check_is_double(temp_lng, api::coords.longitude))
+    {
+        console_menu::write_line("failed to parse coordinates");
+        cJSON_Delete(root);
+        return false;
+    }
 
     fs::write_file("sd://WiiEat/coordinates", format::va("%f %f", api::coords.latitude, api::coords.longitude));
+
+    api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 6);
     fs::write_file("sd://WiiEat/geohash", api::geohash);
 
     cJSON_Delete(root);
@@ -261,10 +272,12 @@ api::error api::geocode_request(char* address, char* city, char* state, char* zi
 
     if(api::request_access(endpoint, url, "GET"))
     {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
         std::vector<net::header> headers = 
         {
             { "Accept", "application/json"},
-            { "Authorization", format::va("Bearer %s", api::access_token.c_str()).c_str() },
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
         };
 
         auto resp = net::http_request(url, "GET", headers);
@@ -323,10 +336,75 @@ api::img_data api::download_image(const std::string& url)
 
 bool api::is_address_complete()
 {
-    return !strcmp(api::address, "") && !strcmp(api::city, "") && !strcmp(api::state, "") && !strcmp(api::zip, "") && api::geohash != "";
+    return  (strlen(address) > 0 && strlen(city) > 0 && strlen(state) > 0 && strlen(zip) > 0 && api::geohash != "");
 }
 
 std::string api::get_full_address()
 {
     return format::va("%s, %s, %s %s", api::address, api::city, api::state, api::zip);
+}
+
+bool api::load_address()
+{
+    if(!fs::file_exists("sd://WiiEat/address")) 
+    {
+        console_menu::write_line("could not find sd://WiiEat/address");
+        return false;
+    }
+
+    auto split_address = format::split(fs::read_file("sd://WiiEat/address"), ",");
+    if(split_address.size() != 3)
+    {
+        console_menu::write_line("split_address != 3");
+        fs::delete_file("sd://WiiEat/address");
+        return false;
+    }
+
+    auto state_zip = format::split(split_address[2], " ");
+    //Remove first space
+    //ex: " , XX, 11111" -> "XX, 11111"
+    state_zip.erase(state_zip.begin());
+    if(state_zip.size() != 2)
+    {
+        console_menu::write_line("state_zip != 2");
+        fs::delete_file("sd://WiiEat/address");
+        return false;
+    }
+
+    split_address[0].copy(api::address, ADDRESS_LEN);
+    split_address[1].erase(0, 1).copy(api::city, CITY_LEN); //Removes first space between address,[]city
+    state_zip[0].copy(api::state, STATE_LEN);
+    state_zip[1].copy(api::zip, ZIP_LEN);
+
+    if(!fs::file_exists("sd://WiiEat/geohash")) 
+    {
+        console_menu::write_line("could not find sd://WiiEat/geohash");
+        return false;
+    }
+    api::geohash = fs::read_file("sd://WiiEat/geohash");
+
+    if(!fs::file_exists("sd://WiiEat/coordinates")) 
+    {
+        console_menu::write_line("sd://WiiEat/coordinates");
+        return false;
+    }
+
+    auto split_coords = format::split(fs::read_file("sd://WiiEat/coordinates"), " ");
+    if(split_coords.size() != 2)
+    {
+        console_menu::write_line("split_coords != 2");
+        fs::delete_file("sd://WiiEat/coordinates");
+        return false;
+    }
+
+    if( !format::check_is_double(split_coords[0], api::coords.latitude) ||
+        !format::check_is_double(split_coords[1], api::coords.longitude)
+    )
+    {
+        console_menu::write_line("split_coords != 2");
+        fs::delete_file("sd://WiiEat/coordinates");
+        return false;
+    }
+
+    return true;
 }

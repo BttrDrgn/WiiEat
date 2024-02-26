@@ -83,19 +83,18 @@ net::response net::http_request(std::string url, const std::string& method,
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &(response.headers));
 
+    curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
+
     if(method == "POST")
     {
         headers.emplace_back("Content-Type", "application/json");
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data.c_str());
     }
 
-    headers.emplace_back("Accept-Encoding", "gzip, deflate, br, zstd");
+    headers.emplace_back("Accept-Encoding", "gzip, deflate, br");
     headers.emplace_back("Accept-Language", "en-US,en;q=0.9");
     headers.emplace_back("Origin", "https://www.grubhub.com");
     headers.emplace_back("Referer", "https://www.grubhub.com/");
-    headers.emplace_back("Sec-Ch-Ua", "\"Not A(Brand\";v=\"99\", \"Google Chrome\";v=\"121\", \"Chromium\";v=\"121\"");
-    headers.emplace_back("Sec-Ch-Ua-Mobile", "?0" );
-    headers.emplace_back("Sec-Ch-Ua-Platform", "\"Windows\"" );
     headers.emplace_back("Sec-Fetch-Dest", "empty");
     headers.emplace_back("Sec-Fetch-Mode", "cors");
     headers.emplace_back("Sec-Fetch-Site", "same-site");
@@ -113,6 +112,10 @@ net::response net::http_request(std::string url, const std::string& method,
     if (res == CURLE_OK)
     {
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &(response.status_code));
+    }
+    else
+    {
+        console_menu::write_line(format::va("Net Err: %s", curl_easy_strerror(res)));
     }
 
     console_menu::write_line(format::va("[%s] %i %s", method.c_str(), response.status_code, url.c_str()));

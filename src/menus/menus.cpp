@@ -371,7 +371,7 @@ int menus::window_prompt(const char *title, const char *msg, const char *btn1Lab
 		prompt_window.append(&btn2);
 	}
 
-	prompt_window.set_effect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
+	prompt_window.set_effect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 35);
 	menus::halt_gui();
 	menus::main_window->set_state(STATE_DISABLED);
 	menus::main_window->append(&prompt_window);
@@ -392,7 +392,7 @@ int menus::window_prompt(const char *title, const char *msg, const char *btn1Lab
 		}
 	}
 
-	prompt_window.set_effect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+	prompt_window.set_effect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 35);
 	while(prompt_window.get_effect() > 0) usleep(100);
 	menus::halt_gui();
 	menus::main_window->remove(&prompt_window);

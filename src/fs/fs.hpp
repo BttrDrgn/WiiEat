@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sys/stat.h>
 #include <format/format.hpp>
+#include <stdio.h>
 #define MAXPATH 256
 
 class fs
@@ -120,6 +121,11 @@ class fs
             }
 
             return false;
+        }
+
+        static bool delete_file(const std::string& path)
+        {
+            return !std::remove(path.c_str());
         }
 };
 

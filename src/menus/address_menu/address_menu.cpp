@@ -192,9 +192,10 @@ menus::state address_menu::update()
 		else if(save_btn.get_state() == STATE_CLICKED)
 		{
 			auto err = api::geocode_request(api::address, api::city, api::state, api::zip);
-			if(err != api::error::NONE)
+
+			if(err == api::error::NONE)
 			{
-				menu = menus::state::MENU_RESTAURANT;
+				menu = menus::next(menus::state::MENU_RESTAURANT);
 
 				w.set_effect(EFFECT_FADE, -25);
 				while(w.get_effect() > 0) usleep(100);
@@ -203,6 +204,8 @@ menus::state address_menu::update()
 			{
 
 			}
+
+			save_btn.reset_state();
 		}
 	}
 

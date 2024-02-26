@@ -64,6 +64,8 @@ menus::state home_menu::update()
 	menus::main_window->change_focus(&home);
 	menus::resume_gui();
 
+	menus::current_song->Pause();
+
 	while(menu == menus::state::MENU_NONE)
 	{
 		usleep(100);
@@ -106,5 +108,8 @@ menus::state home_menu::update()
 	menus::main_window->remove(&home);
 	menus::main_window->set_state(STATE_DEFAULT);
 	menus::resume_gui();
+
+	if(menu != menus::state::MENU_EXIT) menus::current_song->Resume();
+
 	return menu;
 }

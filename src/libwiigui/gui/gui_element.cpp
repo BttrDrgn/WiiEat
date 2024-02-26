@@ -196,7 +196,7 @@ bool gui_element::is_visible()
 	return visible;
 }
 
-void gui_element::SetVisible(bool v)
+void gui_element::set_visible(bool v)
 {
 	visible = v;
 }

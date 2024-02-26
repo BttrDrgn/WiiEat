@@ -149,14 +149,14 @@ void gui_window::set_state(int s)
 	}
 }
 
-void gui_window::SetVisible(bool v)
+void gui_window::set_visible(bool v)
 {
 	visible = v;
 
 	u32 elemSize = _elements.size();
 	for (u32 i = 0; i < elemSize; ++i)
 	{
-		try { _elements.at(i)->SetVisible(v); }
+		try { _elements.at(i)->set_visible(v); }
 		catch (const std::exception& e) { }
 	}
 }

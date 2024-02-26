@@ -2,6 +2,7 @@
 #define _FORMAT_H_
 
 #include <string>
+#include <vector>
 #include <cstdarg>
 #include <cstring>
 
@@ -61,6 +62,35 @@ class format
 
             // Return the modified string
             return original_str;
+        }
+
+        static std::vector<std::string> split(const std::string& s, const std::string& seperator)
+        {
+            std::vector<std::string> output;
+
+            std::string::size_type prev_pos = 0, pos = 0;
+
+            while ((pos = s.find(seperator, pos)) != std::string::npos)
+            {
+                std::string substring(s.substr(prev_pos, pos - prev_pos));
+
+                output.push_back(substring);
+
+                prev_pos = ++pos;
+            }
+
+            output.push_back(s.substr(prev_pos, pos - prev_pos)); // Last word
+
+            return output;
+        }
+
+        //https://stackoverflow.com/a/39813237
+        static bool check_is_double(const std::string& in_str, double &result)
+        {
+            char* end;
+            result = strtod(in_str.c_str(), &end);
+            if (end == in_str.c_str() || *end != '\0') return false;
+            return true;
         }
 };
 

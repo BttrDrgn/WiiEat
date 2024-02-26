@@ -393,7 +393,7 @@ class gui_element
 		int IsFocused();
 		//!Sets the element's visibility
 		//!\param v Visibility (true = visible)
-		virtual void SetVisible(bool v);
+		virtual void set_visible(bool v);
 		//!Sets the element's focus
 		//!\param f Focus (true = in focus)
 		virtual void SetFocus(int f);
@@ -493,7 +493,7 @@ class gui_window : public gui_element
 		u32 get_size();
 		//!Sets the visibility of the window
 		//!\param v visibility (true = visible)
-		void SetVisible(bool v);
+		void set_visible(bool v);
 		//!Resets the window's state to STATE_DEFAULT
 		void reset_state();
 		//!Sets the window's state

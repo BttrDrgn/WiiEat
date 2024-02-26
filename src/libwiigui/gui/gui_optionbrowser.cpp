@@ -278,7 +278,7 @@ void GuiOptionBrowser::Update(gui_trigger * t)
 			{
 				if(optionBtn[i]->get_state() == STATE_DISABLED)
 				{
-					optionBtn[i]->SetVisible(true);
+					optionBtn[i]->set_visible(true);
 					optionBtn[i]->set_state(STATE_DEFAULT);
 				}
 
@@ -289,7 +289,7 @@ void GuiOptionBrowser::Update(gui_trigger * t)
 			}
 			else
 			{
-				optionBtn[i]->SetVisible(false);
+				optionBtn[i]->set_visible(false);
 				optionBtn[i]->set_state(STATE_DISABLED);
 			}
 		}
