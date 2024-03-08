@@ -12,12 +12,13 @@ void update_buttons()
 	updating = true;
 	int i = 0;
 	int col = 0;
-	constexpr int anim_speed = 75;
+	constexpr int anim_speed = 15;
 
 	for(i = 0; i < 10; ++i)
 	{
-		if(col == 0) buttons[i]->set_effect(EFFECT_SLIDE_OUT | EFFECT_SLIDE_LEFT, anim_speed);
-		else if(col == 1) buttons[i]->set_effect(EFFECT_SLIDE_OUT | EFFECT_SLIDE_RIGHT, anim_speed);
+		// if(col == 0) buttons[i]->set_effect(EFFECT_SLIDE_OUT | EFFECT_SLIDE_LEFT, anim_speed);
+		// else if(col == 1) buttons[i]->set_effect(EFFECT_SLIDE_OUT | EFFECT_SLIDE_RIGHT, anim_speed);
+		buttons[i]->set_effect(EFFECT_FADE, anim_speed);
 
 		int index = i + (10 * current_page);
 		if(index + 1 > restaurants.size()) break;
@@ -27,10 +28,7 @@ void update_buttons()
 		auto text = new gui_text(restaurants[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 
-		while(buttons[i]->get_effect() > 0) usleep(10);
-		if(col == 0) buttons[i]->set_effect(EFFECT_SLIDE_IN | EFFECT_SLIDE_LEFT, anim_speed);
-		else if(col == 1) buttons[i]->set_effect(EFFECT_SLIDE_IN | EFFECT_SLIDE_RIGHT, anim_speed);
-
+		buttons[i]->set_effect(EFFECT_FADE, anim_speed);
 		buttons[i]->set_label(text);
 
 		if(i == 4)
@@ -85,6 +83,7 @@ menus::state restaurant_menu::update()
 
 	if(restaurants.size() == 0)
 	{
+		api::restaurants_request();
 		restaurants.emplace_back(new restaurant("McDonald's", ""));
 		restaurants.emplace_back(new restaurant("Subway", ""));
 		restaurants.emplace_back(new restaurant("Burger King", ""));
@@ -267,6 +266,17 @@ menus::state restaurant_menu::update()
 	{
 		usleep(100);
 		if(updating) continue;
+
+		for(int i = 0; i < buttons.size(); ++i)
+		{
+			if(buttons[i]->get_state() == STATE_CLICKED)
+			{
+				int index = i + (10 * current_page);
+				console_menu::write_line(restaurants[index]->id);
+				buttons[i]->reset_state();
+				break;
+			}
+		}
 
 		if(home_btn.get_state() == STATE_CLICKED)
 		{

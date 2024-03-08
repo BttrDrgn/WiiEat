@@ -18,6 +18,7 @@ std::unordered_map<char*, char*> api::endpoints =
     { "auth", "https://api-gtm.grubhub.com/auth" },
     { "confirmation_code", "https://api-gtm.grubhub.com/auth/confirmation_code" },
     { "geocode", "https://api-gtm.grubhub.com/geocode" },
+    { "restaurants", "https://api-gtm.grubhub.com/restaurants/search" },
 };
 
 std::unordered_map<char*, char*> access_control =
@@ -25,6 +26,7 @@ std::unordered_map<char*, char*> access_control =
     { "auth", "authorization,content-type" },
     { "confirmation_code", "" },
     { "geocode", "authorization,cache-control,if-modified-since" },
+    { "restaurants", "authorization,cache-control,if-modified-since" },
 };
 
 bool api::request_access(char* endpoint, const std::string& url, const std::string& method)
@@ -297,21 +299,53 @@ api::error api::geocode_request(char* address, char* city, char* state, char* zi
 api::error api::restaurants_request()
 {
     /*
-    https://api-gtm.grubhub.com/restaurants/search/search_listing?
-    orderMethod=delivery
+    https://api-gtm.grubhub.com/restaurants/search
+    ?orderMethod=delivery
     &locationMode=DELIVERY
     &facetSet=umamiV6
-    &pageSize=0
+    &pageSize=36
     &hideHateos=true
     &searchMetrics=true
-    &location=POINT({lat} {lng})
+    &location=POINT(lng lat)
     &preciseLocation=true
-    &geohash={geohash}
+    &geohash=djfn99ju3dej
+    &includeOffers=true
     &sortSetId=umamiv3
+    &sponsoredSize=3
     &countOmittingTimes=true
+    &tab=all
     */
+   //
 
+   //yes lat lng is reversed
+    char* endpoint = "restaurants";
+    auto url = format::va("%s?orderMethod=delivery&locationMode=DELIVERY&facetSet=umamiV6&pageSize=36&hideHateos=true&searchMetrics=true&location=POINT(%f %f)&preciseLocation=true&geohash=%s&includeOffers=true&sortSetId=umamiv3&sponsoredSize=3&countOmittingTimes=true&tab=all",
+        api::endpoints[endpoint],
+        api::coords.longitude, api::coords.latitude,
+        api::geohash.c_str()
+    );
 
+    console_menu::write_line(url);
+
+    if(api::request_access(endpoint, url, "GET"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "GET", headers);
+        if(resp.status_code == 200)
+        {
+            console_menu::write_line("Search accepted");
+            return api::error::NONE;
+        }
+    }
+   
+   return api::error::UNKNOWN;
 }
 
 api::img_data api::download_image(const std::string& url)

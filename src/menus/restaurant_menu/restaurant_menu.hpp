@@ -13,6 +13,7 @@ class restaurant
         restaurant(const std::string& name, const std::string& id)
         {
             this->name = name;
+            this->id = id;
         }
 };
 

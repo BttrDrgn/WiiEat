@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 	init_free_type((u8*)font_ttf, font_ttf_size); // Initialize font system
 	net::initialize();
 
+	//Streamline this better
 	if(fs::file_exists("sd://WiiEat/refresh_token"))
 	{
 		auto refresh_token = fs::read_file("sd://WiiEat/refresh_token");
