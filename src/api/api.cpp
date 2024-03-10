@@ -1,4 +1,5 @@
 #include "api.hpp"
+#include "restaurant.hpp"
 #include <main.hpp>
 #include <geohash/geohash.h>
 
@@ -19,6 +20,7 @@ std::unordered_map<char*, char*> api::endpoints =
     { "confirmation_code", "https://api-gtm.grubhub.com/auth/confirmation_code" },
     { "geocode", "https://api-gtm.grubhub.com/geocode" },
     { "restaurants", "https://api-gtm.grubhub.com/restaurants/search" },
+    { "info", "https://api-gtm.grubhub.com/restaurant_gateway/info/nonvolatile" },
 };
 
 std::unordered_map<char*, char*> access_control =
@@ -257,19 +259,19 @@ api::error api::confirmation_code_request(char* email)
         resp = net::http_request(api::endpoints[endpoint], "POST", headers, json.dump());
 
         if (resp.status_code == 200)
-{
-    try
-    {
-        auto json = nlohmann::json::parse(resp.body);
-        api::csrf_token = json["csrf_token"].get<std::string>();
-        return api::error::NONE;
-    }
-    catch (const std::exception& e)
-    {
-        // Handle parsing error
-        return api::error::BAD_JSON;
-    }
-}
+        {
+            try
+            {
+                auto json = nlohmann::json::parse(resp.body);
+                api::csrf_token = json["csrf_token"].get<std::string>();
+                return api::error::NONE;
+            }
+            catch (const std::exception& e)
+            {
+                // Handle parsing error
+                return api::error::BAD_JSON;
+            }
+        }
     }
     
     return api::error::UNKNOWN;
@@ -306,7 +308,7 @@ api::error api::geocode_request(char* address, char* city, char* state, char* zi
     return api::error::UNKNOWN;
 }
 
-api::error api::restaurants_request()
+api::error api::restaurants_request(std::vector<restaurant*>& restaurants)
 {
     /*
     https://api-gtm.grubhub.com/restaurants/search
@@ -348,11 +350,76 @@ api::error api::restaurants_request()
         auto resp = net::http_request(url, "GET", headers);
         if(resp.status_code == 200)
         {
+            try
+            {
+                auto json = nlohmann::json::parse(resp.body);
+                auto results = json["search_result"]["results"];
+                for(int i = 0; i < results.size(); ++i)
+                {
+                    auto r = results[i];
+                    restaurants.emplace_back(new restaurant(r["brand_name"].get<std::string>(), r["restaurant_id"]));
+                }
+            }
+            catch (const std::exception& e)
+            {
+                // Handle parsing error
+                return api::error::BAD_JSON;
+            }
+
             return api::error::NONE;
         }
     }
    
    return api::error::UNKNOWN;
+}
+
+api::error api::restaurant_info_request(const std::string& id)
+{
+    /*
+    https://api-gtm.grubhub.com/restaurant_gateway/info/nonvolatile/{id}
+    ?orderType=STANDARD
+    &platform=WEB
+    &enhancedFeed=true
+    &location=POINT(lng lat)
+    */
+
+    char* endpoint = "info";
+    auto url = format::va("%s/%s?orderType=STANDARD&platform=WEB&enhancedFeed=true&location=POINT(%f %f)", api::endpoints[endpoint], id.c_str(), api::coords.longitude, api::coords.latitude);
+
+    if(api::request_access(endpoint, url, "GET"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "GET", headers);
+        if(resp.status_code == 200)
+        {
+            try
+            {
+                auto json = nlohmann::json::parse(resp.body);
+                auto categories = json["object"]["data"]["enhanced_feed"];
+                for(int c = 0; c < categories.size(); ++c)
+                {
+                    auto category = categories[c];
+                    console_menu::write_line(category["name"].get<std::string>());
+                }
+            }
+            catch (const std::exception& e)
+            {
+                // Handle parsing error
+                return api::error::BAD_JSON;
+            }
+
+            return api::error::NONE;
+        }
+    }
+
+    return api::error::UNKNOWN;
 }
 
 api::img_data api::download_image(const std::string& url)

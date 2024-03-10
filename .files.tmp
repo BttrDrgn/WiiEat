@@ -12,6 +12,7 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\nlohmann
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\restaurant.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth_code.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth_refresh.hpp
@@ -132,6 +133,7 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\scrollbar_bo
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\logo\wiieat_logo.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\music\legacyAlli_mash_up.ogg
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\music\license.txt
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds\button_click.mp3
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds\button_click.pcm
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\sounds\button_over.pcm
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\wad\banner.png

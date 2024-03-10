@@ -2,25 +2,14 @@
 #define RESTAURANT_MENU
 
 #include <menus/menus.hpp>
+#include <api/restaurant.hpp>
 #include <main.hpp>
-
-class restaurant
-{
-    public:
-        std::string name;
-        std::string id;
-
-        restaurant(const std::string& name, const std::string& id)
-        {
-            this->name = name;
-            this->id = id;
-        }
-};
 
 class restaurant_menu
 {
     public:
         static menus::state update();
+        static std::vector<restaurant*> restaurants;
 };
 
 #endif /* RESTAURANT_MENU */

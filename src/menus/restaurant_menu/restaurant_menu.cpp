@@ -1,6 +1,6 @@
 #include "restaurant_menu.hpp"
 
-std::vector<restaurant*> restaurants;
+std::vector<restaurant*> restaurant_menu::restaurants;
 std::vector<gui_button*> buttons;
 
 int current_page = 0;
@@ -21,11 +21,11 @@ void update_buttons()
 		buttons[i]->set_effect(EFFECT_FADE, anim_speed);
 
 		int index = i + (10 * current_page);
-		if(index + 1 > restaurants.size()) break;
+		if(index + 1 > restaurant_menu::restaurants.size()) break;
 
 		if(!buttons[i]->is_visible()) buttons[i]->set_visible(true);
 
-		auto text = new gui_text(restaurants[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(restaurant_menu::restaurants[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 
 		buttons[i]->set_effect(EFFECT_FADE, anim_speed);
@@ -50,6 +50,8 @@ void update_buttons()
 
 void next_page()
 {
+	if(max_page <= 1) return;
+
 	++current_page;
 	if(current_page > max_page - 1)
 	{
@@ -61,6 +63,8 @@ void next_page()
 
 void prev_page()
 {
+	if(max_page <= 1) return;
+
 	--current_page;
 	if(current_page < 0)
 	{
@@ -81,32 +85,12 @@ menus::state restaurant_menu::update()
 		return menu; 
 	}
 
-	if(restaurants.size() == 0)
+	if(restaurant_menu::restaurants.size() == 0)
 	{
-		api::restaurants_request();
-		restaurants.emplace_back(new restaurant("McDonald's", ""));
-		restaurants.emplace_back(new restaurant("Subway", ""));
-		restaurants.emplace_back(new restaurant("Burger King", ""));
-		restaurants.emplace_back(new restaurant("Wendy's", ""));
-		restaurants.emplace_back(new restaurant("KFC", ""));
-		restaurants.emplace_back(new restaurant("Taco Bell", ""));
-		restaurants.emplace_back(new restaurant("Pizza Hut", ""));
-		restaurants.emplace_back(new restaurant("Domino's Pizza", ""));
-		restaurants.emplace_back(new restaurant("Dunkin'", ""));
-		restaurants.emplace_back(new restaurant("Starbucks", ""));
-		restaurants.emplace_back(new restaurant("Chipotle Mexican Grill", ""));
-		restaurants.emplace_back(new restaurant("Papa John's", ""));
-		restaurants.emplace_back(new restaurant("Five Guys", ""));
-		restaurants.emplace_back(new restaurant("Panera Bread", ""));
-		restaurants.emplace_back(new restaurant("Chick-fil-A", ""));
-		restaurants.emplace_back(new restaurant("Popeyes Louisiana Kitchen", ""));
-		restaurants.emplace_back(new restaurant("Arby's", ""));
-		restaurants.emplace_back(new restaurant("Jimmy John's", ""));
-		restaurants.emplace_back(new restaurant("In-N-Out Burger", ""));
-		restaurants.emplace_back(new restaurant("Sonic Drive-In", ""));
+		api::restaurants_request(restaurant_menu::restaurants);
 	}
 
-	max_page = (int)floor(restaurants.size() / 10.f);
+	max_page = (int)floor(restaurant_menu::restaurants.size() / 10.f);
 
 	gui_window w(screen_width, screen_height);
 
@@ -121,7 +105,13 @@ menus::state restaurant_menu::update()
 	gui_image_data btn_small_hover(button_small_hover_png);
 
 	gui_trigger trig_a;
-	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, 0);
+
+	gui_trigger trig_minus;
+	trig_minus.set_simple_trigger(-1, WPAD_BUTTON_MINUS, 0);
+
+	gui_trigger trig_plus;
+	trig_plus.set_simple_trigger(-1, WPAD_BUTTON_PLUS, 0);
 
 	gui_image_data logoImage(wiieat_logo_png);
 	gui_image logo(&logoImage);
@@ -142,6 +132,7 @@ menus::state restaurant_menu::update()
 	address_btn.set_sound_hover(&btn_sound_hover);
 	address_btn.set_trigger(&trig_a);
 	address_btn.set_scale(0.75f);
+	address_btn.set_effect_grow();
 	w.append(&address_btn);
 
 	gui_image_data basket_btn_img_data(basket_button_png);
@@ -156,6 +147,7 @@ menus::state restaurant_menu::update()
 	basket_btn.set_sound_hover(&btn_sound_hover);
 	basket_btn.set_trigger(&trig_a);
 	basket_btn.set_scale(0.75f);
+	basket_btn.set_effect_grow();
 	w.append(&basket_btn);
 
 	gui_image_data left_btn_img_data(left_button_png);
@@ -170,7 +162,8 @@ menus::state restaurant_menu::update()
 	left_btn.set_sound_hover(&btn_sound_hover);
 	left_btn.set_trigger(&trig_a);
 	left_btn.set_scale(0.75f);
-	w.append(&left_btn);
+	left_btn.set_effect_grow();
+	if(max_page > 1) w.append(&left_btn);
 
 	gui_image_data right_btn_img_data(right_button_png);
 	gui_image_data right_btn_hover_img_data(right_button_hover_png);
@@ -184,7 +177,8 @@ menus::state restaurant_menu::update()
 	right_btn.set_sound_hover(&btn_sound_hover);
 	right_btn.set_trigger(&trig_a);
 	right_btn.set_scale(0.75f);
-	w.append(&right_btn);
+	right_btn.set_effect_grow();
+	if(max_page > 1) w.append(&right_btn);
 
 	gui_image_data exit_btn_img_data(exit_button_png);
 	gui_image_data exit_btn_hover_img_data(exit_button_hover_png);
@@ -198,6 +192,7 @@ menus::state restaurant_menu::update()
 	exit_btn.set_sound_hover(&btn_sound_hover);
 	exit_btn.set_trigger(&trig_a);
 	exit_btn.set_scale(0.75f);
+	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
 
 	gui_trigger trig_home;
@@ -231,6 +226,8 @@ menus::state restaurant_menu::update()
 		new_btn->set_image_hover(new_img_hover);
 		new_btn->set_sound_hover(&btn_sound_hover);
 		new_btn->set_trigger(&trig_a);
+		new_btn->set_visible(false);
+		new_btn->set_effect_grow();
 
 		buttons.emplace_back(new_btn);
 		w.append(buttons[i]);
@@ -247,10 +244,11 @@ menus::state restaurant_menu::update()
 	for(int i = 0; i < 10; ++i)
 	{
 		int index = i + (10 * current_page);
-		if(index + 1 > restaurants.size()) break;
-		auto text = new gui_text(restaurants[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		if(index + 1 > restaurant_menu::restaurants.size()) break;
+		auto text = new gui_text(restaurant_menu::restaurants[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 		buttons[i]->set_label(text);
+		buttons[i]->set_visible(true);
 	}
 
 	w.set_effect(EFFECT_FADE, 25);
@@ -272,7 +270,8 @@ menus::state restaurant_menu::update()
 			if(buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
-				console_menu::write_line(restaurants[index]->id);
+				console_menu::write_line(restaurant_menu::restaurants[index]->id);
+				api::restaurant_info_request(restaurant_menu::restaurants[index]->id);
 				buttons[i]->reset_state();
 				break;
 			}
@@ -290,12 +289,12 @@ menus::state restaurant_menu::update()
 			w.set_effect(EFFECT_FADE, -25);
 			while(w.get_effect() > 0) usleep(100);
 		}
-		else if(left_btn.get_state() == STATE_CLICKED)
+		else if(max_page <= 1 && left_btn.get_state() == STATE_CLICKED)
 		{
 			prev_page();
 			left_btn.reset_state();
 		}
-		else if(right_btn.get_state() == STATE_CLICKED)
+		else if(max_page <= 1 && right_btn.get_state() == STATE_CLICKED)
 		{
 			next_page();
 			right_btn.reset_state();

@@ -60,6 +60,7 @@ menus::state main_menu::update()
 	exit_btn.set_sound_hover(&btn_sound_hover);
 	exit_btn.set_trigger(&trig_a);
 	exit_btn.set_scale(0.75f);
+	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
 
 	gui_text login_btnText("Login", 22, (GXColor){0, 0, 0, 255});
@@ -136,6 +137,7 @@ menus::state main_menu::update()
 	console_btn.set_sound_hover(&btn_sound_hover);
 	console_btn.set_trigger(&trig_a);
 	console_btn.set_scale(0.75f);
+	console_btn.set_effect_grow();
 	w.append(&console_btn);
 #endif
 

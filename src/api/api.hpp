@@ -1,6 +1,8 @@
 #ifndef API
 #define API
 
+#include <vector>
+#include <menus/restaurant_menu/restaurant_menu.hpp>
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 #include <net/net.hpp>
@@ -68,7 +70,8 @@ class api
         static bool load_address();
 
         //restaurants
-        static api::error restaurants_request();
+        static api::error restaurants_request(std::vector<restaurant*>& restaurants);
+        static api::error restaurant_info_request(const std::string& id);
 
         //download
         static img_data download_image(const std::string& url);
