@@ -209,7 +209,9 @@ void gui_button::Update(gui_trigger * t)
 		return;
 	else if(parentElement && parentElement->get_state() == STATE_DISABLED)
 		return;
-
+	else if(!this->is_visible())
+		return;
+		
 	#ifdef HW_RVL
 	// cursor
 	if(t->wpad->ir.valid && t->chan >= 0)
