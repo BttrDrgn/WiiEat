@@ -2,13 +2,15 @@
 #define API
 
 #include <unordered_map>
-#include <cjson/cJSON.h>
+#include <nlohmann/json.hpp>
 #include <net/net.hpp>
 #include <api/auth/auth.hpp>
 #include <api/auth/auth_refresh.hpp>
 #include <api/auth/auth_code.hpp>
 #include <api/auth/confirmation_code/confirmation_code.hpp>
 #include <api/auth/confirmation_code/confirmation_code_resp.hpp>
+
+using json = nlohmann::json;
 
 #define ADDRESS_LEN 50
 #define CITY_LEN 50

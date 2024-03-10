@@ -44,86 +44,94 @@ bool api::request_access(char* endpoint, const std::string& url, const std::stri
 
 bool save_token(const std::string& json)
 {
-    cJSON* root = cJSON_Parse(json.c_str());
-    if(!root) return false;
-
-    auto session_handle = cJSON_GetObjectItem(root, "session_handle");
-
-    if(!session_handle)
+    try
     {
-        cJSON_Delete(root);
-        return false;
-    }
-    else
-    {
-        api::access_token = cJSON_GetObjectItem(session_handle, "access_token")->valuestring;
-        const char* refresh_token = cJSON_GetObjectItem(session_handle, "refresh_token")->valuestring;
-        if(refresh_token)
+        auto root = json::parse(json);
+
+        auto session_handle = root.find("session_handle");
+        if (session_handle == root.end())
         {
-            fs::write_file("sd://WiiEat/refresh_token", refresh_token);
+            return false;
         }
-
-        auto claims_arr = cJSON_GetObjectItem(root, "claims");
-        if (claims_arr || cJSON_IsArray(claims_arr))
+        else
         {
-            auto claim_obj = cJSON_GetArrayItem(claims_arr, 0);
-            api::ud_id = cJSON_GetObjectItem(claim_obj, "ud_id")->valuestring;
-            if(api::ud_id != "")
+            api::access_token = (*session_handle)["access_token"].get<std::string>();
+            auto refresh_token = (*session_handle).find("refresh_token");
+            if (refresh_token != session_handle->end())
             {
-                fs::write_file("sd://WiiEat/ud_id", api::ud_id);
+                fs::write_file("sd://WiiEat/refresh_token", refresh_token->get<std::string>());
+            }
+
+            auto claims_arr = root.find("claims");
+            if (claims_arr != root.end() && claims_arr->is_array() && !claims_arr->empty())
+            {
+                auto claim_obj = (*claims_arr)[0];
+                api::ud_id = claim_obj["ud_id"].get<std::string>();
+                if (!api::ud_id.empty())
+                {
+                    fs::write_file("sd://WiiEat/ud_id", api::ud_id);
+                }
             }
         }
+
+        return true;
     }
-
-    cJSON_Delete(root);
-
-    return true;
+    catch (const std::exception& e)
+    {
+        // Handle exception (e.g., JSON parsing error)
+        return false;
+    }
 }
 
 bool save_address(const std::string& full_address, const std::string& json)
 {
     fs::write_file("sd://WiiEat/address", full_address);
 
-    auto root = cJSON_Parse(json.c_str());
-    if(!root) 
+    try
     {
-        console_menu::write_line("unable to parse geocode json");
+        auto root = json::parse(json);
+
+        if (root.empty())
+        {
+            console_menu::write_line("unable to parse geocode json");
+            return false;
+        }
+
+        auto root_arr = root.at(0);
+        if (root_arr.empty())
+        {
+            console_menu::write_line("unable to find first element in root array");
+            return false;
+        }
+
+        auto temp_lat = root_arr["latitude"].get<std::string>();
+        auto temp_lng = root_arr["longitude"].get<std::string>();
+
+        if (!format::check_is_double(temp_lat, api::coords.latitude) || !format::check_is_double(temp_lng, api::coords.longitude))
+        {
+            console_menu::write_line("failed to parse coordinates");
+            return false;
+        }
+
+        fs::write_file("sd://WiiEat/coordinates", format::va("%f %f", api::coords.latitude, api::coords.longitude));
+
+        api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 6);
+        fs::write_file("sd://WiiEat/geohash", api::geohash);
+
+        return true;
+    }
+    catch (const std::exception& e)
+    {
+        // Handle exception (e.g., JSON parsing error)
+        console_menu::write_line(e.what());
         return false;
     }
-
-    auto root_arr = cJSON_GetArrayItem(root, 0);
-    if(!root_arr) 
-    {
-        console_menu::write_line("unable find first element in root array");
-        cJSON_Delete(root);
-        return false;
-    }
-
-    auto temp_lat = cJSON_GetObjectItem(root_arr, "latitude")->valuestring;
-    auto temp_lng = cJSON_GetObjectItem(root_arr, "longitude")->valuestring;
-
-    if(!format::check_is_double(temp_lat, api::coords.latitude) || !format::check_is_double(temp_lng, api::coords.longitude))
-    {
-        console_menu::write_line("failed to parse coordinates");
-        cJSON_Delete(root);
-        return false;
-    }
-
-    fs::write_file("sd://WiiEat/coordinates", format::va("%f %f", api::coords.latitude, api::coords.longitude));
-
-    api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 6);
-    fs::write_file("sd://WiiEat/geohash", api::geohash);
-
-    cJSON_Delete(root);
-
-    return true;
 }
 
 api::error api::auth_request(char* email, char* password)
 {
     auth auth_login(email, password);
-    cJSON* json = auth_login.serialize();
-    char* serialized = cJSON_Print(json);
+    auto json = auth_login.serialize();
     net::response resp;
 
     char* endpoint = "auth";
@@ -134,7 +142,7 @@ api::error api::auth_request(char* email, char* password)
             { "Accept", "*/*"},
         };
 
-        resp = net::http_request(api::endpoints[endpoint], "POST", headers, serialized);
+        resp = net::http_request(api::endpoints[endpoint], "POST", headers, json.dump());
 
         if(resp.status_code == 463)
         {
@@ -161,8 +169,7 @@ api::error api::auth_request(char* email, char* password)
 api::error api::auth_request(const char* refresh_token)
 {
     auth_refresh auth_login(refresh_token);
-    cJSON* json = auth_login.serialize();
-    char* serialized = cJSON_Print(json);
+    auto json = auth_login.serialize();
     net::response resp;
 
     char* endpoint = "auth";
@@ -173,7 +180,7 @@ api::error api::auth_request(const char* refresh_token)
             { "Accept", "*/*"},
         };
 
-        resp = net::http_request(api::endpoints[endpoint], "POST", headers, serialized);
+        resp = net::http_request(api::endpoints[endpoint], "POST", headers, json.dump());
 
         if(resp.status_code == 463)
         {
@@ -200,8 +207,7 @@ api::error api::auth_request(const char* refresh_token)
 api::error api::auth_code_request(char* email, char* code)
 {
     auth_code auth_login(code, api::csrf_token, email);
-    cJSON* json = auth_login.serialize();
-    char* serialized = cJSON_Print(json);
+    auto json = auth_login.serialize();
     net::response resp;
 
     char* endpoint = "auth";
@@ -212,7 +218,7 @@ api::error api::auth_code_request(char* email, char* code)
             { "Accept", "*/*"},
         };
 
-        resp = net::http_request(api::endpoints[endpoint], "POST", headers, serialized);
+        resp = net::http_request(api::endpoints[endpoint], "POST", headers, json.dump());
 
         if(resp.status_code == 200)
         {
@@ -235,8 +241,7 @@ api::error api::auth_code_request(char* email, char* code)
 api::error api::confirmation_code_request(char* email)
 {
     confirmation_code conf_code(email);
-    cJSON* json = conf_code.serialize();
-    char* serialized = cJSON_Print(json);
+    auto json = conf_code.serialize();
     net::response resp;
 
     char* endpoint = "confirmation_code";
@@ -249,17 +254,22 @@ api::error api::confirmation_code_request(char* email)
             { "Access-Control-Request-Method", "POST" },
         };
 
-        resp = net::http_request(api::endpoints[endpoint], "POST", headers, serialized);
+        resp = net::http_request(api::endpoints[endpoint], "POST", headers, json.dump());
 
-        if(resp.status_code == 200)
-        {
-            auto root = cJSON_Parse(resp.body.c_str());
-            if(!root) return api::error::UNKNOWN;
-
-            api::csrf_token = cJSON_GetObjectItem(root, "csrf_token")->valuestring;
-
-            return api::error::NONE;
-        }
+        if (resp.status_code == 200)
+{
+    try
+    {
+        auto json = nlohmann::json::parse(resp.body);
+        api::csrf_token = json["csrf_token"].get<std::string>();
+        return api::error::NONE;
+    }
+    catch (const std::exception& e)
+    {
+        // Handle parsing error
+        return api::error::BAD_JSON;
+    }
+}
     }
     
     return api::error::UNKNOWN;
@@ -325,8 +335,6 @@ api::error api::restaurants_request()
         api::geohash.c_str()
     );
 
-    console_menu::write_line(url);
-
     if(api::request_access(endpoint, url, "GET"))
     {
         auto bearer = format::va("Bearer %s", api::access_token.c_str());
@@ -340,7 +348,6 @@ api::error api::restaurants_request()
         auto resp = net::http_request(url, "GET", headers);
         if(resp.status_code == 200)
         {
-            console_menu::write_line("Search accepted");
             return api::error::NONE;
         }
     }

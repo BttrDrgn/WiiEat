@@ -1,6 +1,11 @@
 #ifndef CONFIRMATION_CODE_RESP
 #define CONFIRMATION_CODE_RESP
 
+#include <string>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 class confirmation_code_resp
 {
 public:
@@ -17,29 +22,25 @@ public:
         expiration_time(expiration_time)
     {}
 
-    cJSON* serialize() const
+    // Serialize method
+    json serialize() const
     {
-        cJSON* root = cJSON_CreateObject();
-        cJSON_AddStringToObject(root, "status", status.c_str());
-        cJSON_AddStringToObject(root, "crsf_token", crsf_token.c_str());
-        cJSON_AddNumberToObject(root, "code_length", code_length);
-        cJSON_AddNumberToObject(root, "expiration_time", expiration_time);
-        return root;
+        return {
+            {"status", status},
+            {"crsf_token", crsf_token},
+            {"code_length", code_length},
+            {"expiration_time", expiration_time}
+        };
     }
 
     // Static Deserialize method
-    static confirmation_code_resp deserialize(const cJSON* root)
+    static confirmation_code_resp deserialize(const json& root)
     {
-        if (!root)
-        {
-            // Handle error
-            throw std::runtime_error("Invalid JSON object");
-        }
-        const char* status = cJSON_GetObjectItem(root, "status")->valuestring;
-        const char* crsf_token = cJSON_GetObjectItem(root, "crsf_token")->valuestring;
-        int code_length = cJSON_GetObjectItem(root, "code_length")->valueint;
-        int expiration_time = cJSON_GetObjectItem(root, "expiration_time")->valueint;
-        return confirmation_code_resp{ status, crsf_token, code_length, expiration_time };
+        const std::string status = root.at("status").get<std::string>();
+        const std::string crsf_token = root.at("crsf_token").get<std::string>();
+        int code_length = root.at("code_length").get<int>();
+        int expiration_time = root.at("expiration_time").get<int>();
+        return confirmation_code_resp{status, crsf_token, code_length, expiration_time};
     }
 };
 
