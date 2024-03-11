@@ -18,6 +18,7 @@ class menus
             MENU_MAIN,
             MENU_ADDRESS,
             MENU_RESTAURANT,
+            MENU_STORE,
             MENU_CONSOLE,
         };
 

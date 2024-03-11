@@ -71,7 +71,7 @@ class api
 
         //restaurants
         static api::error restaurants_request(std::vector<restaurant*>& restaurants);
-        static api::error restaurant_info_request(const std::string& id);
+        static api::error restaurant_info_request(const std::string& id, json& json);
 
         //download
         static img_data download_image(const std::string& url);

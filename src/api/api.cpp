@@ -373,7 +373,7 @@ api::error api::restaurants_request(std::vector<restaurant*>& restaurants)
    return api::error::UNKNOWN;
 }
 
-api::error api::restaurant_info_request(const std::string& id)
+api::error api::restaurant_info_request(const std::string& id, json& json)
 {
     /*
     https://api-gtm.grubhub.com/restaurant_gateway/info/nonvolatile/{id}
@@ -401,13 +401,13 @@ api::error api::restaurant_info_request(const std::string& id)
         {
             try
             {
-                auto json = nlohmann::json::parse(resp.body);
-                auto categories = json["object"]["data"]["enhanced_feed"];
-                for(int c = 0; c < categories.size(); ++c)
-                {
-                    auto category = categories[c];
-                    console_menu::write_line(category["name"].get<std::string>());
-                }
+                json = nlohmann::json::parse(resp.body);
+                // auto categories = json["object"]["data"]["enhanced_feed"];
+                // for(int c = 4; c < categories.size(); ++c)
+                // {
+                //     auto category = categories[c];
+                //     console_menu::write_line(category["name"].get<std::string>());
+                // }
             }
             catch (const std::exception& e)
             {

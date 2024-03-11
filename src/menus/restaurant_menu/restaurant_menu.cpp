@@ -270,12 +270,16 @@ menus::state restaurant_menu::update()
 			if(buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
-				console_menu::write_line(restaurant_menu::restaurants[index]->id);
-				api::restaurant_info_request(restaurant_menu::restaurants[index]->id);
+				if(store_menu::load_store(restaurant_menu::restaurants[index]->id))
+				{
+					menu = menus::next(menus::state::MENU_STORE);
+				}
 				buttons[i]->reset_state();
 				break;
 			}
 		}
+
+		if(menu != menus::state::MENU_NONE) break;
 
 		if(home_btn.get_state() == STATE_CLICKED)
 		{

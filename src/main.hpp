@@ -5,8 +5,8 @@
  * demo.h
  ***************************************************************************/
 
-#ifndef _MAIN_H_
-#define _MAIN_H_
+#ifndef MAIN
+#define MAIN
 
 #define DEBUG
 
@@ -30,6 +30,7 @@
 #include <fs/fs.hpp>
 #include "menus/main_menu/main_menu.hpp"
 #include "menus/restaurant_menu/restaurant_menu.hpp"
+#include "menus/store_menu/store_menu.hpp"
 #include "menus/console_menu/console_menu.hpp"
 #include "menus/address_menu/address_menu.hpp"
 #include "menus/home_menu/home_menu.hpp"
@@ -47,4 +48,4 @@ class main
 
 extern FreeTypeGX *fontSystem[];
 
-#endif
+#endif /* MAIN */

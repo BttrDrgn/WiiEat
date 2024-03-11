@@ -12,6 +12,7 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\nlohmann
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\category.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\restaurant.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth_code.hpp
@@ -61,6 +62,7 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\main_menu
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\menus.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\menus.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\restaurant_menu
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\address_menu\address_menu.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\address_menu\address_menu.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\console_menu\console_menu.cpp
@@ -71,6 +73,8 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\main_menu\main_m
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\main_menu\main_menu.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\restaurant_menu\restaurant_menu.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\restaurant_menu\restaurant_menu.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_menu.cpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_menu.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\nlohmann\json.hpp
