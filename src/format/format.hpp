@@ -64,6 +64,20 @@ class format
             return original_str;
         }
 
+        static std::string remove_non_ascii(const std::string& input)
+        {
+            std::string output = input;
+            for (size_t i = 0; i < output.length(); ++i)
+            {
+                if (static_cast<unsigned char>(output[i]) > 127)
+                {
+                    output.erase(i, 1);
+                    --i; // Adjust index after erasing
+                }
+            }
+            return output;
+        }
+
         static std::vector<std::string> split(const std::string& s, const std::string& seperator)
         {
             std::vector<std::string> output;

@@ -117,7 +117,7 @@ bool save_address(const std::string& full_address, const std::string& json)
 
         fs::write_file("sd://WiiEat/coordinates", format::va("%f %f", api::coords.latitude, api::coords.longitude));
 
-        api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 6);
+        api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 12);
         fs::write_file("sd://WiiEat/geohash", api::geohash);
 
         return true;
@@ -327,7 +327,6 @@ api::error api::restaurants_request(std::vector<restaurant*>& restaurants)
     &countOmittingTimes=true
     &tab=all
     */
-   //
 
    //yes lat lng is reversed
     char* endpoint = "restaurants";
@@ -357,7 +356,7 @@ api::error api::restaurants_request(std::vector<restaurant*>& restaurants)
                 for(int i = 0; i < results.size(); ++i)
                 {
                     auto r = results[i];
-                    restaurants.emplace_back(new restaurant(r["brand_name"].get<std::string>(), r["restaurant_id"]));
+                    restaurants.emplace_back(new restaurant(r["name"].get<std::string>(), r["restaurant_id"]));
                 }
             }
             catch (const std::exception& e)
@@ -402,12 +401,6 @@ api::error api::restaurant_info_request(const std::string& id, json& json)
             try
             {
                 json = nlohmann::json::parse(resp.body);
-                // auto categories = json["object"]["data"]["enhanced_feed"];
-                // for(int c = 4; c < categories.size(); ++c)
-                // {
-                //     auto category = categories[c];
-                //     console_menu::write_line(category["name"].get<std::string>());
-                // }
             }
             catch (const std::exception& e)
             {

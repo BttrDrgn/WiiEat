@@ -2,15 +2,73 @@
 
 bool store_menu::loaded = false;
 json store_menu::json = 0;
-
-std::vector<gui_button*> category_buttons;
-std::vector<category*> categories;
-
-int category_current_page = 0;
-int category_max_page = 0;
 static bool updating = false;
+store_menu::view store_menu::current_view = store_menu::view::VIEW_NONE;
+store_menu::view store_menu::prev_view = store_menu::view::VIEW_NONE;
 
-void update_category_buttons()
+bool store_menu::load_store(const std::string& store_id)
+{
+	if(api::restaurant_info_request(store_id, json) != api::error::NONE)
+	{
+		loaded = false;
+		return false;
+	}
+
+	try
+	{
+		auto cats = json["object"]["data"]["enhanced_feed"]; //meow
+		//by starting at 4, we skip the default grubhub disclaimers, search, and other categories which don't actually exist as categories
+		for(int c = 4; c < cats.size(); ++c)
+		{
+		    auto cat = cats[c];
+			store_category::categories.emplace_back(new category(cat["name"].get<std::string>(), ""));
+		}
+	}
+	catch(std::exception e)
+	{
+		loaded = false;
+		return loaded;
+	}
+
+	store_category::max_page = (int)floor(store_category::categories.size() / 10.f);
+
+	loaded = true;
+	return loaded;
+}
+
+void store_menu::unload_store()
+{
+	store_menu::current_view = store_menu::view::VIEW_NONE;
+	store_category::buttons.clear();
+	store_category::categories.clear();
+}
+
+menus::state store_menu::update()
+{
+	auto menu = menus::state::MENU_RESTAURANT;
+	store_menu::current_view = store_menu::view::VIEW_CATEGORIES;
+
+	while(store_menu::current_view != store_menu::view::VIEW_EXIT)
+	{
+		switch(store_menu::current_view)
+		{
+			case store_menu::view::VIEW_CATEGORIES:
+				store_menu::current_view = store_category::update(menu);
+			break;
+		}
+	}
+
+	store_menu::unload_store();
+	return menu; 
+}
+
+
+std::vector<gui_button*> store_category::buttons;
+std::vector<category*> store_category::categories;
+int store_category::current_page = 0;
+int store_category::max_page = 0;
+
+void store_category::update_buttons()
 {
 	updating = true;
 	int i = 0;
@@ -19,18 +77,23 @@ void update_category_buttons()
 
 	for(i = 0; i < 10; ++i)
 	{
-		category_buttons[i]->set_effect(EFFECT_FADE, anim_speed);
+		store_category::buttons[i]->set_effect(EFFECT_FADE, anim_speed);
 
-		int index = i + (10 * category_current_page);
+		int index = i + (10 * store_category::current_page);
 		if(index + 1 > categories.size()) break;
 
-		if(!category_buttons[i]->is_visible()) category_buttons[i]->set_visible(true);
+		if(!store_category::buttons[i]->is_visible()) store_category::buttons[i]->set_visible(true);
 
-		auto text = new gui_text(categories[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
+		store_category::buttons[i]->set_label(text);
 
-		category_buttons[i]->set_effect(EFFECT_FADE, anim_speed);
-		category_buttons[i]->set_label(text);
+		auto text_hover = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		text_hover->set_max_width(200);
+		text_hover->set_scroll(true);
+		store_category::buttons[i]->set_label_hover(text_hover);
+
+		store_category::buttons[i]->set_effect(EFFECT_FADE, anim_speed);
 
 		if(i == 4)
 		{
@@ -43,74 +106,41 @@ void update_category_buttons()
 		i = 10 - i;
 		for(i = 10 - i; i < 10; ++i)
 		{
-			category_buttons[i]->set_visible(false);
+			store_category::buttons[i]->set_visible(false);
 		}
 	}
 	updating = false;
 }
 
-void category_next_page()
+void store_category::next_page()
 {
-	if(category_max_page <= 1) return;
+	if(store_category::max_page <= 1) return;
 
-	++category_current_page;
-	if(category_current_page > category_max_page - 1)
+	++store_category::current_page;
+	if(store_category::current_page > store_category::max_page - 1)
 	{
-		category_current_page = 0;
+		store_category::current_page = 0;
 	}
 
-	update_category_buttons();
+	store_category::update_buttons();
 }
 
-void category_prev_page()
+void store_category::prev_page()
 {
-	if(category_max_page <= 1) return;
+	if(store_category::max_page <= 1) return;
 
-	--category_current_page;
-	if(category_current_page < 0)
+	--store_category::current_page;
+	if(store_category::current_page < 0)
 	{
-		category_current_page = category_max_page - 1;
+		store_category::current_page = store_category::max_page - 1;
 	}
 
-	update_category_buttons();
+	store_category::update_buttons();
 }
 
-bool store_menu::load_store(const std::string& store_id)
+store_menu::view store_category::update(menus::state& menu)
 {
-	if(api::restaurant_info_request(store_id, json) != api::error::NONE)
-	{
-		loaded = false;
-		return false;
-	}
-
-	try
-	{
-		auto cats = json["object"]["data"]["enhanced_feed"];
-		for(int c = 4; c < cats.size(); ++c)
-		{
-		    auto cat = cats[c];
-			categories.emplace_back(new category(cat["name"].get<std::string>(), ""));
-		}
-	}
-	catch(std::exception e)
-	{
-		loaded = false;
-		return loaded;
-	}
-
-	loaded = true;
-	return loaded;
-}
-
-void store_menu::unload_store()
-{
-	category_buttons.clear();
-	categories.clear();
-}
-
-menus::state store_menu::update()
-{
-    menus::state menu = menus::state::MENU_NONE;
+	auto view = store_menu::view::VIEW_NONE;
 
 	gui_window w(screen_width, screen_height);
 
@@ -168,6 +198,7 @@ menus::state store_menu::update()
 	left_btn.set_trigger(&trig_a);
 	left_btn.set_scale(0.75f);
 	left_btn.set_effect_grow();
+	if(store_category::max_page > 1) w.append(&left_btn);
 
 	gui_image_data right_btn_img_data(right_button_png);
 	gui_image_data right_btn_hover_img_data(right_button_hover_png);
@@ -182,6 +213,7 @@ menus::state store_menu::update()
 	right_btn.set_trigger(&trig_a);
 	right_btn.set_scale(0.75f);
 	right_btn.set_effect_grow();
+	if(store_category::max_page > 1) w.append(&right_btn);
 
 	gui_image_data exit_btn_img_data(exit_button_png);
 	gui_image_data exit_btn_hover_img_data(exit_button_hover_png);
@@ -214,7 +246,7 @@ menus::state store_menu::update()
 		gui_image* new_img_hover = new gui_image(&btn_hover);
 		gui_button* new_btn = new gui_button(new_img->get_width(), new_img->get_height());
 
-		float y_pos = 84 + row * 64;
+		float y_pos = 96 + row * 64;
 		if(col == 0)
 		{
 			new_btn->set_alignment(ALIGN_LEFT, ALIGN_CENTER);
@@ -232,8 +264,8 @@ menus::state store_menu::update()
 		new_btn->set_visible(false);
 		new_btn->set_effect_grow();
 
-		category_buttons.emplace_back(new_btn);
-		w.append(category_buttons[i]);
+		store_category::buttons.emplace_back(new_btn);
+		w.append(store_category::buttons[i]);
 
 		row++;
 
@@ -246,12 +278,19 @@ menus::state store_menu::update()
 
 	for(int i = 0; i < 10; ++i)
 	{
-		int index = i + (10 * category_current_page);
-		if(index + 1 > categories.size()) break;
-		auto text = new gui_text(categories[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		int index = i + (10 * store_category::current_page);
+		if(index + 1 > store_category::categories.size()) break;
+
+		auto text = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
-		category_buttons[i]->set_label(text);
-		category_buttons[i]->set_visible(true);
+		store_category::buttons[i]->set_label(text);
+
+		auto text_hover = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		text_hover->set_max_width(200);
+		text_hover->set_scroll(true);
+		store_category::buttons[i]->set_label_hover(text_hover);
+
+		store_category::buttons[i]->set_visible(true);
 	}
 
 	w.set_effect(EFFECT_FADE, 25);
@@ -259,29 +298,35 @@ menus::state store_menu::update()
 	menus::main_window->append(&w);
 	menus::resume_gui();
 
-	menus::halt_gui();
-	menus::main_window->append(&w);
-	menus::resume_gui();
-
-	while(menu == menus::state::MENU_NONE)
+	while(view == store_menu::view::VIEW_NONE)
 	{
 		usleep(100);
 
 		if(home_btn.get_state() == STATE_CLICKED)
 		{
 			menu = home_menu::update();
-			if(menu == menus::state::MENU_CANCEL) menu = menus::state::MENU_NONE;
+			if(menu == menus::state::MENU_CANCEL) view = store_menu::view::VIEW_NONE;
+			else if(menu == menus::state::MENU_EXIT)  view = store_menu::view::VIEW_EXIT;
 		}
 		else if(exit_btn.get_state() == STATE_CLICKED)
 		{
-			menu = menus::prev_menu;
-			menus::prev_menu = menus::state::MENU_NONE;
+			view = store_menu::view::VIEW_EXIT;
+			store_menu::prev_view = store_menu::view::VIEW_NONE;
+		}
+		else if(left_btn.get_state() == STATE_CLICKED)
+		{
+			store_category::prev_page();
+			left_btn.reset_state();
+		}
+		else if(right_btn.get_state() == STATE_CLICKED)
+		{
+			store_category::next_page();
+			right_btn.reset_state();
 		}
 	}
 
-	store_menu::unload_store();
-
 	menus::halt_gui();
 	menus::main_window->remove(&w);
-	return menu; 
+
+	return view;
 }

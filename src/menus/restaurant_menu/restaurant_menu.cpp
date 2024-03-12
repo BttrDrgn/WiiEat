@@ -25,11 +25,16 @@ void update_buttons()
 
 		if(!buttons[i]->is_visible()) buttons[i]->set_visible(true);
 
-		auto text = new gui_text(restaurant_menu::restaurants[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
+		buttons[i]->set_label(text);
+
+		auto text_hover = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		text_hover->set_max_width(200);
+		text_hover->set_scroll(true);
+		buttons[i]->set_label_hover(text_hover);
 
 		buttons[i]->set_effect(EFFECT_FADE, anim_speed);
-		buttons[i]->set_label(text);
 
 		if(i == 4)
 		{
@@ -211,7 +216,7 @@ menus::state restaurant_menu::update()
 		gui_image* new_img_hover = new gui_image(&btn_hover);
 		gui_button* new_btn = new gui_button(new_img->get_width(), new_img->get_height());
 
-		float y_pos = 84 + row * 64;
+		float y_pos = 96 + row * 64;
 		if(col == 0)
 		{
 			new_btn->set_alignment(ALIGN_LEFT, ALIGN_CENTER);
@@ -245,8 +250,15 @@ menus::state restaurant_menu::update()
 	{
 		int index = i + (10 * current_page);
 		if(index + 1 > restaurant_menu::restaurants.size()) break;
-		auto text = new gui_text(restaurant_menu::restaurants[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
+		buttons[i]->set_label(text);
+
+		auto text_hover = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		text_hover->set_max_width(200);
+		text_hover->set_scroll(true);
+		buttons[i]->set_label_hover(text_hover);
+
 		buttons[i]->set_label(text);
 		buttons[i]->set_visible(true);
 	}
@@ -293,12 +305,12 @@ menus::state restaurant_menu::update()
 			w.set_effect(EFFECT_FADE, -25);
 			while(w.get_effect() > 0) usleep(100);
 		}
-		else if(max_page <= 1 && left_btn.get_state() == STATE_CLICKED)
+		else if(left_btn.get_state() == STATE_CLICKED)
 		{
 			prev_page();
 			left_btn.reset_state();
 		}
-		else if(max_page <= 1 && right_btn.get_state() == STATE_CLICKED)
+		else if(right_btn.get_state() == STATE_CLICKED)
 		{
 			next_page();
 			right_btn.reset_state();
