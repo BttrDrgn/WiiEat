@@ -19,8 +19,8 @@ static int preset_alignmentHor = 0;
 static int preset_alignmentVert = 0;
 static u16 preset_style = 0;
 
-#define TEXT_SCROLL_DELAY			8
-#define	TEXT_SCROLL_INITIAL_DELAY	6
+#define TEXT_SCROLL_DELAY			6
+#define	TEXT_SCROLL_INITIAL_DELAY	12
 
 /**
  * Constructor for the gui_text class.
@@ -434,7 +434,7 @@ void gui_text::Draw()
 				else
 				{
 					++textScrollPos;
-					if((u32)textScrollPos > textlen-1)
+					if((u32)textScrollPos > textlen)
 					{
 						textScrollPos = 0;
 						textScrollInitialDelay = TEXT_SCROLL_INITIAL_DELAY;
@@ -474,6 +474,7 @@ void gui_text::Draw()
 				}
 			}
 		}
+
 		fontSystem[currentSize]->draw_text(this->get_left(), this->get_top(), textDyn[0], c, style);
 	}
 	this->update_effects();
