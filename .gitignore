@@ -1,3 +1,4 @@
 build/
-dist/apps/WiiEat/*.dol
-dist/apps/WiiEat/*.elf
+*.dol
+*.elf
+*.wad
