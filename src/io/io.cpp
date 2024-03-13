@@ -1,7 +1,7 @@
-#include "fs.hpp"
+#include "io.hpp"
 #include <main.hpp>
 
-void fs::init()
+void io::init()
 {
     fatInitDefault();
 }

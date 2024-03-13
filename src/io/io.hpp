@@ -10,7 +10,7 @@
 #include <stdio.h>
 #define MAXPATH 256
 
-class fs
+class io
 {
     public:
         static void init();
@@ -126,6 +126,13 @@ class fs
         static bool delete_file(const std::string& path)
         {
             return !std::remove(path.c_str());
+        }
+
+        static double time_now()
+        {
+            time_t current_time;
+            time(&current_time);
+            return current_time;
         }
 };
 

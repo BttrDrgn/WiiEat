@@ -21,6 +21,7 @@ std::unordered_map<char*, char*> api::endpoints =
     { "geocode", "https://api-gtm.grubhub.com/geocode" },
     { "restaurants", "https://api-gtm.grubhub.com/restaurants/search" },
     { "info", "https://api-gtm.grubhub.com/restaurant_gateway/info/nonvolatile" },
+    { "feed", "https://api-gtm.grubhub.com/restaurant_gateway/feed" },
 };
 
 std::unordered_map<char*, char*> access_control =
@@ -29,6 +30,7 @@ std::unordered_map<char*, char*> access_control =
     { "confirmation_code", "" },
     { "geocode", "authorization,cache-control,if-modified-since" },
     { "restaurants", "authorization,cache-control,if-modified-since" },
+    { "feed", "" },
 };
 
 bool api::request_access(char* endpoint, const std::string& url, const std::string& method)
@@ -61,7 +63,7 @@ bool save_token(const std::string& json)
             auto refresh_token = (*session_handle).find("refresh_token");
             if (refresh_token != session_handle->end())
             {
-                fs::write_file("sd://WiiEat/refresh_token", refresh_token->get<std::string>());
+                io::write_file("sd://WiiEat/refresh_token", refresh_token->get<std::string>());
             }
 
             auto claims_arr = root.find("claims");
@@ -71,7 +73,7 @@ bool save_token(const std::string& json)
                 api::ud_id = claim_obj["ud_id"].get<std::string>();
                 if (!api::ud_id.empty())
                 {
-                    fs::write_file("sd://WiiEat/ud_id", api::ud_id);
+                    io::write_file("sd://WiiEat/ud_id", api::ud_id);
                 }
             }
         }
@@ -87,7 +89,7 @@ bool save_token(const std::string& json)
 
 bool save_address(const std::string& full_address, const std::string& json)
 {
-    fs::write_file("sd://WiiEat/address", full_address);
+    io::write_file("sd://WiiEat/address", full_address);
 
     try
     {
@@ -115,10 +117,10 @@ bool save_address(const std::string& full_address, const std::string& json)
             return false;
         }
 
-        fs::write_file("sd://WiiEat/coordinates", format::va("%f %f", api::coords.latitude, api::coords.longitude));
+        io::write_file("sd://WiiEat/coordinates", format::va("%f %f", api::coords.latitude, api::coords.longitude));
 
         api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 12);
-        fs::write_file("sd://WiiEat/geohash", api::geohash);
+        io::write_file("sd://WiiEat/geohash", api::geohash);
 
         return true;
     }
@@ -415,6 +417,49 @@ api::error api::restaurant_info_request(const std::string& id, json& json)
     return api::error::UNKNOWN;
 }
 
+api::error api::category_items_request(const std::string& res_id, const std::string& category_id, const std::string& brand_guid,)
+{
+    /*
+    https://api-gtm.grubhub.com/restaurant_gateway/feed/{resId}}/{catId}
+    ?time={epoch}
+    &location=POINT({lng} {lat}})
+    &operationId={opId}
+    &isFutureOrder=false
+    &restaurantStatus=ORDERABLE
+    &brandUuid={brandUUID}
+    &isConvenienceMerchant=false
+    &orderType=STANDARD
+    &agent=false
+    &task=CATEGORY
+    &platform=WEB
+    */
+
+   auto endpoint = "feed";
+   auto url = format::va("%s/%s/%s?time=%f&location=POINT(%f %f)&isFutureOrder=false&restaurantStatus=ORDERABLE&brandUuid=%s&isConvenienceMerchant=false&orderType=STANDARD&agent=false&task=CATEGORY&platform=WEB",
+        api::endpoints["feed"], res_id.c_str(), category_id.c_str(),
+        io::time_now(), api::coords.longitude, api::coords.latitude,
+        brand_guid.c_str()
+   );
+
+    if(api::request_access(feed, URL, "GET"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "GET", headers);
+        if(resp.status_code == 200)
+        {
+        }
+    }
+
+    return api::error::UNKNOWN;
+}
+
 api::img_data api::download_image(const std::string& url)
 {
     api::img_data img = { 0, 0 };
@@ -447,17 +492,17 @@ std::string api::get_full_address()
 
 bool api::load_address()
 {
-    if(!fs::file_exists("sd://WiiEat/address")) 
+    if(!io::file_exists("sd://WiiEat/address")) 
     {
         console_menu::write_line("could not find sd://WiiEat/address");
         return false;
     }
 
-    auto split_address = format::split(fs::read_file("sd://WiiEat/address"), ",");
+    auto split_address = format::split(io::read_file("sd://WiiEat/address"), ",");
     if(split_address.size() != 3)
     {
         console_menu::write_line("split_address != 3");
-        fs::delete_file("sd://WiiEat/address");
+        io::delete_file("sd://WiiEat/address");
         return false;
     }
 
@@ -468,7 +513,7 @@ bool api::load_address()
     if(state_zip.size() != 2)
     {
         console_menu::write_line("state_zip != 2");
-        fs::delete_file("sd://WiiEat/address");
+        io::delete_file("sd://WiiEat/address");
         return false;
     }
 
@@ -477,24 +522,24 @@ bool api::load_address()
     state_zip[0].copy(api::state, STATE_LEN);
     state_zip[1].copy(api::zip, ZIP_LEN);
 
-    if(!fs::file_exists("sd://WiiEat/geohash")) 
+    if(!io::file_exists("sd://WiiEat/geohash")) 
     {
         console_menu::write_line("could not find sd://WiiEat/geohash");
         return false;
     }
-    api::geohash = fs::read_file("sd://WiiEat/geohash");
+    api::geohash = io::read_file("sd://WiiEat/geohash");
 
-    if(!fs::file_exists("sd://WiiEat/coordinates")) 
+    if(!io::file_exists("sd://WiiEat/coordinates")) 
     {
         console_menu::write_line("sd://WiiEat/coordinates");
         return false;
     }
 
-    auto split_coords = format::split(fs::read_file("sd://WiiEat/coordinates"), " ");
+    auto split_coords = format::split(io::read_file("sd://WiiEat/coordinates"), " ");
     if(split_coords.size() != 2)
     {
         console_menu::write_line("split_coords != 2");
-        fs::delete_file("sd://WiiEat/coordinates");
+        io::delete_file("sd://WiiEat/coordinates");
         return false;
     }
 
@@ -503,7 +548,7 @@ bool api::load_address()
     )
     {
         console_menu::write_line("split_coords != 2");
-        fs::delete_file("sd://WiiEat/coordinates");
+        io::delete_file("sd://WiiEat/coordinates");
         return false;
     }
 
