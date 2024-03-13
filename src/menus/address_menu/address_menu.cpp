@@ -196,6 +196,7 @@ menus::state address_menu::update()
 			if(err == api::error::NONE)
 			{
 				menu = menus::next(menus::state::MENU_RESTAURANT);
+				restaurant_menu::refresh();
 
 				w.set_effect(EFFECT_FADE, -25);
 				while(w.get_effect() > 0) usleep(100);

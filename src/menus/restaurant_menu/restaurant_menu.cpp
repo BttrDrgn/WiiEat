@@ -79,6 +79,15 @@ void prev_page()
 	update_buttons();
 }
 
+void restaurant_menu::refresh()
+{
+	buttons.clear();
+	restaurant_menu::restaurants.clear();
+
+	api::restaurants_request(restaurant_menu::restaurants);
+	max_page = (int)floor(restaurant_menu::restaurants.size() / 10.f);
+}
+
 menus::state restaurant_menu::update()
 {
     menus::state menu = menus::state::MENU_NONE;
@@ -92,10 +101,8 @@ menus::state restaurant_menu::update()
 
 	if(restaurant_menu::restaurants.size() == 0)
 	{
-		api::restaurants_request(restaurant_menu::restaurants);
+		restaurant_menu::refresh();
 	}
-
-	max_page = (int)floor(restaurant_menu::restaurants.size() / 10.f);
 
 	gui_window w(screen_width, screen_height);
 
