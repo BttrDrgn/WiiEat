@@ -84,7 +84,21 @@ void restaurant_menu::refresh()
 	buttons.clear();
 	restaurant_menu::restaurants.clear();
 
-	api::restaurants_request(restaurant_menu::restaurants);
+	json json = 0;
+	api::restaurants_request(json);
+	try
+	{
+		auto results = json["search_result"]["results"];
+		for(int i = 0; i < results.size(); ++i)
+		{
+			auto r = results[i];
+			restaurants.emplace_back(new restaurant(r["name"].get<std::string>(), r["restaurant_id"]));
+		}		
+	}
+	catch(const std::exception& e)
+	{
+		
+	}
 	max_page = (int)floor(restaurant_menu::restaurants.size() / 10.f);
 }
 
@@ -207,6 +221,11 @@ menus::state restaurant_menu::update()
 	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
 
+	gui_text info_text("What are Wii eating today?", 20, (GXColor){0, 0, 0, 255});
+	info_text.set_alignment(ALIGN_LEFT, ALIGN_TOP);
+	info_text.set_position(32, 80);
+	w.append(&info_text);
+
 	gui_trigger trig_home;
 	trig_home.set_button_only_trigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 	gui_button home_btn(0, 0);
@@ -223,7 +242,7 @@ menus::state restaurant_menu::update()
 		gui_image* new_img_hover = new gui_image(&btn_hover);
 		gui_button* new_btn = new gui_button(new_img->get_width(), new_img->get_height());
 
-		float y_pos = 96 + row * 64;
+		float y_pos = 100 + row * 64;
 		if(col == 0)
 		{
 			new_btn->set_alignment(ALIGN_LEFT, ALIGN_CENTER);
@@ -289,9 +308,13 @@ menus::state restaurant_menu::update()
 			if(buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
-				if(store_menu::load_store(restaurant_menu::restaurants[index]->id))
+				if(store_menu::load_store(restaurant_menu::restaurants[index]->name, restaurant_menu::restaurants[index]->id))
 				{
 					menu = menus::next(menus::state::MENU_STORE);
+				}
+				else
+				{
+					store_menu::unload_store();
 				}
 				buttons[i]->reset_state();
 				break;

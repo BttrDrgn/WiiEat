@@ -1,20 +1,19 @@
-#ifndef CATEGORY
-#define CATEGORY
+#ifndef SELECTION
+#define SELECTION
 
 #include <string>
-#include "menu_item.hpp"
 
-class category
+class selection
 {
     public:
         std::string name;
         std::string id;
 
-        category(const std::string& name, const std::string& id)
+        selection(const std::string& name, const std::string& id)
         {
             this->name = name;
             this->id = id;
         }
 };
 
-#endif /* CATEGORY */
+#endif /* SELECTION */

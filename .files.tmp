@@ -1,8 +1,8 @@
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\filelist.h
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\format
-C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\fs
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\geohash
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\io
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\main.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\main.hpp
@@ -13,7 +13,9 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\category.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\menu_item.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\restaurant.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\selection.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth_code.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth_refresh.hpp
@@ -21,10 +23,10 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\confirmation_
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\confirmation_code\confirmation_code.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\confirmation_code\confirmation_code_resp.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\format\format.hpp
-C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\fs\fs.cpp
-C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\fs\fs.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\geohash\geohash.c
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\geohash\geohash.h
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\io\io.cpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\io\io.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\audio.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\audio.h
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\libwiigui\filebrowser.cpp

@@ -22,6 +22,7 @@ std::unordered_map<char*, char*> api::endpoints =
     { "restaurants", "https://api-gtm.grubhub.com/restaurants/search" },
     { "info", "https://api-gtm.grubhub.com/restaurant_gateway/info/nonvolatile" },
     { "feed", "https://api-gtm.grubhub.com/restaurant_gateway/feed" },
+    { "menu_item", "https://api-gtm.grubhub.com/restaurants/{resId}/menu_items" },
 };
 
 std::unordered_map<char*, char*> access_control =
@@ -30,7 +31,8 @@ std::unordered_map<char*, char*> access_control =
     { "confirmation_code", "" },
     { "geocode", "authorization,cache-control,if-modified-since" },
     { "restaurants", "authorization,cache-control,if-modified-since" },
-    { "feed", "" },
+    { "feed", "authorization,cache-control,if-modified-since" },
+    { "menu_item", "" },
 };
 
 bool api::request_access(char* endpoint, const std::string& url, const std::string& method)
@@ -310,7 +312,7 @@ api::error api::geocode_request(char* address, char* city, char* state, char* zi
     return api::error::UNKNOWN;
 }
 
-api::error api::restaurants_request(std::vector<restaurant*>& restaurants)
+api::error api::restaurants_request(json& json)
 {
     /*
     https://api-gtm.grubhub.com/restaurants/search
@@ -330,9 +332,9 @@ api::error api::restaurants_request(std::vector<restaurant*>& restaurants)
     &tab=all
     */
 
-   //yes lat lng is reversed
+    //yes lat lng is reversed
     char* endpoint = "restaurants";
-    auto url = format::va("%s?orderMethod=delivery&locationMode=DELIVERY&facetSet=umamiV6&pageSize=36&hideHateos=true&searchMetrics=true&location=POINT(%f %f)&preciseLocation=true&geohash=%s&includeOffers=true&sortSetId=umamiv3&sponsoredSize=3&countOmittingTimes=true&tab=all",
+    auto url = format::va("%s?orderMethod=delivery&locationMode=DELIVERY&facetSet=umamiV6&pageSize=64&hideHateos=true&searchMetrics=true&location=POINT(%f %f)&preciseLocation=true&geohash=%s&includeOffers=true&sortSetId=umamiv3&sponsoredSize=3&countOmittingTimes=true&tab=all",
         api::endpoints[endpoint],
         api::coords.longitude, api::coords.latitude,
         api::geohash.c_str()
@@ -353,13 +355,7 @@ api::error api::restaurants_request(std::vector<restaurant*>& restaurants)
         {
             try
             {
-                auto json = nlohmann::json::parse(resp.body);
-                auto results = json["search_result"]["results"];
-                for(int i = 0; i < results.size(); ++i)
-                {
-                    auto r = results[i];
-                    restaurants.emplace_back(new restaurant(r["name"].get<std::string>(), r["restaurant_id"]));
-                }
+                json = nlohmann::json::parse(resp.body);
             }
             catch (const std::exception& e)
             {
@@ -417,16 +413,14 @@ api::error api::restaurant_info_request(const std::string& id, json& json)
     return api::error::UNKNOWN;
 }
 
-api::error api::category_items_request(const std::string& res_id, const std::string& category_id, const std::string& brand_guid,)
+api::error api::category_items_request(const std::string& res_id, const std::string& category_id, json& json)
 {
     /*
     https://api-gtm.grubhub.com/restaurant_gateway/feed/{resId}}/{catId}
     ?time={epoch}
     &location=POINT({lng} {lat}})
-    &operationId={opId}
     &isFutureOrder=false
     &restaurantStatus=ORDERABLE
-    &brandUuid={brandUUID}
     &isConvenienceMerchant=false
     &orderType=STANDARD
     &agent=false
@@ -434,14 +428,13 @@ api::error api::category_items_request(const std::string& res_id, const std::str
     &platform=WEB
     */
 
-   auto endpoint = "feed";
-   auto url = format::va("%s/%s/%s?time=%f&location=POINT(%f %f)&isFutureOrder=false&restaurantStatus=ORDERABLE&brandUuid=%s&isConvenienceMerchant=false&orderType=STANDARD&agent=false&task=CATEGORY&platform=WEB",
-        api::endpoints["feed"], res_id.c_str(), category_id.c_str(),
-        io::time_now(), api::coords.longitude, api::coords.latitude,
-        brand_guid.c_str()
+   char* endpoint = "feed";
+   auto url = format::va("%s/%s/%s?time=%.0f&location=POINT(%f %f)&isFutureOrder=false&restaurantStatus=ORDERABLE&isConvenienceMerchant=false&orderType=STANDARD&agent=false&task=CATEGORY&platform=WEB",
+        api::endpoints[endpoint], res_id.c_str(), category_id.c_str(),
+        io::time_now(), api::coords.longitude, api::coords.latitude
    );
 
-    if(api::request_access(feed, URL, "GET"))
+    if(api::request_access(endpoint, url, "GET"))
     {
         auto bearer = format::va("Bearer %s", api::access_token.c_str());
         std::vector<net::header> headers = 
@@ -454,6 +447,64 @@ api::error api::category_items_request(const std::string& res_id, const std::str
         auto resp = net::http_request(url, "GET", headers);
         if(resp.status_code == 200)
         {
+            try
+            {
+                json = nlohmann::json::parse(resp.body);
+            }
+            catch(const std::exception& e)
+            {
+                console_menu::write_line(e.what());
+                return api::error::BAD_JSON;
+            }
+
+            return api::error::NONE;
+        }
+    }
+
+    return api::error::UNKNOWN;
+}
+
+api::error api::item_selection_request(const std::string& res_id, const std::string& item_id, json& json)
+{
+    /*
+    https://api-gtm.grubhub.com/restaurants/{resId}/menu_items/{itemId}
+    ?time=1710451227679
+    &hideUnavailableMenuItems=true
+    &orderType=standard
+    &version=4
+    &location=POINT({lng} {lat})
+    */
+
+    char* endpoint = "menu_item";
+    auto url = format::va("%s/%s?time=%.0f&hideUnavailableMenuItems=true&orderType=standard&version=4&location=POINT(%f %f)",
+        format::replace(api::endpoints[endpoint], "{resId}", res_id.c_str()).c_str(),
+        item_id.c_str(), io::time_now(), api::coords.longitude, api::coords.latitude
+    );
+
+    if(api::request_access(endpoint, url, "GET"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "GET", headers);
+        if(resp.status_code == 200)
+        {
+            try
+            {
+                json = nlohmann::json::parse(resp.body);
+            }
+            catch(const std::exception& e)
+            {
+                console_menu::write_line(e.what());
+                return api::error::BAD_JSON;
+            }
+
+            return api::error::NONE;
         }
     }
 

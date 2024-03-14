@@ -91,7 +91,7 @@ menus::state console_menu::update()
 				if (line_index >= console_out.size())
 					break;
 
-				lines[i]->set_text(console_out[line_index].data());
+				lines[i]->set_text(console_out[line_index].substr(0, 64).c_str());
 			}
 			needs_update = false;
 		}
@@ -125,6 +125,10 @@ menus::state console_menu::update()
 
 void console_menu::write_line(const std::string& msg)
 {
+#ifndef DEBUG
+	return;
+#endif
+
 	needs_update = true;
 	console_out.emplace_back(msg);
 	if (console_out.size() > LINES)
