@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <format/format.hpp>
 #include <stdio.h>
 #define MAXPATH 256
@@ -130,9 +131,9 @@ class io
 
         static double time_now()
         {
-            time_t current_time;
-            time(&current_time);
-            return current_time;
+            struct timeval tv;
+            gettimeofday(&tv, NULL);
+            return (double)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
         }
 };
 
