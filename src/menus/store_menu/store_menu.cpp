@@ -174,10 +174,10 @@ store_menu::view store_category::update(menus::state& menu)
 	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, 0);
 
 	gui_trigger trig_minus;
-	trig_minus.set_simple_trigger(-1, WPAD_BUTTON_MINUS, 0);
+	trig_minus.set_button_only_trigger(-1, WPAD_BUTTON_MINUS, 0);
 
 	gui_trigger trig_plus;
-	trig_plus.set_simple_trigger(-1, WPAD_BUTTON_PLUS, 0);
+	trig_plus.set_button_only_trigger(-1, WPAD_BUTTON_PLUS, 0);
 
 	gui_image_data logoImage(wiieat_logo_png);
 	gui_image logo(&logoImage);
@@ -212,6 +212,7 @@ store_menu::view store_category::update(menus::state& menu)
 	left_btn.set_image_hover(&left_btn_hover_img);
 	left_btn.set_sound_hover(&btn_sound_hover);
 	left_btn.set_trigger(&trig_a);
+	left_btn.set_trigger(&trig_minus);
 	left_btn.set_scale(0.75f);
 	left_btn.set_effect_grow();
 	if(store_category::max_page > 1) w.append(&left_btn);
@@ -227,6 +228,7 @@ store_menu::view store_category::update(menus::state& menu)
 	right_btn.set_image_hover(&right_btn_hover_img);
 	right_btn.set_sound_hover(&btn_sound_hover);
 	right_btn.set_trigger(&trig_a);
+	right_btn.set_trigger(&trig_plus);
 	right_btn.set_scale(0.75f);
 	right_btn.set_effect_grow();
 	if(store_category::max_page > 1) w.append(&right_btn);
@@ -491,10 +493,10 @@ store_menu::view store_items::update(menus::state& menu)
 	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, 0);
 
 	gui_trigger trig_minus;
-	trig_minus.set_simple_trigger(-1, WPAD_BUTTON_MINUS, 0);
+	trig_minus.set_button_only_trigger(-1, WPAD_BUTTON_MINUS, 0);
 
 	gui_trigger trig_plus;
-	trig_plus.set_simple_trigger(-1, WPAD_BUTTON_PLUS, 0);
+	trig_plus.set_button_only_trigger(-1, WPAD_BUTTON_PLUS, 0);
 
 	gui_image_data logoImage(wiieat_logo_png);
 	gui_image logo(&logoImage);
@@ -529,6 +531,7 @@ store_menu::view store_items::update(menus::state& menu)
 	left_btn.set_image_hover(&left_btn_hover_img);
 	left_btn.set_sound_hover(&btn_sound_hover);
 	left_btn.set_trigger(&trig_a);
+	left_btn.set_trigger(&trig_plus);
 	left_btn.set_scale(0.75f);
 	left_btn.set_effect_grow();
 	if(store_items::max_page > 1) w.append(&left_btn);
@@ -544,6 +547,7 @@ store_menu::view store_items::update(menus::state& menu)
 	right_btn.set_image_hover(&right_btn_hover_img);
 	right_btn.set_sound_hover(&btn_sound_hover);
 	right_btn.set_trigger(&trig_a);
+	right_btn.set_trigger(&trig_minus);
 	right_btn.set_scale(0.75f);
 	right_btn.set_effect_grow();
 	if(store_items::max_page > 1) w.append(&right_btn);
@@ -695,7 +699,11 @@ void store_selection::load_selection(const std::string& store_id, const std::str
 	{
 		try
 		{
-			console_menu::write_line(json["description"]);
+			auto choices = json["choice_category_list"];
+			for(int i = 0; i < choices.size(); ++i)
+			{
+				console_menu::write_line(choices[i]["name"].get<std::string>());
+			}
 		}
 		catch(const std::exception& e)
 		{
