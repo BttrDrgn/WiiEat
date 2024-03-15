@@ -134,10 +134,10 @@ menus::state restaurant_menu::update()
 	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, 0);
 
 	gui_trigger trig_minus;
-	trig_minus.set_simple_trigger(-1, WPAD_BUTTON_MINUS, 0);
+	trig_minus.set_button_only_trigger(-1, WPAD_BUTTON_MINUS, 0);
 
 	gui_trigger trig_plus;
-	trig_plus.set_simple_trigger(-1, WPAD_BUTTON_PLUS, 0);
+	trig_plus.set_button_only_trigger(-1, WPAD_BUTTON_PLUS, 0);
 
 	gui_image_data logoImage(wiieat_logo_png);
 	gui_image logo(&logoImage);
