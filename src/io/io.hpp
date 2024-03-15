@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <chrono>
 #include <format/format.hpp>
 #include <stdio.h>
 #define MAXPATH 256
@@ -131,9 +132,7 @@ class io
 
         static double time_now()
         {
-            struct timeval tv;
-            gettimeofday(&tv, NULL);
-            return (double)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
+            return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         }
 };
 
