@@ -18,7 +18,7 @@ include $(DEVKITPPC)/wii_rules
 TARGET		:=	boot
 BUILD		:=	build
 BIN			:=	dist/apps/WiiEat
-SOURCES		:=	src $(wildcard src/**) $(wildcard src/**/**) assets $(wildcard assets/**)
+SOURCES		:=	src $(wildcard src/**) $(wildcard src/**/**) $(wildcard src/**/**/**) assets $(wildcard assets/**)
 INCLUDES	:=	src
 
 #---------------------------------------------------------------------------------

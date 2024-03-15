@@ -13,9 +13,9 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\api.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\category.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\choice.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\menu_item.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\restaurant.hpp
-C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\selection.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth_code.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\api\auth\auth_refresh.hpp
@@ -75,8 +75,11 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\main_menu\main_m
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\main_menu\main_menu.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\restaurant_menu\restaurant_menu.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\restaurant_menu\restaurant_menu.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_category
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_menu.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_menu.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_category\store_category.cpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_category\store_category.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\nlohmann\json.hpp

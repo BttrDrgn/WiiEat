@@ -5,7 +5,7 @@
 #include <api/restaurant.hpp>
 #include <api/category.hpp>
 #include <api/menu_item.hpp>
-#include <api/selection.hpp>
+#include <api/choice.hpp>
 #include <main.hpp>
 #include <nlohmann/json.hpp>
 
@@ -20,33 +20,16 @@ class store_menu
             VIEW_NONE,
             VIEW_CATEGORIES,
             VIEW_ITEMS,
+            VIEW_SELECTION,
         };
 
         static bool load_store(const std::string& store_name, const std::string& id);
         static void unload_store();
         static menus::state update();
-        static view next_view(view next_view);
         static view current_view;
-        static view prev_view;
         static std::string store_id;
+        static std::string brand_uuid;
         static std::string store_name;
-};
-
-class store_category
-{
-    public:
-        static store_menu::view update(menus::state& menu);
-        static void update_buttons();
-        static void load_category();
-        static void unload_category();
-        static void next_page();
-        static void prev_page();
-        static std::vector<gui_button*> buttons;
-        static std::vector<category*> categories;
-        static std::string category_name;   
-
-        static int current_page;
-        static int max_page;
 };
 
 class store_items
@@ -69,13 +52,14 @@ class store_selection
 {
     public:
         static store_menu::view update(menus::state& menu);
-        static void load_selection(const std::string& store_id, const std::string& item_id);
-        static void unload_selection();
+        static void load_choices(const std::string& store_id, const std::string& item_id);
+        static void unload_choices();
         static void update_buttons();
         static void next_page();
         static void prev_page();
         static std::vector<gui_button*> buttons;
-        static std::vector<selection*> selections;
+        static std::vector<choice*> choices;
+        static std::vector<std::string> selected_choices;
 
         static int current_page;
         static int max_page;

@@ -73,7 +73,7 @@ class api
         static api::error restaurants_request(json& json);
         static api::error restaurant_info_request(const std::string& id, json& json);
         static api::error category_items_request(const std::string& res_id, const std::string& category_id, json& json);
-        static api::error item_selection_request(const std::string& res_id, const std::string& item_id, json& json);
+        static api::error item_info_request(const std::string& res_id, const std::string& item_id, json& json);
 
         //download
         static img_data download_image(const std::string& url);

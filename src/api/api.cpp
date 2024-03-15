@@ -20,7 +20,7 @@ std::unordered_map<char*, char*> api::endpoints =
     { "confirmation_code", "https://api-gtm.grubhub.com/auth/confirmation_code" },
     { "geocode", "https://api-gtm.grubhub.com/geocode" },
     { "restaurants", "https://api-gtm.grubhub.com/restaurants/search" },
-    { "info", "https://api-gtm.grubhub.com/restaurant_gateway/info/nonvolatile" },
+    { "info", "https://api-gtm.grubhub.com/restaurant_gateway/info/volatile" },
     { "feed", "https://api-gtm.grubhub.com/restaurant_gateway/feed" },
     { "menu_item", "https://api-gtm.grubhub.com/restaurants/{resId}/menu_items" },
 };
@@ -32,7 +32,7 @@ std::unordered_map<char*, char*> access_control =
     { "geocode", "authorization,cache-control,if-modified-since" },
     { "restaurants", "authorization,cache-control,if-modified-since" },
     { "feed", "authorization,cache-control,if-modified-since" },
-    { "menu_item", "" },
+    { "menu_item", "authorization,cache-control,if-modified-since" },
 };
 
 bool api::request_access(char* endpoint, const std::string& url, const std::string& method)
@@ -464,7 +464,7 @@ api::error api::category_items_request(const std::string& res_id, const std::str
     return api::error::UNKNOWN;
 }
 
-api::error api::item_selection_request(const std::string& res_id, const std::string& item_id, json& json)
+api::error api::item_info_request(const std::string& res_id, const std::string& item_id, json& json)
 {
     /*
     https://api-gtm.grubhub.com/restaurants/{resId}/menu_items/{itemId}
