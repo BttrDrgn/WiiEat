@@ -341,7 +341,7 @@ store_menu::view store_items::update(menus::state& menu)
 		store_items::buttons[i]->set_visible(true);
 	}
 
-	w.set_effect(EFFECT_FADE, 25);
+	//w.set_effect(EFFECT_FADE, 25);
 	menus::halt_gui();
 	menus::main_window->append(&w);
 	menus::resume_gui();
@@ -660,7 +660,7 @@ store_menu::view store_selection::update(menus::state& menu)
 		store_selection::buttons[i]->set_visible(true);
 	}
 
-	w.set_effect(EFFECT_FADE, 25);
+	//w.set_effect(EFFECT_FADE, 25);
 	menus::halt_gui();
 	menus::main_window->append(&w);
 	menus::resume_gui();
