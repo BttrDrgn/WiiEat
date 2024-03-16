@@ -130,7 +130,7 @@ class io
             return !std::remove(path.c_str());
         }
 
-        static double time_now()
+        static unsigned long long time_now()
         {
             return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         }

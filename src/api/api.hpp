@@ -54,6 +54,7 @@ class api
         static coordinates coords;
         static std::string geohash;
         static std::unordered_map<char*, char*> endpoints;
+        static std::string operation_id;
 
         static bool request_access(char* endpoint, const std::string& url, const std::string& method);
 
@@ -72,7 +73,7 @@ class api
         //restaurants
         static api::error restaurants_request(json& json);
         static api::error restaurant_info_request(const std::string& id, json& json);
-        static api::error category_items_request(const std::string& res_id, const std::string& category_id, json& json);
+        static api::error category_items_request(const std::string& res_id, const std::string& category_id, const std::string& op_id, json& json);
         static api::error item_info_request(const std::string& res_id, const std::string& item_id, json& json);
 
         //download

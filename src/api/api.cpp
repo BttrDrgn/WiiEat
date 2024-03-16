@@ -8,6 +8,7 @@ std::string api::ud_id = "";
 std::string api::csrf_token = "";
 std::string api::geohash = "";
 api::coordinates api::coords;
+std::string api::operation_id = "";
 
 char api::address[ADDRESS_LEN] = "";
 char api::city[CITY_LEN] = "";
@@ -20,7 +21,8 @@ std::unordered_map<char*, char*> api::endpoints =
     { "confirmation_code", "https://api-gtm.grubhub.com/auth/confirmation_code" },
     { "geocode", "https://api-gtm.grubhub.com/geocode" },
     { "restaurants", "https://api-gtm.grubhub.com/restaurants/search" },
-    { "info", "https://api-gtm.grubhub.com/restaurant_gateway/info/volatile" },
+    { "info_nonvolatile", "https://api-gtm.grubhub.com/restaurant_gateway/info/nonvolatile" },
+    { "info_volatile", "https://api-gtm.grubhub.com/restaurant_gateway/info/volatile" },
     { "feed", "https://api-gtm.grubhub.com/restaurant_gateway/feed" },
     { "menu_item", "https://api-gtm.grubhub.com/restaurants/{resId}/menu_items" },
 };
@@ -31,6 +33,8 @@ std::unordered_map<char*, char*> access_control =
     { "confirmation_code", "" },
     { "geocode", "authorization,cache-control,if-modified-since" },
     { "restaurants", "authorization,cache-control,if-modified-since" },
+    { "info_nonvolatile", "authorization,cache-control,if-modified-since,perimeter-x" },
+    { "info_volatile", "authorization,cache-control,if-modified-since,perimeter-x" },
     { "feed", "authorization,cache-control,if-modified-since" },
     { "menu_item", "authorization,cache-control,if-modified-since" },
 };
@@ -272,7 +276,7 @@ api::error api::confirmation_code_request(char* email)
             }
             catch (const std::exception& e)
             {
-                // Handle parsing error
+                console_menu::write_line(e.what());
                 return api::error::BAD_JSON;
             }
         }
@@ -359,7 +363,7 @@ api::error api::restaurants_request(json& json)
             }
             catch (const std::exception& e)
             {
-                // Handle parsing error
+                console_menu::write_line(e.what());
                 return api::error::BAD_JSON;
             }
 
@@ -380,7 +384,7 @@ api::error api::restaurant_info_request(const std::string& id, json& json)
     &location=POINT(lng lat)
     */
 
-    char* endpoint = "info";
+    char* endpoint = "info_volatile";
     auto url = format::va("%s/%s?orderType=STANDARD&platform=WEB&enhancedFeed=true&location=POINT(%f %f)", api::endpoints[endpoint], id.c_str(), api::coords.longitude, api::coords.latitude);
 
     if(api::request_access(endpoint, url, "GET"))
@@ -402,7 +406,7 @@ api::error api::restaurant_info_request(const std::string& id, json& json)
             }
             catch (const std::exception& e)
             {
-                // Handle parsing error
+                console_menu::write_line(e.what());
                 return api::error::BAD_JSON;
             }
 
@@ -413,26 +417,15 @@ api::error api::restaurant_info_request(const std::string& id, json& json)
     return api::error::UNKNOWN;
 }
 
-api::error api::category_items_request(const std::string& res_id, const std::string& category_id, json& json)
+api::error api::category_items_request(const std::string& res_id, const std::string& category_id, const std::string& op_id, json& json)
 {
-    /*
-    https://api-gtm.grubhub.com/restaurant_gateway/feed/{resId}}/{catId}
-    ?time={epoch}
-    &location=POINT({lng} {lat}})
-    &isFutureOrder=false
-    &restaurantStatus=ORDERABLE
-    &isConvenienceMerchant=false
-    &orderType=STANDARD
-    &agent=false
-    &task=CATEGORY
-    &platform=WEB
-    */
+    char* endpoint = "feed";
+    auto url = format::va("%s/%s/%s?time=%u&location=POINT(%f %f)&operationId={opId}&isFutureOrder=false&restaurantStatus=ORDERABLE&isConvenienceMerchant=false&orderType=STANDARD&agent=false&task=CATEGORY&platform=WEB",
+            api::endpoints[endpoint], res_id.c_str(), category_id.c_str(),
+            io::time_now(), api::coords.longitude, api::coords.latitude
+    );
 
-   char* endpoint = "feed";
-   auto url = format::va("%s/%s/%s?time=%.0f&location=POINT(%f %f)&isFutureOrder=false&restaurantStatus=ORDERABLE&isConvenienceMerchant=false&orderType=STANDARD&agent=false&task=CATEGORY&platform=WEB",
-        api::endpoints[endpoint], res_id.c_str(), category_id.c_str(),
-        io::time_now(), api::coords.longitude, api::coords.latitude
-   );
+    url = format::replace(url.c_str(), "{opId}", op_id.c_str());
 
     if(api::request_access(endpoint, url, "GET"))
     {
@@ -458,6 +451,10 @@ api::error api::category_items_request(const std::string& res_id, const std::str
             }
 
             return api::error::NONE;
+        }
+        else if(resp.status_code == 403)
+        {
+            return api::error::UNAUTHORIZED;
         }
     }
 

@@ -76,10 +76,13 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\main_menu\main_m
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\restaurant_menu\restaurant_menu.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\restaurant_menu\restaurant_menu.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_category
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_items
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_menu.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_menu.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_category\store_category.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_category\store_category.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_items\store_items.cpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_items\store_items.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\nlohmann\json.hpp

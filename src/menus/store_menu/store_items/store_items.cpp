@@ -1,13 +1,12 @@
-#include "store_category.hpp"
-#include "../store_items/store_items.hpp"
+#include "store_items.hpp"
+#include "../store_category/store_category.hpp"
 
-std::vector<gui_button*> store_category::buttons;
-std::vector<category*> store_category::categories;
-int store_category::current_page = 0;
-int store_category::max_page = 0;
-std::string store_category::category_name = "";
+std::vector<gui_button*> store_items::buttons;
+std::vector<menu_item*> store_items::items;
+int store_items::current_page = 0;
+int store_items::max_page = 0;
 
-void store_category::update_buttons()
+void store_items::update_buttons()
 {
 	int i = 0;
 	int col = 0;
@@ -15,23 +14,23 @@ void store_category::update_buttons()
 
 	for(i = 0; i < 10; ++i)
 	{
-		store_category::buttons[i]->set_effect(EFFECT_FADE, anim_speed);
+		store_items::buttons[i]->set_effect(EFFECT_FADE, anim_speed);
 
-		int index = i + (10 * store_category::current_page);
-		if(index + 1 > categories.size()) break;
+		int index = i + (10 * store_items::current_page);
+		if(index + 1 > items.size()) break;
 
-		if(!store_category::buttons[i]->is_visible()) store_category::buttons[i]->set_visible(true);
+		if(!store_items::buttons[i]->is_visible()) store_items::buttons[i]->set_visible(true);
 
-		auto text = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::remove_non_ascii(store_items::items[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
-		store_category::buttons[i]->set_label(text);
+		store_items::buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(format::remove_non_ascii(store_items::items[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
-		store_category::buttons[i]->set_label_hover(text_hover);
+		store_items::buttons[i]->set_label_hover(text_hover);
 
-		store_category::buttons[i]->set_effect(EFFECT_FADE, anim_speed);
+		store_items::buttons[i]->set_effect(EFFECT_FADE, anim_speed);
 
 		if(i == 4)
 		{
@@ -44,41 +43,66 @@ void store_category::update_buttons()
 		i = 10 - i;
 		for(i = 10 - i; i < 10; ++i)
 		{
-			store_category::buttons[i]->set_visible(false);
+			store_items::buttons[i]->set_visible(false);
 		}
 	}
 }
 
-void store_category::next_page()
+void store_items::next_page()
 {
-	if(store_category::max_page <= 1) return;
+	if(store_items::max_page <= 1) return;
 
-	++store_category::current_page;
-	if(store_category::current_page > store_category::max_page - 1)
+	++store_items::current_page;
+	if(store_items::current_page > store_items::max_page - 1)
 	{
-		store_category::current_page = 0;
+		store_items::current_page = 0;
 	}
 
-	store_category::update_buttons();
+	store_items::update_buttons();
 }
 
-void store_category::prev_page()
+void store_items::prev_page()
 {
-	if(store_category::max_page <= 1) return;
+	if(store_items::max_page <= 1) return;
 
-	--store_category::current_page;
-	if(store_category::current_page < 0)
+	--store_items::current_page;
+	if(store_items::current_page < 0)
 	{
-		store_category::current_page = store_category::max_page - 1;
+		store_items::current_page = store_items::max_page - 1;
 	}
 
-	store_category::update_buttons();
+	store_items::update_buttons();
 }
 
-store_menu::view store_category::update(menus::state& menu)
+void store_items::load_items(const std::string& store_id, const std::string& cat_id)
+{
+	try
+	{
+		json json = 0;
+		if(api::category_items_request(store_id, cat_id, api::operation_id, json) == api::error::NONE)
+		{
+			auto menu_items = json["object"]["data"]["content"];
+			for(int i = 0; i < menu_items.size(); ++i)
+			{
+				auto item = menu_items[i];
+				store_items::items.emplace_back(new menu_item(
+					format::remove_non_ascii(item["entity"]["item_name"].get<std::string>()),
+					item["entity"]["item_id"].get<std::string>())
+				);
+			}
+
+			store_items::max_page = (int)floor(store_items::items.size() / 10.f);
+		}
+	}
+	catch(const std::exception& e)
+	{
+		console_menu::write_line(e.what());
+	}
+}
+
+store_menu::view store_items::update(menus::state& menu)
 {
 	auto view = store_menu::view::VIEW_NONE;
-	store_category::category_name = "";
 
 	gui_window w(screen_width, screen_height);
 
@@ -134,10 +158,10 @@ store_menu::view store_category::update(menus::state& menu)
 	left_btn.set_image_hover(&left_btn_hover_img);
 	left_btn.set_sound_hover(&btn_sound_hover);
 	left_btn.set_trigger(&trig_a);
-	left_btn.set_trigger(&trig_minus);
+	left_btn.set_trigger(&trig_plus);
 	left_btn.set_scale(0.75f);
 	left_btn.set_effect_grow();
-	if(store_category::max_page > 1) w.append(&left_btn);
+	if(store_items::max_page > 1) w.append(&left_btn);
 
 	gui_image_data right_btn_img_data(right_button_png);
 	gui_image_data right_btn_hover_img_data(right_button_hover_png);
@@ -150,10 +174,10 @@ store_menu::view store_category::update(menus::state& menu)
 	right_btn.set_image_hover(&right_btn_hover_img);
 	right_btn.set_sound_hover(&btn_sound_hover);
 	right_btn.set_trigger(&trig_a);
-	right_btn.set_trigger(&trig_plus);
+	right_btn.set_trigger(&trig_minus);
 	right_btn.set_scale(0.75f);
 	right_btn.set_effect_grow();
-	if(store_category::max_page > 1) w.append(&right_btn);
+	if(store_items::max_page > 1) w.append(&right_btn);
 
 	gui_image_data exit_btn_img_data(exit_button_png);
 	gui_image_data exit_btn_hover_img_data(exit_button_hover_png);
@@ -170,7 +194,7 @@ store_menu::view store_category::update(menus::state& menu)
 	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
 
-	gui_text info_text(format::va("%s", store_menu::store_name.c_str()).c_str(), 20, (GXColor){0, 0, 0, 255});
+	gui_text info_text(format::va("%s - %s", store_menu::store_name.c_str(), store_category::category_name.c_str()).c_str(), 20, (GXColor){0, 0, 0, 255});
 	info_text.set_alignment(ALIGN_LEFT, ALIGN_TOP);
 	info_text.set_position(32, 80);
 	w.append(&info_text);
@@ -182,7 +206,7 @@ store_menu::view store_category::update(menus::state& menu)
 	home_btn.set_trigger(&trig_home);
 	w.append(&home_btn);
 
-	if(store_category::buttons.size() == 0)
+	if(store_items::buttons.size() == 0)
 	{
 		int col = 0;
 		int row = 0;
@@ -211,8 +235,8 @@ store_menu::view store_category::update(menus::state& menu)
 			new_btn->set_visible(false);
 			new_btn->set_effect_grow();
 
-			store_category::buttons.emplace_back(new_btn);
-			w.append(store_category::buttons[i]);
+			store_items::buttons.emplace_back(new_btn);
+			w.append(store_items::buttons[i]);
 
 			row++;
 
@@ -226,19 +250,19 @@ store_menu::view store_category::update(menus::state& menu)
 
 	for(int i = 0; i < 10; ++i)
 	{
-		int index = i + (10 * store_category::current_page);
-		if(index + 1 > store_category::categories.size()) break;
+		int index = i + (10 * store_items::current_page);
+		if(index + 1 > store_items::items.size()) break;
 
-		auto text = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::remove_non_ascii(store_items::items[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
-		store_category::buttons[i]->set_label(text);
+		store_items::buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(format::remove_non_ascii(store_items::items[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
-		store_category::buttons[i]->set_label_hover(text_hover);
+		store_items::buttons[i]->set_label_hover(text_hover);
 
-		store_category::buttons[i]->set_visible(true);
+		store_items::buttons[i]->set_visible(true);
 	}
 
 	//w.set_effect(EFFECT_FADE, 25);
@@ -252,15 +276,12 @@ store_menu::view store_category::update(menus::state& menu)
 
 		for(int i = 0; i < buttons.size(); ++i)
 		{
-			if(store_category::buttons[i]->get_state() == STATE_CLICKED)
+			if(store_items::buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
-
-				store_items::load_items(store_menu::store_id, store_category::categories[index]->id);
-
-				store_category::category_name = store_category::categories[index]->name;
-				store_category::buttons[i]->reset_state();
-				view = store_menu::view::VIEW_ITEMS;
+				store_selection::load_choices(store_menu::store_id, store_items::items[index]->id);
+				view = store_menu::view::VIEW_SELECTION;
+				store_items::buttons[i]->reset_state();
 				break;
 			}
 		}
@@ -273,22 +294,22 @@ store_menu::view store_category::update(menus::state& menu)
 		}
 		else if(exit_btn.get_state() == STATE_CLICKED)
 		{
-			view = store_menu::view::VIEW_EXIT;
-			store_category::unload_category();
+			view = store_menu::view::VIEW_CATEGORIES;
+			store_items::unload_items();
 		}
 		else if(left_btn.get_state() == STATE_CLICKED)
 		{
-			store_category::prev_page();
+			store_items::prev_page();
 			left_btn.reset_state();
 		}
 		else if(right_btn.get_state() == STATE_CLICKED)
 		{
-			store_category::next_page();
+			store_items::next_page();
 			right_btn.reset_state();
 		}
 	}
 
-	store_category::buttons.clear();
+	store_items::buttons.clear();
 
 	menus::halt_gui();
 	menus::main_window->remove(&w);
@@ -296,9 +317,9 @@ store_menu::view store_category::update(menus::state& menu)
 	return view;
 }
 
-void store_category::unload_category()
+void store_items::unload_items()
 {
-	store_category::category_name = "";
-	store_category::current_page = 0;
-	store_category::max_page = 0;
+	store_items::items.clear();
+	store_items::current_page = 0;
+	store_items::max_page = 0;
 }
