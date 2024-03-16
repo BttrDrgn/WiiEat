@@ -193,7 +193,7 @@ store_menu::view store_category::update(menus::state& menu)
 			gui_image* new_img_hover = new gui_image(&btn_hover);
 			gui_button* new_btn = new gui_button(new_img->get_width(), new_img->get_height());
 
-			float y_pos = 100 + row * 64;
+			float y_pos = 100 + row * 68;
 			if(col == 0)
 			{
 				new_btn->set_alignment(ALIGN_LEFT, ALIGN_CENTER);

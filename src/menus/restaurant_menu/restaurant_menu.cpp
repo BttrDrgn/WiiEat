@@ -85,7 +85,16 @@ void restaurant_menu::refresh()
 	restaurant_menu::restaurants.clear();
 
 	json json = 0;
-	api::restaurants_request(json);
+	auto err = api::restaurants_request(json);
+	if(err != api::error::NONE)
+	{
+		if(err == api::error::UNAUTHORIZED)
+		{
+			menus::unauthorized_prompt();
+		}
+		return;
+	}
+
 	try
 	{
 		auto results = json["search_result"]["results"];
@@ -242,7 +251,7 @@ menus::state restaurant_menu::update()
 		gui_image* new_img_hover = new gui_image(&btn_hover);
 		gui_button* new_btn = new gui_button(new_img->get_width(), new_img->get_height());
 
-		float y_pos = 100 + row * 64;
+		float y_pos = 100 + row * 68;
 		if(col == 0)
 		{
 			new_btn->set_alignment(ALIGN_LEFT, ALIGN_CENTER);

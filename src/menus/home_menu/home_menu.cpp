@@ -20,7 +20,7 @@ menus::state home_menu::update()
 	bg_img->color_stripe(18);
 	home.append(bg_img);
 
-	gui_text quit_btn_txt("Homebrew Menu", 22, (GXColor){0, 0, 0, 255});
+	gui_text quit_btn_txt("Return To Menu", 22, (GXColor){0, 0, 0, 255});
 	gui_image quit_btn_img(&btn);
 	gui_image quit_btn_img_hover(&btn_hover);
 	gui_button quit_btn(btn.get_width(), btn.get_height());

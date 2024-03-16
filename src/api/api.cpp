@@ -33,8 +33,7 @@ std::unordered_map<char*, char*> access_control =
     { "confirmation_code", "" },
     { "geocode", "authorization,cache-control,if-modified-since" },
     { "restaurants", "authorization,cache-control,if-modified-since" },
-    { "info_nonvolatile", "authorization,cache-control,if-modified-since,perimeter-x" },
-    { "info_volatile", "authorization,cache-control,if-modified-since,perimeter-x" },
+    { "info_volatile", "authorization,cache-control,if-modified-since" },
     { "feed", "authorization,cache-control,if-modified-since" },
     { "menu_item", "authorization,cache-control,if-modified-since" },
 };
@@ -338,7 +337,7 @@ api::error api::restaurants_request(json& json)
 
     //yes lat lng is reversed
     char* endpoint = "restaurants";
-    auto url = format::va("%s?orderMethod=delivery&locationMode=DELIVERY&facetSet=umamiV6&pageSize=64&hideHateos=true&searchMetrics=true&location=POINT(%f %f)&preciseLocation=true&geohash=%s&includeOffers=true&sortSetId=umamiv3&sponsoredSize=3&countOmittingTimes=true&tab=all",
+    auto url = format::va("%s?orderMethod=delivery&locationMode=DELIVERY&facetSet=umamiV6&pageSize=36&hideHateos=true&searchMetrics=true&location=POINT(%f %f)&preciseLocation=true&geohash=%s&includeOffers=true&sortSetId=umamiv3&sponsoredSize=3&countOmittingTimes=true&tab=all",
         api::endpoints[endpoint],
         api::coords.longitude, api::coords.latitude,
         api::geohash.c_str()
@@ -368,6 +367,10 @@ api::error api::restaurants_request(json& json)
             }
 
             return api::error::NONE;
+        }
+        else if(resp.status_code == 403)
+        {
+            return api::error::UNAUTHORIZED;
         }
     }
    
@@ -412,6 +415,10 @@ api::error api::restaurant_info_request(const std::string& id, json& json)
 
             return api::error::NONE;
         }
+        else if(resp.status_code == 403)
+        {
+            return api::error::UNAUTHORIZED;
+        }
     }
 
     return api::error::UNKNOWN;
@@ -425,6 +432,10 @@ api::error api::category_items_request(const std::string& res_id, const std::str
             io::time_now(), api::coords.longitude, api::coords.latitude
     );
 
+    //I have absolutely no idea why but whenever I va the op_id into the string it returns nothing
+    //However, if i replace {opId} within the string it works fine; if i print op_id it works fine;
+    //if i use it somewhere else it works fine; if i make it a static variable within api class IT DOESNT WORK AT ALL???
+    //genuinely confused by this
     url = format::replace(url.c_str(), "{opId}", op_id.c_str());
 
     if(api::request_access(endpoint, url, "GET"))

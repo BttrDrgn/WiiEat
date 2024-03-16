@@ -35,6 +35,7 @@ class menus
         static void initialize(state menu);
         static void update();
         static void shutdown_app();
+        static void unauthorized_prompt();
 
         static void resume_gui()
         {

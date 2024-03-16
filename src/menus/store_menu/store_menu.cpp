@@ -10,8 +10,13 @@ std::string store_menu::store_name = "";
 bool store_menu::load_store(const std::string& store_name, const std::string& store_id)
 {
 	json categories_json = 0;
-	if(api::restaurant_info_request(store_id, categories_json) != api::error::NONE)
+	auto err = api::restaurant_info_request(store_id, categories_json);
+	if(err != api::error::NONE)
 	{
+		if(err == api::error::UNAUTHORIZED)
+		{
+			menus::unauthorized_prompt();
+		}
 		return false;
 	}
 
@@ -85,7 +90,8 @@ int store_selection::max_page = 0;
 void store_selection::load_choices(const std::string& store_id, const std::string& item_id)
 {
 	json json = 0;
-	if(api::item_info_request(store_id, item_id, json) == api::error::NONE)
+	auto err = api::item_info_request(store_id, item_id, json);
+	if(err == api::error::NONE)
 	{
 		try
 		{
@@ -102,6 +108,10 @@ void store_selection::load_choices(const std::string& store_id, const std::strin
 			console_menu::write_line(e.what());
 		}
 		
+	}
+	else if(err == api::error::UNAUTHORIZED)
+	{
+		menus::unauthorized_prompt();
 	}
 }
 
@@ -288,7 +298,7 @@ store_menu::view store_selection::update(menus::state& menu)
 		gui_image* new_img_hover = new gui_image(&btn_hover);
 		gui_button* new_btn = new gui_button(new_img->get_width(), new_img->get_height());
 
-		float y_pos = 100 + row * 64;
+		float y_pos = 100 + row * 68;
 		if(col == 0)
 		{
 			new_btn->set_alignment(ALIGN_LEFT, ALIGN_CENTER);

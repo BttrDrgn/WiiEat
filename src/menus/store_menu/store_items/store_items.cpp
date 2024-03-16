@@ -79,7 +79,8 @@ void store_items::load_items(const std::string& store_id, const std::string& cat
 	try
 	{
 		json json = 0;
-		if(api::category_items_request(store_id, cat_id, api::operation_id, json) == api::error::NONE)
+		auto err = api::category_items_request(store_id, cat_id, api::operation_id, json);
+		if(err == api::error::NONE)
 		{
 			auto menu_items = json["object"]["data"]["content"];
 			for(int i = 0; i < menu_items.size(); ++i)
@@ -91,7 +92,12 @@ void store_items::load_items(const std::string& store_id, const std::string& cat
 				);
 			}
 
+			console_menu::write_line(format::va("%i", store_items::items.size()));
 			store_items::max_page = (int)floor(store_items::items.size() / 10.f);
+		}
+		else if(err == api::error::UNAUTHORIZED)
+		{
+			menus::unauthorized_prompt();
 		}
 	}
 	catch(const std::exception& e)
@@ -217,7 +223,7 @@ store_menu::view store_items::update(menus::state& menu)
 			gui_image* new_img_hover = new gui_image(&btn_hover);
 			gui_button* new_btn = new gui_button(new_img->get_width(), new_img->get_height());
 
-			float y_pos = 100 + row * 64;
+			float y_pos = 100 + row * 68;
 			if(col == 0)
 			{
 				new_btn->set_alignment(ALIGN_LEFT, ALIGN_CENTER);

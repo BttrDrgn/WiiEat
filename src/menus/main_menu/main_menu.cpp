@@ -181,12 +181,7 @@ menus::state main_menu::update()
 			}
 			else if(err == api::error::UNAUTHORIZED)
 			{
-				menus::window_prompt
-				(
-					"Unauthorized",
-					"Your account might have been temporarily blocked. Please try to access grubhub.com and login to unblock your account.",
-					"Ok"
-				);
+				menus::unauthorized_prompt();
 			}
 			else if(err == api::error::EMAIL_2FA)
 			{

@@ -404,3 +404,13 @@ int menus::window_prompt(const char *title, const char *msg, const char *btn1Lab
 	menus::resume_gui();
 	return choice;
 }
+
+void menus::unauthorized_prompt()
+{
+    menus::window_prompt
+    (
+        "Unauthorized",
+        "Your account might have been temporarily blocked. Please try to access grubhub.com and login to unblock your account.",
+        "Ok"
+    );
+}
