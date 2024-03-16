@@ -92,8 +92,7 @@ void store_items::load_items(const std::string& store_id, const std::string& cat
 				);
 			}
 
-			console_menu::write_line(format::va("%i", store_items::items.size()));
-			store_items::max_page = (int)floor(store_items::items.size() / 10.f);
+			store_items::max_page = (int)ceil(store_items::items.size() / 10.f);
 		}
 		else if(err == api::error::UNAUTHORIZED)
 		{

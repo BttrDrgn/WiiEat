@@ -34,14 +34,13 @@ bool store_menu::load_store(const std::string& store_name, const std::string& st
 		    auto cat = cats[c];
 			store_category::categories.emplace_back(new category(cat["name"].get<std::string>(), cat["id"].get<std::string>()));
 		}
+		store_category::max_page = (int)ceil(store_category::categories.size() / 10.f);
 	}
 	catch(std::exception e)
 	{
 		console_menu::write_line(e.what());
 		return false;
 	}
-
-	store_category::max_page = (int)floor(store_category::categories.size() / 10.f);
 
 	return true;
 }
@@ -101,7 +100,7 @@ void store_selection::load_choices(const std::string& store_id, const std::strin
 				console_menu::write_line(choices[i]["name"].get<std::string>());
 			}
 
-			store_selection::max_page = (int)floor(store_selection::choices.size() / 10.f);
+			store_selection::max_page = (int)ceil(store_selection::choices.size() / 10.f);
 		}
 		catch(const std::exception& e)
 		{

@@ -108,7 +108,7 @@ void restaurant_menu::refresh()
 	{
 		
 	}
-	max_page = (int)floor(restaurant_menu::restaurants.size() / 10.f);
+	max_page = (int)ceil(restaurant_menu::restaurants.size() / 10.f);
 }
 
 menus::state restaurant_menu::update()
