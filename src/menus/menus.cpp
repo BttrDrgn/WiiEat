@@ -356,13 +356,14 @@ int menus::window_prompt(const char *title, const char *msg, const char *btn1Lab
 	}
 	prompt_window.append(&btn1);
 
-	gui_button btn2(button.get_width(), button.get_height());
 	gui_text btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
+    gui_image btn2Img(&button);
+    gui_image btn2ImgOver(&button_hover);
+	gui_button btn2(button.get_width(), button.get_height());
 
 	if(has_btn_2)
 	{
-		gui_image btn2Img(&button);
-		gui_image btn2ImgOver(&button_hover);
+		
 		btn2.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 		btn2.set_position(-20, -25);
 		btn2.set_label(&btn2Txt);
