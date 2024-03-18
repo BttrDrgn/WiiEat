@@ -21,6 +21,7 @@ class store_menu
             VIEW_CATEGORIES,
             VIEW_ITEMS,
             VIEW_SELECTION,
+            VIEW_CHOICE,
         };
 
         static bool load_store(const std::string& store_name, const std::string& id);
@@ -30,23 +31,6 @@ class store_menu
         static std::string store_id;
         static std::string brand_uuid;
         static std::string store_name;
-};
-
-class store_selection
-{
-    public:
-        static store_menu::view update(menus::state& menu);
-        static void load_choices(const std::string& store_id, const std::string& item_id);
-        static void unload_choices();
-        static void update_buttons();
-        static void next_page();
-        static void prev_page();
-        static std::vector<gui_button*> buttons;
-        static std::vector<choice*> choices;
-        static std::vector<std::string> selected_choices;
-
-        static int current_page;
-        static int max_page;
 };
 
 #endif /* STORE_MENU */

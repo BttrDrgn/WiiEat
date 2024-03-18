@@ -22,11 +22,11 @@ void store_category::update_buttons()
 
 		if(!store_category::buttons[i]->is_visible()) store_category::buttons[i]->set_visible(true);
 
-		auto text = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(store_category::categories[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 		store_category::buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(store_category::categories[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		store_category::buttons[i]->set_label_hover(text_hover);
@@ -229,11 +229,11 @@ store_menu::view store_category::update(menus::state& menu)
 		int index = i + (10 * store_category::current_page);
 		if(index + 1 > store_category::categories.size()) break;
 
-		auto text = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(store_category::categories[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 		store_category::buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(format::remove_non_ascii(store_category::categories[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(store_category::categories[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		store_category::buttons[i]->set_label_hover(text_hover);
@@ -257,7 +257,6 @@ store_menu::view store_category::update(menus::state& menu)
 				int index = i + (10 * current_page);
 
 				store_items::load_items(store_menu::store_id, store_category::categories[index]->id);
-
 				store_category::category_name = store_category::categories[index]->name;
 				store_category::buttons[i]->reset_state();
 				view = store_menu::view::VIEW_ITEMS;

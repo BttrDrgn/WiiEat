@@ -79,10 +79,13 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_items
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_menu.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_menu.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_selection
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_category\store_category.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_category\store_category.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_items\store_items.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_items\store_items.hpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_selection\store_selection.cpp
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\menus\store_menu\store_selection\store_selection.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.cpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\net\net.hpp
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\src\nlohmann\json.hpp
@@ -105,6 +108,8 @@ C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\button.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\button_hover.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\button_large.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\button_large_over.png
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\button_required.png
+C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\button_required_hover.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\button_small.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\button_small_hover.png
 C:\Users\Drgn\Desktop\Development\Homebrew\Wii\WiiEat\assets\images\circle_button.png

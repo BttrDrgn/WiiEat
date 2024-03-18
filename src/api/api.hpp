@@ -55,6 +55,7 @@ class api
         static std::string geohash;
         static std::unordered_map<char*, char*> endpoints;
         static std::string operation_id;
+        static int tz_offset;
 
         static bool request_access(char* endpoint, const std::string& url, const std::string& method);
 

@@ -42,6 +42,8 @@
 #include "button_small_hover_png.h"
 #include "button_png.h"
 #include "button_hover_png.h"
+#include "button_required_png.h"
+#include "button_required_hover_png.h"
 #include "button_large_png.h"
 #include "button_large_over_png.h"
 #include "dialogue_box_png.h"

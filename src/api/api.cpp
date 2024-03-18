@@ -9,6 +9,7 @@ std::string api::csrf_token = "";
 std::string api::geohash = "";
 api::coordinates api::coords;
 std::string api::operation_id = "";
+int api::tz_offset = 0;
 
 char api::address[ADDRESS_LEN] = "";
 char api::city[CITY_LEN] = "";
@@ -25,6 +26,8 @@ std::unordered_map<char*, char*> api::endpoints =
     { "info_volatile", "https://api-gtm.grubhub.com/restaurant_gateway/info/volatile" },
     { "feed", "https://api-gtm.grubhub.com/restaurant_gateway/feed" },
     { "menu_item", "https://api-gtm.grubhub.com/restaurants/{resId}/menu_items" },
+    { "client_token", "https://api-gtm.grubhub.com/payments/client_token" }, //{"payment_type":"CREDIT_CARD","frontend_capabilities":[]}
+    { "credit_card", "https://api-cde-gtm.grubhub.com/tokenizer/{token}/credit_card" }, //{"credit_card_number":"","cvv":"","expiration_month":"","expiration_year":"","cc_zipcode":"","vaulted":true}
 };
 
 std::unordered_map<char*, char*> access_control =
@@ -36,6 +39,8 @@ std::unordered_map<char*, char*> access_control =
     { "info_volatile", "authorization,cache-control,if-modified-since" },
     { "feed", "authorization,cache-control,if-modified-since" },
     { "menu_item", "authorization,cache-control,if-modified-since" },
+    { "client_token", "authorization,cache-control,content-type,if-modified-since" },
+    { "credit_card", "content-type" },
 };
 
 bool api::request_access(char* endpoint, const std::string& url, const std::string& method)
@@ -126,6 +131,9 @@ bool save_address(const std::string& full_address, const std::string& json)
 
         api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 12);
         io::write_file("sd://WiiEat/geohash", api::geohash);
+
+        api::tz_offset = root_arr["time_zone"]["raw_offset"].get<int>();
+        io::write_file("sd://WiiEat/tz_offset", std::to_string(api::tz_offset));
 
         return true;
     }
@@ -426,10 +434,13 @@ api::error api::restaurant_info_request(const std::string& id, json& json)
 
 api::error api::category_items_request(const std::string& res_id, const std::string& category_id, const std::string& op_id, json& json)
 {
+    console_menu::write_line(format::va("Tz offset: %i", api::tz_offset));
+
+
     char* endpoint = "feed";
-    auto url = format::va("%s/%s/%s?time=%u&location=POINT(%f %f)&operationId={opId}&isFutureOrder=false&restaurantStatus=ORDERABLE&isConvenienceMerchant=false&orderType=STANDARD&agent=false&task=CATEGORY&platform=WEB",
+    auto url = format::va("%s/%s/%s?time=%llu&location=POINT(%f %f)&operationId={opId}&isFutureOrder=false&restaurantStatus=ORDERABLE&isConvenienceMerchant=false&orderType=STANDARD&agent=false&task=CATEGORY&platform=WEB",
             api::endpoints[endpoint], res_id.c_str(), category_id.c_str(),
-            io::time_now(), api::coords.longitude, api::coords.latitude
+            io::time_now(api::tz_offset), api::coords.longitude, api::coords.latitude
     );
 
     //I have absolutely no idea why but whenever I va the op_id into the string it returns nothing
@@ -484,10 +495,12 @@ api::error api::item_info_request(const std::string& res_id, const std::string& 
     */
 
     char* endpoint = "menu_item";
-    auto url = format::va("%s/%s?time=%.0f&hideUnavailableMenuItems=true&orderType=standard&version=4&location=POINT(%f %f)",
+    auto url = format::va("%s/%s",
         format::replace(api::endpoints[endpoint], "{resId}", res_id.c_str()).c_str(),
-        item_id.c_str(), io::time_now(), api::coords.longitude, api::coords.latitude
+        item_id.c_str()
     );
+
+    url = format::va("%s?time=%llu&hideUnavailableMenuItems=true&orderType=standard&version=4&location=POINT(%f %f)", url.c_str(), io::time_now(api::tz_offset), api::coords.longitude, api::coords.latitude);
 
     if(api::request_access(endpoint, url, "GET"))
     {
@@ -610,6 +623,13 @@ bool api::load_address()
         io::delete_file("sd://WiiEat/coordinates");
         return false;
     }
+
+    if(!io::file_exists("sd://WiiEat/tz_offset"))
+    {
+        console_menu::write_line("tz_offset not found");
+        return false;
+    }
+    api::tz_offset = std::stoi(io::read_file("sd://WiiEat/tz_offset"));
 
     return true;
 }

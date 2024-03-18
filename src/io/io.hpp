@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <time.h>
 #include <chrono>
 #include <format/format.hpp>
 #include <stdio.h>
@@ -130,9 +131,12 @@ class io
             return !std::remove(path.c_str());
         }
 
-        static unsigned long long time_now()
+        static std::uint64_t time_now(int offset = 0)
         {
-            return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            struct timeval tv;
+            gettimeofday(&tv, NULL);
+
+            return (std::uint64_t)(tv.tv_sec * 1000LL + tv.tv_usec / 1000LL) - offset;
         }
 };
 
