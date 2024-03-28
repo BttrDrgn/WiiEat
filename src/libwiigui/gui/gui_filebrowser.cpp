@@ -372,7 +372,7 @@ void GuiFileBrowser::Update(gui_trigger * t)
 
 		int currChan = t->chan;
 
-		if(t->wpad->ir.valid && !fileList[i]->IsInside(t->wpad->ir.x, t->wpad->ir.y))
+		if(t->wpad->ir.valid && !fileList[i]->is_inside(t->wpad->ir.x, t->wpad->ir.y))
 			t->chan = -1;
 
 		fileList[i]->Update(t);

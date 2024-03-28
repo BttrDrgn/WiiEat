@@ -133,8 +133,8 @@ void init_video ()
 	console_init (xfb[0], 20, 64, vmode->fbWidth, vmode->xfbHeight, vmode->fbWidth * 2);
 
 	// Clear framebuffers etc.
-	VIDEO_ClearFrameBuffer (vmode, xfb[0], COLOR_BLACK);
-	VIDEO_ClearFrameBuffer (vmode, xfb[1], COLOR_BLACK);
+	VIDEO_ClearFrameBuffer (vmode, xfb[0], COLOR_WHITE);
+	VIDEO_ClearFrameBuffer (vmode, xfb[1], COLOR_WHITE);
 	VIDEO_SetNextFramebuffer (xfb[0]);
 
 	VIDEO_SetBlack (FALSE);

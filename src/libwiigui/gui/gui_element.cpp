@@ -578,10 +578,8 @@ void gui_element::draw_tool_tip()
 {
 }
 
-bool gui_element::IsInside(int x, int y)
+bool gui_element::is_inside(int x, int y)
 {
-	if(unsigned(x - this->get_left())  < unsigned(width)
-	&& unsigned(y - this->get_top())  < unsigned(height))
-		return true;
+	if(unsigned(x - this->get_left())  < unsigned(width) && unsigned(y - this->get_top())  < unsigned(height)) return true;
 	return false;
 }

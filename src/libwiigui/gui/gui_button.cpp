@@ -216,7 +216,7 @@ void gui_button::Update(gui_trigger * t)
 	// cursor
 	if(t->wpad->ir.valid && t->chan >= 0)
 	{
-		if(this->IsInside(t->wpad->ir.x, t->wpad->ir.y))
+		if(this->is_inside(t->wpad->ir.x, t->wpad->ir.y))
 		{
 			if(state == STATE_DEFAULT) // we weren't on the button before!
 			{
@@ -279,7 +279,7 @@ void gui_button::Update(gui_trigger * t)
 					{
 						if(state == STATE_SELECTED)
 						{
-							if(!t->wpad->ir.valid ||	this->IsInside(t->wpad->ir.x, t->wpad->ir.y))
+							if(!t->wpad->ir.valid || this->is_inside(t->wpad->ir.x, t->wpad->ir.y))
 							{
 								this->set_state(STATE_CLICKED, t->chan);
 

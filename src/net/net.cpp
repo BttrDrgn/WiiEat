@@ -3,7 +3,7 @@
 #include <menus/console_menu/console_menu.hpp>
 
 bool net::offline = true;
-std::string net::user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
+std::string net::user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
 
 void net::initialize()
 {

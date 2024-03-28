@@ -22,7 +22,7 @@ class choice
     public:
         std::string name;
         std::string id;
-        std::vector<option> options;
+        std::vector<option*> options;
         bool required;
         int max_options;
 
@@ -36,7 +36,7 @@ class choice
 
         void add_option(const std::string& name, const std::string& id)
         {
-            //options.emplace_back(new option(name, id));
+            options.emplace_back(new option(name, id));
         }
 };
 

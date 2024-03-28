@@ -10,6 +10,7 @@ std::string api::geohash = "";
 api::coordinates api::coords;
 std::string api::operation_id = "";
 int api::tz_offset = 0;
+std::string api::cart_id;
 
 char api::address[ADDRESS_LEN] = "";
 char api::city[CITY_LEN] = "";
@@ -26,6 +27,9 @@ std::unordered_map<char*, char*> api::endpoints =
     { "info_volatile", "https://api-gtm.grubhub.com/restaurant_gateway/info/volatile" },
     { "feed", "https://api-gtm.grubhub.com/restaurant_gateway/feed" },
     { "menu_item", "https://api-gtm.grubhub.com/restaurants/{resId}/menu_items" },
+    { "carts", "https://api-gtm.grubhub.com/carts" },
+    { "delivery_info", "https://api-gtm.grubhub.com/carts" },
+    { "lines", "https://api-gtm.grubhub.com/carts/{cartId}/lines" },
     { "client_token", "https://api-gtm.grubhub.com/payments/client_token" }, //{"payment_type":"CREDIT_CARD","frontend_capabilities":[]}
     { "credit_card", "https://api-cde-gtm.grubhub.com/tokenizer/{token}/credit_card" }, //{"credit_card_number":"","cvv":"","expiration_month":"","expiration_year":"","cc_zipcode":"","vaulted":true}
 };
@@ -39,6 +43,8 @@ std::unordered_map<char*, char*> access_control =
     { "info_volatile", "authorization,cache-control,if-modified-since" },
     { "feed", "authorization,cache-control,if-modified-since" },
     { "menu_item", "authorization,cache-control,if-modified-since" },
+    { "carts", "authorization,cache-control,content-type,if-modified-since" },
+    { "delivery_info", "authorization,cache-control,content-type,if-modified-since" },
     { "client_token", "authorization,cache-control,content-type,if-modified-since" },
     { "credit_card", "content-type" },
 };
@@ -434,9 +440,6 @@ api::error api::restaurant_info_request(const std::string& id, json& json)
 
 api::error api::category_items_request(const std::string& res_id, const std::string& category_id, const std::string& op_id, json& json)
 {
-    console_menu::write_line(format::va("Tz offset: %i", api::tz_offset));
-
-
     char* endpoint = "feed";
     auto url = format::va("%s/%s/%s?time=%llu&location=POINT(%f %f)&operationId={opId}&isFutureOrder=false&restaurantStatus=ORDERABLE&isConvenienceMerchant=false&orderType=STANDARD&agent=false&task=CATEGORY&platform=WEB",
             api::endpoints[endpoint], res_id.c_str(), category_id.c_str(),
@@ -529,6 +532,95 @@ api::error api::item_info_request(const std::string& res_id, const std::string& 
         }
     }
 
+    return api::error::UNKNOWN;
+}
+
+api::error api::create_cart_request()
+{
+    try
+    {
+    carts* cart = new carts();
+    json carts_json = cart->serialize();
+
+    char* endpoint = "carts";
+    auto url = api::endpoints[endpoint];
+    if(api::request_access(endpoint, url, "POST"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "POST", headers, carts_json.dump());
+        if(resp.status_code == 200)
+        {
+            try
+            {
+                auto json = nlohmann::json::parse(resp.body);
+                api::cart_id = json["id"].get<std::string>();
+            }
+            catch(const std::exception& e)
+            {
+                console_menu::write_line(e.what());
+                return api::error::BAD_JSON;
+            }
+
+            return api::error::NONE;
+        }
+    }
+    }
+    catch(const std::exception& e)
+    {
+        console_menu::write_line(e.what());
+    }
+
+    return api::error::UNKNOWN;
+}
+
+api::error api::get_cart_request(json& json)
+{
+    char* endpoint = "cart";
+    auto url = format::va("%s/%s", api::endpoints[endpoint], api::cart_id.c_str());
+    if(api::request_access(endpoint, url, "GET"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "GET", headers);
+        if(resp.status_code == 200)
+        {
+            try
+            {
+                json = nlohmann::json::parse(resp.body);
+            }
+            catch(const std::exception& e)
+            {
+                console_menu::write_line(e.what());
+                return api::error::BAD_JSON;
+            }
+
+            return api::error::NONE;
+        }
+    }
+
+    return api::error::UNKNOWN;
+}
+
+api::error api::add_item_request(const std::string& store_id, const std::string& menu_item_id, const std::string& item_id)
+{
+    return api::error::UNKNOWN;
+}
+
+api::error api::put_delivery_info()
+{
     return api::error::UNKNOWN;
 }
 

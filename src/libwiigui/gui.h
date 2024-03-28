@@ -377,7 +377,7 @@ class gui_element
 		//!\param x X coordinate
 		//!\param y Y coordinate
 		//!\return true if contained within, false otherwise
-		bool IsInside(int x, int y);
+		bool is_inside(int x, int y);
 		//!Sets the element's position
 		//!\param x X coordinate
 		//!\param y Y coordinate
@@ -651,7 +651,7 @@ class gui_text : public gui_element
 		//!\param t UTF-8 Text
 		void SetWText(wchar_t * t);
 		//!Gets the translated text length of the gui_text element
-		int GetLength();
+		int get_length();
 		//!Sets up preset values to be used by gui_text(t)
 		//!Useful when printing multiple text elements, all with the same attributes set
 		//!\param sz Font size
@@ -668,7 +668,7 @@ class gui_text : public gui_element
 		//!\param w Maximum width
 		void set_max_width(int w);
 		//!Gets the width of the text when rendered
-		int GetTextWidth();
+		int get_text_width();
 		//!Enables/disables text scrolling
 		//!\param s Scrolling on/off
 		void set_scroll(int s);

@@ -6,6 +6,7 @@ std::vector<gui_button*> store_items::buttons;
 std::vector<menu_item*> store_items::items;
 int store_items::current_page = 0;
 int store_items::max_page = 0;
+static gui_text* page_text;
 
 void store_items::update_buttons()
 {
@@ -59,6 +60,8 @@ void store_items::next_page()
 		store_items::current_page = 0;
 	}
 
+	page_text->set_text(format::va("%i/%i", current_page + 1, max_page).c_str());
+
 	store_items::update_buttons();
 }
 
@@ -71,6 +74,8 @@ void store_items::prev_page()
 	{
 		store_items::current_page = store_items::max_page - 1;
 	}
+
+	page_text->set_text(format::va("%i/%i", current_page + 1, max_page).c_str());
 
 	store_items::update_buttons();
 }
@@ -144,7 +149,7 @@ store_menu::view store_items::update(menus::state& menu)
 	gui_image basket_btn_hover_img(&basket_btn_hover_img_data);
 	gui_button basket_btn(basket_btn_img_data.get_width(), basket_btn_img_data.get_height());
 	basket_btn.set_alignment(ALIGN_LEFT, ALIGN_TOP);
-	basket_btn.set_position(234, 15);
+	basket_btn.set_position(160, 15);
 	basket_btn.set_image(&basket_btn_img);
 	basket_btn.set_image_hover(&basket_btn_hover_img);
 	basket_btn.set_sound_hover(&btn_sound_hover);
@@ -199,6 +204,11 @@ store_menu::view store_items::update(menus::state& menu)
 	exit_btn.set_scale(0.75f);
 	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
+
+	page_text = new gui_text(format::va("1/%i", max_page).c_str(), 15, (GXColor){0, 0, 0, 255});
+	page_text->set_alignment(ALIGN_RIGHT, ALIGN_TOP);
+	page_text->set_position(-112, 40);
+	if(max_page > 1) w.append(page_text);
 
 	gui_text info_text(format::va("%s - %s", store_menu::store_name.c_str(), store_category::category_name.c_str()).c_str(), 20, (GXColor){0, 0, 0, 255});
 	info_text.set_alignment(ALIGN_LEFT, ALIGN_TOP);
@@ -259,11 +269,11 @@ store_menu::view store_items::update(menus::state& menu)
 		int index = i + (10 * store_items::current_page);
 		if(index + 1 > store_items::items.size()) break;
 
-		auto text = new gui_text(format::remove_non_ascii(store_items::items[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(store_items::items[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 		store_items::buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(format::remove_non_ascii(store_items::items[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(store_items::items[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		store_items::buttons[i]->set_label_hover(text_hover);

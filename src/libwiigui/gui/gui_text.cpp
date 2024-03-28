@@ -155,7 +155,7 @@ void gui_text::SetWText(wchar_t * t)
 		text = wcsdup(t);
 }
 
-int gui_text::GetLength()
+int gui_text::get_length()
 {
 	if(!text)
 		return 0;
@@ -194,7 +194,7 @@ void gui_text::set_max_width(int width)
 	textDynNum = 0;
 }
 
-int gui_text::GetTextWidth()
+int gui_text::get_text_width()
 {
 	if(!text)
 		return 0;

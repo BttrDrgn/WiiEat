@@ -7,7 +7,7 @@ void main::shutdown_app()
     shutoff_rumble();
     stop_gx();
 
-	io::write_file("sd://WiiEat/console.log", "\n---New Session---\n", true);
+	io::delete_file("sd://WiiEat/console.log");
 	for(auto line : console_menu::console_out)
 	{
 		io::write_file("sd://WiiEat/console.log", format::va("%s\n", line.c_str()), true);

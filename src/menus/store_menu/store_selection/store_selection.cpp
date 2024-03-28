@@ -6,6 +6,7 @@ std::vector<choice*> store_selection::choices;
 int store_selection::current_page = 0;
 int store_selection::max_page = 0;
 std::string store_selection::current_item = "";
+static gui_text* page_text;
 
 bool store_selection::load_choices(const std::string& item_name, const std::string& store_id, const std::string& item_id)
 {
@@ -95,6 +96,8 @@ void store_selection::next_page()
 		store_selection::current_page = 0;
 	}
 
+	page_text->set_text(format::va("%i/%i", current_page + 1, max_page).c_str());
+
 	store_selection::update_buttons();
 }
 
@@ -107,6 +110,8 @@ void store_selection::prev_page()
 	{
 		store_selection::current_page = store_selection::max_page - 1;
 	}
+
+	page_text->set_text(format::va("%i/%i", current_page + 1, max_page).c_str());
 
 	store_selection::update_buttons();
 }
@@ -145,20 +150,20 @@ store_menu::view store_selection::update(menus::state& menu)
 	logo.set_scale(0.75f);
 	w.append(&logo);
 
-	gui_image_data basket_btn_img_data(basket_button_png);
-	gui_image_data basket_btn_hover_img_data(basket_button_hover_png);
-	gui_image basket_btn_img(&basket_btn_img_data);
-	gui_image basket_btn_hover_img(&basket_btn_hover_img_data);
-	gui_button basket_btn(basket_btn_img_data.get_width(), basket_btn_img_data.get_height());
-	basket_btn.set_alignment(ALIGN_LEFT, ALIGN_TOP);
-	basket_btn.set_position(234, 15);
-	basket_btn.set_image(&basket_btn_img);
-	basket_btn.set_image_hover(&basket_btn_hover_img);
-	basket_btn.set_sound_hover(&btn_sound_hover);
-	basket_btn.set_trigger(&trig_a);
-	basket_btn.set_scale(0.75f);
-	basket_btn.set_effect_grow();
-	w.append(&basket_btn);
+	gui_text add_btn_txt("Add To Cart", 22, (GXColor){0, 0, 0, 255});
+	gui_image add_btn_img(&btn);
+	gui_image add_btn_img_over(&btn_hover);
+	gui_button add_btn(btn.get_width(), btn.get_height());
+	add_btn.set_alignment(ALIGN_LEFT, ALIGN_TOP);
+	add_btn.set_position(160, 17);
+	add_btn.set_label(&add_btn_txt);
+	add_btn.set_image(&add_btn_img);
+	add_btn.set_image_hover(&add_btn_img_over);
+	add_btn.set_sound_hover(&btn_sound_hover);
+	add_btn.set_trigger(&trig_a);
+	add_btn.set_effect_grow();
+	add_btn.set_scale(0.75f);
+	w.append(&add_btn);
 
 	gui_image_data left_btn_img_data(left_button_png);
 	gui_image_data left_btn_hover_img_data(left_button_hover_png);
@@ -207,10 +212,22 @@ store_menu::view store_selection::update(menus::state& menu)
 	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
 
-	gui_text info_text(format::va("%s - %s", store_menu::store_name.c_str(), store_selection::current_item.c_str()).c_str(), 20, (GXColor){0, 0, 0, 255});
+	page_text = new gui_text(format::va("1/%i", max_page).c_str(), 15, (GXColor){0, 0, 0, 255});
+	page_text->set_alignment(ALIGN_RIGHT, ALIGN_TOP);
+	page_text->set_position(-112, 40);
+	if(max_page > 1) w.append(page_text);
+
+	gui_text info_text(format::va("%s - ", store_menu::store_name.c_str()).c_str(), 20, (GXColor){0, 0, 0, 255});
 	info_text.set_alignment(ALIGN_LEFT, ALIGN_TOP);
 	info_text.set_position(32, 80);
 	w.append(&info_text);
+
+	gui_text item_text(store_selection::current_item.c_str(), 20, (GXColor){0, 0, 0, 255});
+	item_text.set_alignment(ALIGN_LEFT, ALIGN_TOP);
+	item_text.set_position(32 + info_text.get_text_width(), 80);
+	item_text.set_max_width(500);
+	item_text.set_scroll(true);
+	w.append(&item_text);
 
 	gui_trigger trig_home;
 	trig_home.set_button_only_trigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
@@ -289,7 +306,10 @@ store_menu::view store_selection::update(menus::state& menu)
 			if(store_selection::buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
-				//store_selection::load_choices(store_selection::choices[index]->name, store_menu::store_id, store_selection::choices[index]->id);
+				for(int o = 0; o < store_selection::choices[index]->options.size(); ++i)
+				{
+					console_menu::write_line(store_selection::choices[index]->options[o]->name);
+				}
 				store_selection::buttons[i]->reset_state();
 				break;
 			}
@@ -304,6 +324,16 @@ store_menu::view store_selection::update(menus::state& menu)
 		else if(exit_btn.get_state() == STATE_CLICKED)
 		{
 			view = store_menu::view::VIEW_ITEMS;
+		}
+		else if(add_btn.get_state() == STATE_CLICKED)
+		{
+			if(api::cart_id == "")
+			{
+				api::create_cart_request();
+			}
+			
+			view = store_menu::view::VIEW_CATEGORIES;
+			add_btn.reset_state();
 		}
 		else if(left_btn.get_state() == STATE_CLICKED)
 		{

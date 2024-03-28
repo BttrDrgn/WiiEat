@@ -6,6 +6,7 @@ std::vector<gui_button*> buttons;
 int current_page = 0;
 int max_page = 0;
 bool updating = false;
+static gui_text* page_text;
 
 void update_buttons()
 {
@@ -63,6 +64,8 @@ void next_page()
 		current_page = 0;
 	}
 
+	page_text->set_text(format::va("%i/%i", current_page + 1, max_page).c_str());
+
 	update_buttons();
 }
 
@@ -76,11 +79,14 @@ void prev_page()
 		current_page = max_page - 1;
 	}
 
+	page_text->set_text(format::va("%i/%i", current_page + 1, max_page).c_str());
+
 	update_buttons();
 }
 
 void restaurant_menu::refresh()
 {
+	current_page = 0;
 	buttons.clear();
 	restaurant_menu::restaurants.clear();
 
@@ -170,21 +176,6 @@ menus::state restaurant_menu::update()
 	address_btn.set_effect_grow();
 	w.append(&address_btn);
 
-	gui_image_data basket_btn_img_data(basket_button_png);
-	gui_image_data basket_btn_hover_img_data(basket_button_hover_png);
-	gui_image basket_btn_img(&basket_btn_img_data);
-	gui_image basket_btn_hover_img(&basket_btn_hover_img_data);
-	gui_button basket_btn(basket_btn_img_data.get_width(), basket_btn_img_data.get_height());
-	basket_btn.set_alignment(ALIGN_LEFT, ALIGN_TOP);
-	basket_btn.set_position(234, 15);
-	basket_btn.set_image(&basket_btn_img);
-	basket_btn.set_image_hover(&basket_btn_hover_img);
-	basket_btn.set_sound_hover(&btn_sound_hover);
-	basket_btn.set_trigger(&trig_a);
-	basket_btn.set_scale(0.75f);
-	basket_btn.set_effect_grow();
-	w.append(&basket_btn);
-
 	gui_image_data left_btn_img_data(left_button_png);
 	gui_image_data left_btn_hover_img_data(left_button_hover_png);
 	gui_image left_btn_img(&left_btn_img_data);
@@ -229,6 +220,11 @@ menus::state restaurant_menu::update()
 	exit_btn.set_scale(0.75f);
 	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
+
+	page_text = new gui_text(format::va("1/%i", max_page).c_str(), 15, (GXColor){0, 0, 0, 255});
+	page_text->set_alignment(ALIGN_RIGHT, ALIGN_TOP);
+	page_text->set_position(-112, 40);
+	if(max_page > 1) w.append(page_text);
 
 	gui_text info_text("What are Wii eating today?", 20, (GXColor){0, 0, 0, 255});
 	info_text.set_alignment(ALIGN_LEFT, ALIGN_TOP);

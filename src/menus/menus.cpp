@@ -363,7 +363,6 @@ int menus::window_prompt(const char *title, const char *msg, const char *btn1Lab
 
 	if(has_btn_2)
 	{
-		
 		btn2.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 		btn2.set_position(-20, -25);
 		btn2.set_label(&btn2Txt);

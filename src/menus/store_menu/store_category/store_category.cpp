@@ -6,6 +6,7 @@ std::vector<category*> store_category::categories;
 int store_category::current_page = 0;
 int store_category::max_page = 0;
 std::string store_category::category_name = "";
+static gui_text* page_text;
 
 void store_category::update_buttons()
 {
@@ -59,6 +60,8 @@ void store_category::next_page()
 		store_category::current_page = 0;
 	}
 
+	page_text->set_text(format::va("%i/%i", current_page + 1, max_page).c_str());
+
 	store_category::update_buttons();
 }
 
@@ -71,6 +74,8 @@ void store_category::prev_page()
 	{
 		store_category::current_page = store_category::max_page - 1;
 	}
+
+	page_text->set_text(format::va("%i/%i", current_page + 1, max_page).c_str());
 
 	store_category::update_buttons();
 }
@@ -114,7 +119,7 @@ store_menu::view store_category::update(menus::state& menu)
 	gui_image basket_btn_hover_img(&basket_btn_hover_img_data);
 	gui_button basket_btn(basket_btn_img_data.get_width(), basket_btn_img_data.get_height());
 	basket_btn.set_alignment(ALIGN_LEFT, ALIGN_TOP);
-	basket_btn.set_position(234, 15);
+	basket_btn.set_position(160, 15);
 	basket_btn.set_image(&basket_btn_img);
 	basket_btn.set_image_hover(&basket_btn_hover_img);
 	basket_btn.set_sound_hover(&btn_sound_hover);
@@ -169,6 +174,12 @@ store_menu::view store_category::update(menus::state& menu)
 	exit_btn.set_scale(0.75f);
 	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
+
+
+	page_text = new gui_text(format::va("1/%i", max_page).c_str(), 15, (GXColor){0, 0, 0, 255});
+	page_text->set_alignment(ALIGN_RIGHT, ALIGN_TOP);
+	page_text->set_position(-112, 40);
+	if(max_page > 1) w.append(page_text);
 
 	gui_text info_text(format::va("%s", store_menu::store_name.c_str()).c_str(), 20, (GXColor){0, 0, 0, 255});
 	info_text.set_alignment(ALIGN_LEFT, ALIGN_TOP);
