@@ -310,6 +310,11 @@ store_menu::view store_items::update(menus::state& menu)
 			if(menu == menus::state::MENU_CANCEL) view = store_menu::view::VIEW_NONE;
 			else if(menu != menus::state::MENU_CANCEL)  view = store_menu::view::VIEW_EXIT;
 		}
+		else if(basket_btn.get_state() == STATE_CLICKED)
+		{
+			view = store_menu::view::VIEW_CART;
+			menus::prev_menu = menus::current_menu;
+		}
 		else if(exit_btn.get_state() == STATE_CLICKED)
 		{
 			view = store_menu::view::VIEW_CATEGORIES;

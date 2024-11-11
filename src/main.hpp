@@ -35,6 +35,7 @@
 #include "menus/console_menu/console_menu.hpp"
 #include "menus/address_menu/address_menu.hpp"
 #include "menus/home_menu/home_menu.hpp"
+#include "menus/cart_menu/cart_menu.hpp"
 #include "libwiigui/FreeTypeGX.h"
 #include "libwiigui/video.h"
 #include "libwiigui/audio.h"

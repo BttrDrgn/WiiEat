@@ -70,6 +70,10 @@ void menus::update()
                 menus::current_menu = store_menu::update();
                 break;
 
+            case menus::state::MENU_CART:
+                menus::current_menu = cart_menu::update();
+                break;
+
 			case menus::state::MENU_MAIN:
 			default:
 				menus::current_menu = main_menu::update();

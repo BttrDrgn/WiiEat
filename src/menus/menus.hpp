@@ -20,6 +20,7 @@ class menus
             MENU_RESTAURANT,
             MENU_STORE,
             MENU_CONSOLE,
+            MENU_CART,
         };
 
         static bool gui_halt;
