@@ -341,7 +341,7 @@ store_menu::view store_selection::update(menus::state& menu)
 		}
 		else if(add_btn.get_state() == STATE_CLICKED)
 		{
-			if(api::cart_id == "")
+			if(api::cart_id.length() <= 0)
 			{
 				api::create_cart_request();
 				api::locked_store = store_menu::store_id;
