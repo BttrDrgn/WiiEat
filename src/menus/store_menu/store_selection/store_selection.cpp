@@ -6,6 +6,8 @@ std::vector<choice*> store_selection::choices;
 int store_selection::current_page = 0;
 int store_selection::max_page = 0;
 std::string store_selection::current_item = "";
+std::string store_selection::current_item_id = "";
+double store_selection::current_item_cost = 0;
 static gui_text* page_text;
 
 bool store_selection::load_choices(const std::string& item_name, const std::string& store_id, const std::string& item_id)
@@ -43,6 +45,7 @@ bool store_selection::load_choices(const std::string& item_name, const std::stri
 
 			store_selection::max_page = (int)ceil(store_selection::choices.size() / 10.f);
 			store_selection::current_item = item_name;
+			store_selection::current_item_id = item_id;
             return true;
 		}
 		catch(const std::exception& e)
@@ -344,9 +347,15 @@ store_menu::view store_selection::update(menus::state& menu)
 			if(api::cart_id.length() <= 0)
 			{
 				api::create_cart_request();
-				api::locked_store = store_menu::store_id;
+				api::locked_store_id = store_menu::store_id;
+				api::locked_store_name = store_menu::store_name;
 			}
 			
+			if(api::add_item_request(api::cart_id, api::locked_store_id, store_selection::current_item_id, store_selection::current_item_cost) != api::error::NONE)
+			{
+				console_menu::write_line("adding item error!");
+			}
+
 			view = store_menu::view::VIEW_CATEGORIES;
 			add_btn.reset_state();
 		}
@@ -377,4 +386,5 @@ void store_selection::unload_choices()
 	store_selection::current_page = 0;
 	store_selection::max_page = 0;
 	store_selection::current_item = "";
+	store_selection::current_item_id = "";
 }

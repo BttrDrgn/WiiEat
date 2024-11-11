@@ -313,7 +313,7 @@ store_menu::view store_items::update(menus::state& menu)
 		else if(basket_btn.get_state() == STATE_CLICKED)
 		{
 			view = store_menu::view::VIEW_CART;
-			menus::prev_menu = menus::current_menu;
+			store_items::unload_items();
 		}
 		else if(exit_btn.get_state() == STATE_CLICKED)
 		{

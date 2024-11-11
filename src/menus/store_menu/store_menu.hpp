@@ -22,6 +22,7 @@ class store_menu
             VIEW_ITEMS,
             VIEW_SELECTION,
             VIEW_CHOICE,
+            VIEW_CART,
         };
 
         static bool load_store(const std::string& store_name, const std::string& id);

@@ -8,6 +8,7 @@ class cart_menu
 {
     public:
         static menus::state update();
+        static void load_cart(const std::string& cart_id);
 };
 
 #endif /* CART_MENU */

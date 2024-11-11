@@ -21,6 +21,8 @@ class store_selection
         static std::vector<std::string> selected_choices;
 
         static std::string current_item;
+        static std::string current_item_id;
+        static double current_item_cost;
         static int current_page;
         static int max_page;
 };

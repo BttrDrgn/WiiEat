@@ -11,7 +11,8 @@ api::coordinates api::coords;
 std::string api::operation_id = "";
 int api::tz_offset = 0;
 std::string api::cart_id;
-std::string api::locked_store;
+std::string api::locked_store_id;
+std::string api::locked_store_name;
 
 char api::address[ADDRESS_LEN] = "";
 char api::city[CITY_LEN] = "";
@@ -30,9 +31,11 @@ std::unordered_map<char*, char*> api::endpoints =
     { "menu_item", "https://api-gtm.grubhub.com/restaurants/{resId}/menu_items" },
     { "carts", "https://api-gtm.grubhub.com/carts" },
     { "delivery_info", "https://api-gtm.grubhub.com/carts" },
+    { "incomplete_delivery", "https://api-gtm.grubhub.com/carts/{cartId}/incomplete_delivery" },
     { "lines", "https://api-gtm.grubhub.com/carts/{cartId}/lines" },
     { "client_token", "https://api-gtm.grubhub.com/payments/client_token" }, //{"payment_type":"CREDIT_CARD","frontend_capabilities":[]}
     { "credit_card", "https://api-cde-gtm.grubhub.com/tokenizer/{token}/credit_card" }, //{"credit_card_number":"","cvv":"","expiration_month":"","expiration_year":"","cc_zipcode":"","vaulted":true}
+    { "credentials", "https://api-gtm.grubhub.com/credentials/" },
 };
 
 std::unordered_map<char*, char*> access_control =
@@ -45,9 +48,12 @@ std::unordered_map<char*, char*> access_control =
     { "feed", "authorization,cache-control,if-modified-since" },
     { "menu_item", "authorization,cache-control,if-modified-since" },
     { "carts", "authorization,cache-control,content-type,if-modified-since" },
+    { "incomplete_delivery", "authorization,cache-control,content-type,if-modified-since" },
+    { "lines", "authorization,cache-control,content-type,if-modified-since" },
     { "delivery_info", "authorization,cache-control,content-type,if-modified-since" },
     { "client_token", "authorization,cache-control,content-type,if-modified-since" },
     { "credit_card", "content-type" },
+    { "credentials", "content-type" },
 };
 
 bool api::request_access(char* endpoint, const std::string& url, const std::string& method)
@@ -561,6 +567,7 @@ api::error api::create_cart_request()
             {
                 auto json = nlohmann::json::parse(resp.body);
                 api::cart_id = json["id"].get<std::string>();
+                api::put_incomplete_delivery();
                 return api::error::NONE;
             }
         }
@@ -573,10 +580,11 @@ api::error api::create_cart_request()
     return api::error::UNKNOWN;
 }
 
-api::error api::get_cart_request(json& json)
+api::error api::get_cart_request(const std::string& cart_id, json& json)
 {
-    char* endpoint = "cart";
-    auto url = format::va("%s/%s", api::endpoints[endpoint], api::cart_id.c_str());
+    char* endpoint = "carts";
+    auto url = format::va("%s/%s", api::endpoints[endpoint], cart_id.c_str());
+    
     if(api::request_access(endpoint, url, "GET"))
     {
         auto bearer = format::va("Bearer %s", api::access_token.c_str());
@@ -607,13 +615,60 @@ api::error api::get_cart_request(json& json)
     return api::error::UNKNOWN;
 }
 
-api::error api::add_item_request(const std::string& store_id, const std::string& menu_item_id, const std::string& item_id)
+api::error api::put_incomplete_delivery()
 {
+    char* endpoint = "incomplete_delivery";
+    incomplete_delivery incomp_del(coords.latitude, coords.longitude);
+    auto json = incomp_del.serialize();
+    console_menu::write_line(json.dump().c_str());
+
+    auto url = format::va(format::replace(api::endpoints[endpoint], "{cartId}", cart_id.c_str()).c_str());
+    
+    if(api::request_access(endpoint, url, "PUT"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "PUT", headers, json.dump());
+        if(resp.status_code == 204)
+        {
+            return api::error::NONE;
+        }
+    }
+
     return api::error::UNKNOWN;
 }
 
-api::error api::put_delivery_info()
+api::error api::add_item_request(const std::string& cart_id, const std::string& store_id, const std::string& menu_item_id, double cost)
 {
+    cart_lines new_line(store_id, menu_item_id, 1, cost);
+    auto post_json = new_line.serialize();
+    char* endpoint = "lines";
+    auto url = format::va(format::replace(api::endpoints[endpoint], "{cartId}", cart_id.c_str()).c_str());
+    console_menu::write_line(post_json.dump().c_str());
+    
+    if(api::request_access(endpoint, url, "POST"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "POST", headers, post_json.dump());
+        if(resp.status_code == 201)
+        {
+            return api::error::NONE;
+        }
+    }
+
     return api::error::UNKNOWN;
 }
 

@@ -1,12 +1,12 @@
-#ifndef LINES
-#define LINES
+#ifndef CART_LINES
+#define CART_LINES
 
 #include <string>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
-class lines
+class cart_lines
 {
 public:
     std::string menu_item_id;
@@ -15,7 +15,7 @@ public:
     int quantity;
     std::string special_instructions;
     std::vector<json> options;
-    std::vector<int> sub_option_ids;
+    //std::vector<int> sub_option_ids;
     double cost;
     std::string restaurant_id;
     bool popular;
@@ -23,14 +23,14 @@ public:
     std::string source;
 
     // Constructor with default values
-    lines(const std::string& menu_item_id, int count, double cost, const std::string& store_id) :
+    cart_lines(const std::string& store_id, const std::string& menu_item_id, int count, double cost) :
         menu_item_id(menu_item_id),
         brand("GRUBHUB"),
         experiments({"LINEOPTION_ENHANCEMENTS"}),
         quantity(count),
         special_instructions(""),
         options({}),
-        sub_option_ids({}),
+        //sub_option_ids({}),
         cost(cost),
         restaurant_id(store_id),
         popular(false),
@@ -48,20 +48,24 @@ public:
             {"quantity", quantity},
             {"special_instructions", special_instructions},
             {"options", options},
-            {"sub_option_ids", sub_option_ids},
+            //{"sub_option_ids", sub_option_ids},
             {"cost", cost},
             {"restaurant_id", restaurant_id},
             {"popular", popular},
-            {"is_badged", is_badged},
+            {"isBadged", is_badged},
             {"source", source}
         };
     }
 
     // Static Deserialize method
-    static lines deserialize(const json& root)
+    static cart_lines deserialize(const json& root)
     {
-        return lines{ };
+        const std::string store_id = root.at("store_id").get<std::string>();
+        const std::string menu_item_id = root.at("menu_item_id").get<std::string>();
+        const int count = root.at("count").get<int>();
+        const double cost = root.at("cost").get<double>();
+        return cart_lines{store_id, menu_item_id, count, cost};
     }
 };
 
-#endif /* LINES */
+#endif /* CART_LINES */

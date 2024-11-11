@@ -85,7 +85,7 @@ net::response net::http_request(std::string url, const std::string& method,
 
     curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
 
-    if(method == "POST")
+    if(method == "POST" || method == "PUT")
     {
         headers.emplace_back("Content-Type", "application/json");
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data.c_str());
@@ -119,6 +119,7 @@ net::response net::http_request(std::string url, const std::string& method,
     }
 
     console_menu::write_line(format::va("[%s] %i %s", method.c_str(), response.status_code, url.c_str()));
+    //console_menu::write_line(response.body.c_str());
 
     curl_slist_free_all(headerlist);
     curl_easy_cleanup(curl);

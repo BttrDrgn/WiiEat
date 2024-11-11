@@ -88,6 +88,12 @@ menus::state store_menu::update()
 				store_menu::current_view = store_items::update(menu);
 			break;
 
+			case store_menu::view::VIEW_CART:
+				menu = menus::state::MENU_CART;
+				store_menu::current_view = store_menu::view::VIEW_EXIT;
+				cart_menu::load_cart(api::cart_id);
+			break;
+
 			case store_menu::view::VIEW_SELECTION:
 				store_menu::current_view = store_selection::update(menu);
 			break;

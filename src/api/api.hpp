@@ -12,6 +12,8 @@
 #include <api/auth/confirmation_code/confirmation_code.hpp>
 #include <api/auth/confirmation_code/confirmation_code_resp.hpp>
 #include <api/carts/carts.hpp>
+#include <api/carts/cart_lines.hpp>
+#include <api/incomplete_delivery.hpp>
 
 using json = nlohmann::json;
 
@@ -58,7 +60,8 @@ class api
         static std::string operation_id;
         static int tz_offset;
         static std::string cart_id;
-        static std::string locked_store;
+        static std::string locked_store_id;
+        static std::string locked_store_name;
 
         static bool request_access(char* endpoint, const std::string& url, const std::string& method);
 
@@ -82,9 +85,9 @@ class api
 
         //cart
         static api::error create_cart_request();
-        static api::error get_cart_request(json& json);
-        static api::error add_item_request(const std::string& store_id, const std::string& menu_item_id, const std::string& item_id);
-        static api::error put_delivery_info();
+        static api::error get_cart_request(const std::string& cart_id, json& json);
+        static api::error add_item_request(const std::string& cart_id, const std::string& store_id, const std::string& menu_item_id, double cost);
+        static api::error api::put_incomplete_delivery();
 
         //download
         static img_data download_image(const std::string& url);
