@@ -283,8 +283,27 @@ store_menu::view store_category::update(menus::state& menu)
 		}
 		else if(exit_btn.get_state() == STATE_CLICKED)
 		{
-			view = store_menu::view::VIEW_EXIT;
-			store_category::unload_category();
+			if (api::cart_id.length() > 0)
+			{
+				auto choice = menus::window_prompt
+				(
+					"Return",
+					"Returning to main menu will clear your cart. Are you sure you want to continue?",
+					"Yes",
+					"No"
+				);
+
+				if(choice == 1)
+				{
+					api::cart_id.clear();
+					view = store_menu::view::VIEW_EXIT;
+				}
+			}
+			else
+			{
+				view = store_menu::view::VIEW_EXIT;
+				store_category::unload_category();
+			}
 		}
 		else if(left_btn.get_state() == STATE_CLICKED)
 		{
