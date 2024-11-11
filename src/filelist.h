@@ -28,6 +28,8 @@
 #include "right_button_hover_png.h"
 #include "address_button_png.h"
 #include "address_button_hover_png.h"
+#include "credit_button_png.h"
+#include "credit_button_hover_png.h"
 #include "basket_button_png.h"
 #include "basket_button_hover_png.h"
 #include "exit_button_png.h"
