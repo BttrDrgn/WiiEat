@@ -20,11 +20,25 @@ bool store_selection::load_choices(const std::string& item_name, const std::stri
 			for(int i = 0; i < choices.size(); ++i)
 			{
 				auto name = format::remove_non_ascii(choices[i]["name"].get<std::string>());
-				store_selection::choices.emplace_back(new choice(
+				auto choice_option_list = choices[i]["choice_option_list"];
+
+				auto new_choice = new choice(
 					name, choices[i]["id"].get<std::string>(),
-					choices[i]["max_choice_options"].get<int>(),
-					choices[i]["min_choice_options"].get<int>() > 0
-				));
+					choices[i]["max_choice_options"].get<int>()
+				);
+
+				bool has_default = false;
+				for(int c = 0; c < choice_option_list.size(); ++c)
+				{
+					if(!has_default)
+					{
+						has_default = choice_option_list[c]["defaulted"].get<bool>();
+					}
+					new_choice->add_option(format::remove_non_ascii(choice_option_list[c]["description"].get<std::string>()), choice_option_list[c]["id"].get<std::string>());
+				}
+				new_choice->required = !has_default;
+
+				store_selection::choices.emplace_back(new_choice);
 			}
 
 			store_selection::max_page = (int)ceil(store_selection::choices.size() / 10.f);
@@ -330,6 +344,7 @@ store_menu::view store_selection::update(menus::state& menu)
 			if(api::cart_id == "")
 			{
 				api::create_cart_request();
+				api::locked_store = store_menu::store_id;
 			}
 			
 			view = store_menu::view::VIEW_CATEGORIES;

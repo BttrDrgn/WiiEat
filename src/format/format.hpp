@@ -5,6 +5,8 @@
 #include <vector>
 #include <cstdarg>
 #include <cstring>
+#include <sstream>
+#include <iomanip>
 
 class format
 {
@@ -105,6 +107,16 @@ class format
             result = strtod(in_str.c_str(), &end);
             if (end == in_str.c_str() || *end != '\0') return false;
             return true;
+        }
+
+        static std::string cents_to_usd(int cents)
+        {
+            double dollars = static_cast<double>(cents) / 100.0;
+
+            std::stringstream ss;
+            ss << "$" << std::fixed << std::setprecision(2) << dollars;
+
+            return ss.str();
         }
 };
 

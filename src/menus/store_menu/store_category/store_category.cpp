@@ -126,7 +126,7 @@ store_menu::view store_category::update(menus::state& menu)
 	basket_btn.set_trigger(&trig_a);
 	basket_btn.set_scale(0.75f);
 	basket_btn.set_effect_grow();
-	w.append(&basket_btn);
+	if (api::cart_id.length() > 0) w.append(&basket_btn);
 
 	gui_image_data left_btn_img_data(left_button_png);
 	gui_image_data left_btn_hover_img_data(left_button_hover_png);

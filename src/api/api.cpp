@@ -11,6 +11,7 @@ api::coordinates api::coords;
 std::string api::operation_id = "";
 int api::tz_offset = 0;
 std::string api::cart_id;
+std::string api::locked_store;
 
 char api::address[ADDRESS_LEN] = "";
 char api::city[CITY_LEN] = "";
@@ -539,38 +540,30 @@ api::error api::create_cart_request()
 {
     try
     {
-    carts* cart = new carts();
-    json carts_json = cart->serialize();
+        carts* cart = new carts();
+        json carts_json = cart->serialize();
 
-    char* endpoint = "carts";
-    auto url = api::endpoints[endpoint];
-    if(api::request_access(endpoint, url, "POST"))
-    {
-        auto bearer = format::va("Bearer %s", api::access_token.c_str());
-        std::vector<net::header> headers = 
-        {
-            { "Accept", "application/json"},
-            { "Authorization", bearer.c_str()},
-            { "Cache-Control", "max-age=0"},
-        };
+        char* endpoint = "carts";
+        auto url = api::endpoints[endpoint];
 
-        auto resp = net::http_request(url, "POST", headers, carts_json.dump());
-        if(resp.status_code == 200)
+        if(api::request_access(endpoint, url, "POST"))
         {
-            try
+            auto bearer = format::va("Bearer %s", api::access_token.c_str());
+            std::vector<net::header> headers = 
+            {
+                { "Accept", "application/json"},
+                { "Authorization", bearer.c_str()},
+                { "Cache-Control", "max-age=0"},
+            };
+
+            auto resp = net::http_request(url, "POST", headers, carts_json.dump());
+            if(resp.status_code == 201)
             {
                 auto json = nlohmann::json::parse(resp.body);
                 api::cart_id = json["id"].get<std::string>();
+                return api::error::NONE;
             }
-            catch(const std::exception& e)
-            {
-                console_menu::write_line(e.what());
-                return api::error::BAD_JSON;
-            }
-
-            return api::error::NONE;
         }
-    }
     }
     catch(const std::exception& e)
     {

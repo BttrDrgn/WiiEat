@@ -58,6 +58,7 @@ class api
         static std::string operation_id;
         static int tz_offset;
         static std::string cart_id;
+        static std::string locked_store;
 
         static bool request_access(char* endpoint, const std::string& url, const std::string& method);
 
