@@ -35,7 +35,6 @@ void menus::initialize(state menu)
 	menus::bg_img = new gui_image(screen_width, screen_height, (GXColor){0xE1, 0xE1, 0xE1, 0xFF});
 	menus::main_window->append(menus::bg_img);
 
-    srand(time(NULL));
     menus::current_song = new gui_sound(legacyAlli_mash_up_ogg, legacyAlli_mash_up_ogg_size, SOUND_OGG);
     menus::current_song->SetStartPos(song_times[rand() % 4]);
     menus::current_song->SetVolume(50);

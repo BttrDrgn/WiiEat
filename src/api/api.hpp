@@ -59,6 +59,7 @@ class api
         static std::unordered_map<char*, char*> endpoints;
         static std::string operation_id;
         static int tz_offset;
+        static int device_id;
         static std::string cart_id;
         static std::string locked_store_id;
         static std::string locked_store_name;

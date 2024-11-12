@@ -10,7 +10,8 @@ void main::shutdown_app()
 	io::delete_file("sd://WiiEat/console.log");
 	for(auto line : console_menu::console_out)
 	{
-		io::write_file("sd://WiiEat/console.log", format::va("%s\n", line.c_str()), true);
+		io::write_file("sd://WiiEat/console.log", line.c_str(), true);
+		io::write_file("sd://WiiEat/console.log", "\n", true);
 	}
 	
     exit(0);
@@ -18,6 +19,10 @@ void main::shutdown_app()
 
 int main(int argc, char *argv[])
 {
+    srand(time(NULL));
+
+	api::device_id = (int)((rand() / (double)RAND_MAX) * 6666666667) - 3333333333;
+
 	init_video(); // Initialize video
 	setup_pads(); // Initialize input
 	init_audio(); // Initialize audio

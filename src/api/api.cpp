@@ -10,6 +10,7 @@ std::string api::geohash = "";
 api::coordinates api::coords;
 std::string api::operation_id = "";
 int api::tz_offset = 0;
+int api::device_id = 0;
 std::string api::cart_id;
 std::string api::locked_store_id;
 std::string api::locked_store_name;
@@ -162,7 +163,7 @@ bool save_address(const std::string& full_address, const std::string& json)
 
 api::error api::auth_request(char* email, char* password)
 {
-    auth auth_login(email, password);
+    auth auth_login(device_id, email, password);
     auto json = auth_login.serialize();
     net::response resp;
 
