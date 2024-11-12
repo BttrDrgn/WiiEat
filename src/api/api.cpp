@@ -36,6 +36,7 @@ std::unordered_map<char*, char*> api::endpoints =
     { "client_token", "https://api-gtm.grubhub.com/payments/client_token" }, //{"payment_type":"CREDIT_CARD","frontend_capabilities":[]}
     { "credit_card", "https://api-cde-gtm.grubhub.com/tokenizer/{token}/credit_card" }, //{"credit_card_number":"","cvv":"","expiration_month":"","expiration_year":"","cc_zipcode":"","vaulted":true}
     { "credentials", "https://api-gtm.grubhub.com/credentials/" },
+    { "payments", "https://api-gtm.grubhub.com/payments/{udId}/payments" },
 };
 
 std::unordered_map<char*, char*> access_control =
@@ -54,6 +55,7 @@ std::unordered_map<char*, char*> access_control =
     { "client_token", "authorization,cache-control,content-type,if-modified-since" },
     { "credit_card", "content-type" },
     { "credentials", "content-type" },
+    { "payments", "authorization,cache-control,if-modified-since" },
 };
 
 bool api::request_access(char* endpoint, const std::string& url, const std::string& method)
@@ -665,6 +667,41 @@ api::error api::add_item_request(const std::string& cart_id, const std::string& 
         auto resp = net::http_request(url, "POST", headers, post_json.dump());
         if(resp.status_code == 201)
         {
+            return api::error::NONE;
+        }
+    }
+
+    return api::error::UNKNOWN;
+}
+
+api::error api::get_payments(const std::string& udId, json& json)
+{
+    char* endpoint = "payments";
+    auto url = format::va(format::replace(api::endpoints[endpoint], "{udId}", udId.c_str()).c_str());
+    
+    if(api::request_access(endpoint, url, "GET"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "GET", headers);
+        if(resp.status_code == 200)
+        {
+            try
+            {
+                json = nlohmann::json::parse(resp.body);
+            }
+            catch(const std::exception& e)
+            {
+                console_menu::write_line(e.what());
+                return api::error::BAD_JSON;
+            }
+
             return api::error::NONE;
         }
     }

@@ -252,7 +252,7 @@ store_menu::view store_category::update(menus::state& menu)
 		store_category::buttons[i]->set_visible(true);
 	}
 
-	//w.set_effect(EFFECT_FADE, 25);
+	w.set_effect(EFFECT_FADE, 25);
 	menus::halt_gui();
 	menus::main_window->append(&w);
 	menus::resume_gui();
@@ -266,6 +266,9 @@ store_menu::view store_category::update(menus::state& menu)
 			if(store_category::buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
+
+				w.set_effect(EFFECT_FADE, -25);
+				while(w.get_effect() > 0) usleep(100);
 
 				store_items::load_items(store_menu::store_id, store_category::categories[index]->id);
 				store_category::category_name = store_category::categories[index]->name;
@@ -283,6 +286,9 @@ store_menu::view store_category::update(menus::state& menu)
 		}
 		else if(basket_btn.get_state() == STATE_CLICKED)
 		{
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+			
 			view = store_menu::view::VIEW_CART;
 			store_category::unload_category();
 		}
@@ -300,12 +306,18 @@ store_menu::view store_category::update(menus::state& menu)
 
 				if(choice == 1)
 				{
+					w.set_effect(EFFECT_FADE, -25);
+					while(w.get_effect() > 0) usleep(100);
+
 					api::cart_id.clear();
 					view = store_menu::view::VIEW_EXIT;
 				}
 			}
 			else
 			{
+				w.set_effect(EFFECT_FADE, -25);
+				while(w.get_effect() > 0) usleep(100);
+
 				view = store_menu::view::VIEW_EXIT;
 				store_category::unload_category();
 			}

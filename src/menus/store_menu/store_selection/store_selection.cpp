@@ -309,7 +309,7 @@ store_menu::view store_selection::update(menus::state& menu)
 		store_selection::buttons[i]->set_visible(true);
 	}
 
-	//w.set_effect(EFFECT_FADE, 25);
+	w.set_effect(EFFECT_FADE, 25);
 	menus::halt_gui();
 	menus::main_window->append(&w);
 	menus::resume_gui();
@@ -340,10 +340,16 @@ store_menu::view store_selection::update(menus::state& menu)
 		}
 		else if(exit_btn.get_state() == STATE_CLICKED)
 		{
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+
 			view = store_menu::view::VIEW_ITEMS;
 		}
 		else if(add_btn.get_state() == STATE_CLICKED)
 		{
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+
 			if(api::cart_id.length() <= 0)
 			{
 				api::create_cart_request();

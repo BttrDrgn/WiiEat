@@ -21,6 +21,7 @@ class menus
             MENU_STORE,
             MENU_CONSOLE,
             MENU_CART,
+            MENU_PAYMENT,
         };
 
         static bool gui_halt;

@@ -1,20 +1,10 @@
-#include "cart_menu.hpp"
+#include "payment_menu.hpp"
 
-void cart_menu::load_cart(const std::string& cart_id)
+void payment_menu::load_payments(const std::string& uuId)
 {
-	try
-	{
-		json json = 0;
-		auto err = api::get_cart_request(cart_id, json);
-		console_menu::write_line(format::va("Items in cart: %i", json["charges"]["lines"]["line_items"].size()).c_str());
-	}
-	catch(const std::exception& e)
-	{
-		console_menu::write_line(e.what());
-	}
 }
 
-menus::state cart_menu::update()
+menus::state payment_menu::update()
 {
     menus::state menu = menus::state::MENU_NONE;
 
@@ -84,15 +74,8 @@ menus::state cart_menu::update()
 		{
 			w.set_effect(EFFECT_FADE, -25);
 			while(w.get_effect() > 0) usleep(100);
-
-			if(store_menu::load_store(api::locked_store_name, api::locked_store_id))
-			{
-				menu = menus::state::MENU_STORE;
-			}
-			else
-			{
-				store_menu::unload_store();
-			}
+			
+			menu = menus::state::MENU_RESTAURANT;
 		}
 	}
 

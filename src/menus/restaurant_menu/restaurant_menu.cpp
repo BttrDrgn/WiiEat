@@ -176,6 +176,21 @@ menus::state restaurant_menu::update()
 	address_btn.set_effect_grow();
 	w.append(&address_btn);
 
+	gui_image_data credit_btn_img_data(credit_button_png);
+	gui_image_data credit_btn_hover_img_data(credit_button_hover_png);
+	gui_image credit_btn_img(&credit_btn_img_data);
+	gui_image credit_btn_hover_img(&credit_btn_hover_img_data);
+	gui_button credit_btn(credit_btn_img_data.get_width(), credit_btn_img_data.get_height());
+	credit_btn.set_alignment(ALIGN_LEFT, ALIGN_TOP);
+	credit_btn.set_position(225, 15);
+	credit_btn.set_image(&credit_btn_img);
+	credit_btn.set_image_hover(&credit_btn_hover_img);
+	credit_btn.set_sound_hover(&btn_sound_hover);
+	credit_btn.set_trigger(&trig_a);
+	credit_btn.set_scale(0.75f);
+	credit_btn.set_effect_grow();
+	w.append(&credit_btn);
+
 	gui_image_data left_btn_img_data(left_button_png);
 	gui_image_data left_btn_hover_img_data(left_button_hover_png);
 	gui_image left_btn_img(&left_btn_img_data);
@@ -313,6 +328,9 @@ menus::state restaurant_menu::update()
 			if(buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
+				w.set_effect(EFFECT_FADE, -25);
+				while(w.get_effect() > 0) usleep(100);
+
 				if(store_menu::load_store(restaurant_menu::restaurants[index]->name, restaurant_menu::restaurants[index]->id))
 				{
 					menu = menus::next(menus::state::MENU_STORE);
@@ -336,6 +354,13 @@ menus::state restaurant_menu::update()
 		else if(address_btn.get_state() == STATE_CLICKED)
 		{
 			menu = menus::next(menus::state::MENU_ADDRESS);
+
+			w.set_effect(EFFECT_FADE, -25);
+			while(w.get_effect() > 0) usleep(100);
+		}
+		else if(credit_btn.get_state() == STATE_CLICKED)
+		{
+			menu = menus::next(menus::state::MENU_PAYMENT);
 
 			w.set_effect(EFFECT_FADE, -25);
 			while(w.get_effect() > 0) usleep(100);

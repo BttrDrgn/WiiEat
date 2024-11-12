@@ -90,7 +90,7 @@ menus::state home_menu::update()
 			}
 			else
 			{
-				quit_btn.reset_state();
+				menu = menus::state::MENU_CANCEL;
 			}
 		}
 #ifdef DEBUG

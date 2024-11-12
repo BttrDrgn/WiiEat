@@ -87,7 +87,10 @@ class api
         static api::error create_cart_request();
         static api::error get_cart_request(const std::string& cart_id, json& json);
         static api::error add_item_request(const std::string& cart_id, const std::string& store_id, const std::string& menu_item_id, double cost);
-        static api::error api::put_incomplete_delivery();
+        static api::error put_incomplete_delivery();
+
+        //payments
+        static api::error get_payments(const std::string& udId, json& json);
 
         //download
         static img_data download_image(const std::string& url);
