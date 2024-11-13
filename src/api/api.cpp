@@ -570,7 +570,7 @@ api::error api::create_cart_request()
             {
                 auto json = nlohmann::json::parse(resp.body);
                 api::cart_id = json["id"].get<std::string>();
-                api::put_incomplete_delivery();
+                //api::put_incomplete_delivery();
                 return api::error::NONE;
             }
         }
