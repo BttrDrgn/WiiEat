@@ -25,9 +25,14 @@ INCLUDES	:=	src
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS		=	-g -O0 -Wall $(MACHDEP) $(INCLUDE) `freetype-config --cflags` -fpermissive
+CFLAGS		=	-g -O0 -Wall -w $(MACHDEP) $(INCLUDE) `freetype-config --cflags` -fpermissive
 CXXFLAGS	=	$(CFLAGS)
 LDFLAGS		=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
+
+#---------------------------------------------------------------------------------
+# Add the --silent flag to MAKEFLAGS
+#---------------------------------------------------------------------------------
+MAKEFLAGS += --silent
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
