@@ -29,6 +29,18 @@ class format
             }
         }
 
+        static std::string to_upper(const std::string& input)
+        {
+            std::string result;
+            result.reserve(input.size());  // Reserve space to optimize
+
+            for (char c : input) {
+                result += std::toupper(static_cast<unsigned char>(c));
+            }
+
+            return result;
+        }
+
         static char* get_n_chars(const char* str, int n)
         {
             char* result = (char*)malloc((n + 1) * sizeof(char));
