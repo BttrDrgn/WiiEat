@@ -14,6 +14,8 @@ int api::device_id = 0;
 std::string api::cart_id;
 std::string api::locked_store_id;
 std::string api::locked_store_name;
+std::string api::active_card_last_4;
+std::string api::active_card_id;
 
 char api::address[ADDRESS_LEN] = "";
 char api::city[CITY_LEN] = "";
@@ -810,4 +812,41 @@ bool api::load_address()
     api::tz_offset = std::stoi(io::read_file("sd://WiiEat/tz_offset"));
 
     return true;
+}
+
+bool api::load_card_info()
+{
+    if (!io::file_exists("sd://WiiEat/card_info"))
+    {
+        console_menu::write_line("card_info not found");
+        return false;
+    }
+
+    auto split_info = format::split(io::read_file("sd://WiiEat/card_info"), ", ");
+    if (split_info.size() != 2) 
+    {
+        console_menu::write_line("Card split != 2");
+        return false;
+    }
+
+    //Dont check id size because i dont have enough reference data to determine length of ids, it might be 22
+    if (split_info[0].size() != 4)
+    {
+        io::delete_file("sd://WiiEat/card_info");
+        console_menu::write_line("Last 4 != 4");
+        return false;
+    }
+
+    api::active_card_last_4 = split_info[0];
+    api::active_card_id = split_info[1];
+    return true;
+}
+
+void api::set_active_card(const std::string& last_4, const std::string& id)
+{
+    api::active_card_last_4 = last_4;
+    api::active_card_id = id;
+
+    if (!io::file_exists("sd://WiiEat/card_info")) io::delete_file("sd://WiiEat/card_info");
+    io::write_file("sd://WiiEat/card_info", format::va("%s, %s", last_4.c_str(), id.c_str()).c_str());
 }

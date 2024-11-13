@@ -31,35 +31,29 @@ int main(int argc, char *argv[])
 	net::initialize();
 
 	//Streamline this better
-	if(io::file_exists("sd://WiiEat/refresh_token"))
+	if (!io::file_exists("sd://WiiEat/refresh_token"))
 	{
-		auto refresh_token = io::read_file("sd://WiiEat/refresh_token");
-		if(api::auth_request(refresh_token.c_str()))
-		{
-			if(api::load_address())
-			{
-				if(api::is_address_complete())
-				{
-					menus::initialize(menus::state::MENU_RESTAURANT);
-				}
-				else
-				{
-					menus::initialize(menus::state::MENU_ADDRESS);
-				}
-			}
-			else
-			{
-				menus::initialize(menus::state::MENU_ADDRESS);
-			}
-		}
-		else
-		{
-			menus::initialize(menus::state::MENU_MAIN);
-		}
+		menus::initialize(menus::state::MENU_MAIN);
 	}
 	else
 	{
-		menus::initialize(menus::state::MENU_MAIN);
+		auto refresh_token = io::read_file("sd://WiiEat/refresh_token");
+		if (!api::auth_request(refresh_token.c_str()))
+		{
+			menus::initialize(menus::state::MENU_MAIN);
+		}
+		else
+		{
+			api::load_card_info();
+			if (!api::load_address() || !api::is_address_complete())
+			{
+				menus::initialize(menus::state::MENU_ADDRESS);
+			}
+			else
+			{
+				menus::initialize(menus::state::MENU_RESTAURANT);
+			}
+		}
 	}
 
 	return 0;

@@ -14,6 +14,7 @@
 #include <api/carts/carts.hpp>
 #include <api/carts/cart_lines.hpp>
 #include <api/incomplete_delivery.hpp>
+#include <api/credit_card.hpp>
 
 using json = nlohmann::json;
 
@@ -63,6 +64,8 @@ class api
         static std::string cart_id;
         static std::string locked_store_id;
         static std::string locked_store_name;
+        static std::string active_card_last_4;
+        static std::string active_card_id;
 
         static bool request_access(char* endpoint, const std::string& url, const std::string& method);
 
@@ -92,6 +95,8 @@ class api
 
         //payments
         static api::error get_payments(const std::string& udId, json& json);
+        static bool load_card_info();
+        static void set_active_card(const std::string& last_4, const std::string& id);
 
         //download
         static img_data download_image(const std::string& url);

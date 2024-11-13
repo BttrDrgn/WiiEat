@@ -328,11 +328,12 @@ menus::state restaurant_menu::update()
 			if(buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
-				w.set_effect(EFFECT_FADE, -25);
-				while(w.get_effect() > 0) usleep(100);
 
 				if(store_menu::load_store(restaurant_menu::restaurants[index]->name, restaurant_menu::restaurants[index]->id))
 				{
+					w.set_effect(EFFECT_FADE, -25);
+					while(w.get_effect() > 0) usleep(100);
+					
 					menu = menus::next(menus::state::MENU_STORE);
 				}
 				else
@@ -364,6 +365,8 @@ menus::state restaurant_menu::update()
 
 			w.set_effect(EFFECT_FADE, -25);
 			while(w.get_effect() > 0) usleep(100);
+
+			payment_menu::load_payments(api::ud_id);
 		}
 		else if(left_btn.get_state() == STATE_CLICKED)
 		{
