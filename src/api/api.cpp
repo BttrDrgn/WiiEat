@@ -3,14 +3,15 @@
 #include <main.hpp>
 #include <geohash/geohash.h>
 
+std::string api::email = "";
 std::string api::access_token = "";
 std::string api::ud_id = "";
 std::string api::csrf_token = "";
 std::string api::geohash = "";
 api::coordinates api::coords;
 std::string api::operation_id = "";
-int api::tz_offset = 0;
-int api::device_id = 0;
+std::int64_t api::tz_offset = 0;
+std::int64_t api::device_id = 0;
 std::string api::cart_id;
 std::string api::locked_store_id;
 std::string api::locked_store_name;
@@ -33,13 +34,14 @@ std::unordered_map<char*, char*> api::endpoints =
     { "feed", "https://api-gtm.grubhub.com/restaurant_gateway/feed" },
     { "menu_item", "https://api-gtm.grubhub.com/restaurants/{resId}/menu_items" },
     { "carts", "https://api-gtm.grubhub.com/carts" },
-    { "delivery_info", "https://api-gtm.grubhub.com/carts" },
+    { "delivery_info", "https://api-gtm.grubhub.com/carts/{cartId}/delivery_info" },
     { "incomplete_delivery", "https://api-gtm.grubhub.com/carts/{cartId}/incomplete_delivery" },
     { "lines", "https://api-gtm.grubhub.com/carts/{cartId}/lines" },
     { "client_token", "https://api-gtm.grubhub.com/payments/client_token" }, //{"payment_type":"CREDIT_CARD","frontend_capabilities":[]}
     { "credit_card", "https://api-cde-gtm.grubhub.com/tokenizer/{token}/credit_card" }, //{"credit_card_number":"","cvv":"","expiration_month":"","expiration_year":"","cc_zipcode":"","vaulted":true}
     { "credentials", "https://api-gtm.grubhub.com/credentials/" },
     { "payments", "https://api-gtm.grubhub.com/payments/{udId}/payments" },
+    { "image", "https://media-cdn.grubhub.com/image/upload/w_{width},h_{height},f_png" },
 };
 
 std::unordered_map<char*, char*> access_control =
@@ -79,6 +81,7 @@ bool save_token(const std::string& json)
     try
     {
         auto root = json::parse(json);
+        api::email = root["credential"]["email"].get<std::string>();
 
         auto session_handle = root.find("session_handle");
         if (session_handle == root.end())
@@ -150,7 +153,7 @@ bool save_address(const std::string& full_address, const std::string& json)
         api::geohash = geohash_encode(api::coords.latitude, api::coords.longitude, 12);
         io::write_file("sd://WiiEat/geohash", api::geohash);
 
-        api::tz_offset = root_arr["time_zone"]["raw_offset"].get<int>();
+        api::tz_offset = root_arr["time_zone"]["raw_offset"].get<std::int64_t>();
         io::write_file("sd://WiiEat/tz_offset", std::to_string(api::tz_offset));
 
         return true;
@@ -572,6 +575,7 @@ api::error api::create_cart_request()
             {
                 auto json = nlohmann::json::parse(resp.body);
                 api::cart_id = json["id"].get<std::string>();
+                api::put_delivery_info();
                 //api::put_incomplete_delivery();
                 return api::error::NONE;
             }
@@ -649,13 +653,47 @@ api::error api::put_incomplete_delivery()
     return api::error::UNKNOWN;
 }
 
-api::error api::add_item_request(const std::string& cart_id, const std::string& store_id, const std::string& menu_item_id, double cost)
+api::error api::put_delivery_info()
+{
+    char* endpoint = "delivery_info";
+    delivery_info delivery_info(api::city, api::state, api::email, coords.latitude, coords.longitude, api::zip, api::address);
+    auto json = delivery_info.serialize();
+    console_menu::write_line(json.dump().c_str());
+
+    auto url = format::va(format::replace(api::endpoints[endpoint], "{cartId}", cart_id.c_str()).c_str());
+    
+    if(api::request_access(endpoint, url, "PUT"))
+    {
+        auto bearer = format::va("Bearer %s", api::access_token.c_str());
+        std::vector<net::header> headers = 
+        {
+            { "Accept", "application/json"},
+            { "Authorization", bearer.c_str()},
+            { "Cache-Control", "max-age=0"},
+        };
+
+        auto resp = net::http_request(url, "PUT", headers, json.dump());
+        if(resp.status_code == 204)
+        {
+            return api::error::NONE;
+        }
+    }
+
+    return api::error::UNKNOWN;
+}
+
+api::error api::add_item_request(const std::string& cart_id, const std::string& store_id, const std::string& menu_item_id, double cost, const std::vector<std::uint32_t>& option_ids)
 {
     cart_lines new_line(store_id, menu_item_id, 1, cost);
-    auto post_json = new_line.serialize();
+
+    for(int i = 0; i < option_ids.size(); ++i)
+    {
+        new_line.add_option(option_ids[i], 1);
+    }
+
     char* endpoint = "lines";
     auto url = format::va(format::replace(api::endpoints[endpoint], "{cartId}", cart_id.c_str()).c_str());
-    console_menu::write_line(post_json.dump().c_str());
+    auto post_json = new_line.serialize();
     
     if(api::request_access(endpoint, url, "POST"))
     {
@@ -712,15 +750,20 @@ api::error api::get_payments(const std::string& udId, json& json)
     return api::error::UNKNOWN;
 }
 
-api::img_data api::download_image(const std::string& url)
+api::img_data api::download_image(const std::string& id, int width, int height)
 {
-    api::img_data img = { 0, 0 };
+    api::img_data img = { };
 
-    auto resp = net::http_request(url, "GET", {});
+    char* endpoint = "image";
+    std::string url(api::endpoints[endpoint]);
+    url = format::replace(url.c_str(), "{width}", std::to_string(width).c_str());
+    url = format::replace(url.c_str(), "{height}", std::to_string(height).c_str());
+
+    auto resp = net::http_request(format::va("%s/%s", url.c_str(), id.c_str()), "GET", {});
     if(resp.status_code == 200)
     {
         size_t total_size = resp.body.size();
-        img.data = (uint8_t*)malloc(total_size);
+        img.data = (std::uint8_t*)malloc(total_size);
 
         if(img.data)
         {
@@ -809,7 +852,7 @@ bool api::load_address()
         console_menu::write_line("tz_offset not found");
         return false;
     }
-    api::tz_offset = std::stoi(io::read_file("sd://WiiEat/tz_offset"));
+    api::tz_offset = std::stol(io::read_file("sd://WiiEat/tz_offset"));
 
     return true;
 }

@@ -1,5 +1,6 @@
 #include "store_selection.hpp"
 #include "../store_category/store_category.hpp"
+#include "../store_items/store_items.hpp"
 
 std::vector<gui_button*> store_selection::buttons;
 std::vector<choice*> store_selection::choices;
@@ -7,11 +8,15 @@ int store_selection::current_page = 0;
 int store_selection::max_page = 0;
 std::string store_selection::current_item = "";
 std::string store_selection::current_item_id = "";
+std::unordered_map<std::string, std::vector<std::string>> store_selection::selected_choices;
 double store_selection::current_item_cost = 0;
 static gui_text* page_text;
+static gui_text* price_text;
+std::string store_selection::img_id;
 
-bool store_selection::load_choices(const std::string& item_name, const std::string& store_id, const std::string& item_id)
+bool store_selection::load_choices(const std::string& item_name, const std::string& store_id, const std::string& item_id, const std::string& img_id, double item_cost)
 {
+	store_selection::img_id = img_id;
 	json json = 0;
 	auto err = api::item_info_request(store_id, item_id, json);
 	if(err == api::error::NONE)
@@ -26,19 +31,29 @@ bool store_selection::load_choices(const std::string& item_name, const std::stri
 
 				auto new_choice = new choice(
 					name, choices[i]["id"].get<std::string>(),
-					choices[i]["max_choice_options"].get<int>()
+					choices[i]["max_choice_options"].get<int>(),
+					choices[i]["min_choice_options"].get<int>()
 				);
 
-				bool has_default = false;
+				std::string defaulted;
 				for(int c = 0; c < choice_option_list.size(); ++c)
 				{
-					if(!has_default)
+					if(defaulted.size() <= 0)
 					{
-						has_default = choice_option_list[c]["defaulted"].get<bool>();
+						if(choice_option_list[c]["defaulted"].get<bool>())
+						{
+							defaulted = choice_option_list[c]["id"].get<std::string>();
+						}
 					}
-					new_choice->add_option(format::remove_non_ascii(choice_option_list[c]["description"].get<std::string>()), choice_option_list[c]["id"].get<std::string>());
+
+					new_choice->add_option(
+						format::remove_non_ascii(choice_option_list[c]["description"].get<std::string>()),
+						choice_option_list[c]["id"].get<std::string>(),
+						choice_option_list[c]["delivery_price"]["amount"].get<double>()
+					);
 				}
-				new_choice->required = !has_default;
+
+				new_choice->required = defaulted.size() <= 0 && new_choice->min_options > 0;
 
 				store_selection::choices.emplace_back(new_choice);
 			}
@@ -46,6 +61,7 @@ bool store_selection::load_choices(const std::string& item_name, const std::stri
 			store_selection::max_page = (int)ceil(store_selection::choices.size() / 10.f);
 			store_selection::current_item = item_name;
 			store_selection::current_item_id = item_id;
+			store_selection::current_item_cost = item_cost;
             return true;
 		}
 		catch(const std::exception& e)
@@ -61,7 +77,7 @@ bool store_selection::load_choices(const std::string& item_name, const std::stri
     return false;
 }
 
-void store_selection::update_buttons()
+void store_selection::update_buttons(bool animate = true)
 {
 	int i = 0;
 	int col = 0;
@@ -69,8 +85,6 @@ void store_selection::update_buttons()
 
 	for(i = 0; i < 10; ++i)
 	{
-		store_selection::buttons[i]->set_effect(EFFECT_FADE, anim_speed);
-
 		int index = i + (10 * store_selection::current_page);
 		if(index + 1 > choices.size()) break;
 
@@ -84,8 +98,8 @@ void store_selection::update_buttons()
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		store_selection::buttons[i]->set_label_hover(text_hover);
-
-		store_selection::buttons[i]->set_effect(EFFECT_FADE, anim_speed);
+		
+		if (animate) store_selection::buttons[i]->set_effect(EFFECT_FADE, anim_speed);
 
 		if(i == 4)
 		{
@@ -160,6 +174,15 @@ store_menu::view store_selection::update(menus::state& menu)
 	gui_trigger trig_plus;
 	trig_plus.set_button_only_trigger(-1, WPAD_BUTTON_PLUS, 0);
 
+	auto img = api::download_image(img_id, 320, 320);
+	gui_image_data background_image_img(img.data);
+	gui_image background_image(&background_image_img);
+	background_image.set_alignment(ALIGN_CENTER, ALIGN_CENTER);
+	background_image.set_position(0, 0);
+	background_image.set_scale(1.5f);
+	background_image.set_visible(false);
+	w.append(&background_image);
+
 	gui_image_data logoImage(wiieat_logo_png);
 	gui_image logo(&logoImage);
 	logo.set_alignment(ALIGN_LEFT, ALIGN_TOP);
@@ -181,6 +204,11 @@ store_menu::view store_selection::update(menus::state& menu)
 	add_btn.set_effect_grow();
 	add_btn.set_scale(0.75f);
 	w.append(&add_btn);
+
+	price_text = new gui_text(format::va("$%.2f", store_selection::current_item_cost / 100.0).c_str(), 20, (GXColor){0, 0, 0, 255});
+	price_text->set_alignment(ALIGN_RIGHT, ALIGN_TOP);
+	price_text->set_position(-185, 36);
+	w.append(price_text);
 
 	gui_image_data left_btn_img_data(left_button_png);
 	gui_image_data left_btn_hover_img_data(left_button_hover_png);
@@ -229,6 +257,21 @@ store_menu::view store_selection::update(menus::state& menu)
 	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
 
+	gui_image_data image_btn_img_data(image_button_png);
+	gui_image_data image_btn_hover_img_data(image_button_hover_png);
+	gui_image image_btn_img(&image_btn_img_data);
+	gui_image image_btn_hover_img(&image_btn_hover_img_data);
+	gui_button image_btn(image_btn_img_data.get_width(), image_btn_img_data.get_height());
+	image_btn.set_alignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+	image_btn.set_position(-25, -15);
+	image_btn.set_image(&image_btn_img);
+	image_btn.set_image_hover(&image_btn_hover_img);
+	image_btn.set_sound_hover(&btn_sound_hover);
+	image_btn.set_trigger(&trig_a);
+	image_btn.set_scale(0.75f);
+	image_btn.set_effect_grow();
+	if (img_id.size() > 0) w.append(&image_btn);
+
 	page_text = new gui_text(format::va("1/%i", max_page).c_str(), 15, (GXColor){0, 0, 0, 255});
 	page_text->set_alignment(ALIGN_RIGHT, ALIGN_TOP);
 	page_text->set_position(-112, 40);
@@ -242,7 +285,7 @@ store_menu::view store_selection::update(menus::state& menu)
 	gui_text item_text(store_selection::current_item.c_str(), 20, (GXColor){0, 0, 0, 255});
 	item_text.set_alignment(ALIGN_LEFT, ALIGN_TOP);
 	item_text.set_position(32 + info_text.get_text_width(), 80);
-	item_text.set_max_width(500);
+	item_text.set_max_width(500 - (store_menu::store_name.length() + 3) * 2.9);
 	item_text.set_scroll(true);
 	w.append(&item_text);
 
@@ -255,6 +298,7 @@ store_menu::view store_selection::update(menus::state& menu)
 
 	int col = 0;
 	int row = 0;
+	bool hide_ui = false;
 
 	for(int i = 0; i < 10; ++i)
 	{
@@ -323,10 +367,7 @@ store_menu::view store_selection::update(menus::state& menu)
 			if(store_selection::buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
-				for(int o = 0; o < store_selection::choices[index]->options.size(); ++i)
-				{
-					console_menu::write_line(store_selection::choices[index]->options[o]->name);
-				}
+				console_menu::write_line(store_selection::choices[index]->name.c_str());
 				store_selection::buttons[i]->reset_state();
 				break;
 			}
@@ -337,6 +378,27 @@ store_menu::view store_selection::update(menus::state& menu)
 			menu = home_menu::update();
 			if(menu == menus::state::MENU_CANCEL) view = store_menu::view::VIEW_NONE;
 			else if(menu != menus::state::MENU_CANCEL)  view = store_menu::view::VIEW_EXIT;
+		}
+		else if(image_btn.get_state() == STATE_CLICKED)
+		{
+			hide_ui = !hide_ui;
+
+			for(int i = 0; i < buttons.size(); ++i)
+			{
+				buttons[i]->set_visible(!hide_ui);
+			}
+
+			if (!hide_ui) update_buttons(false);
+
+			background_image.set_visible(hide_ui);
+			add_btn.set_visible(!hide_ui);
+			price_text->set_visible(!hide_ui);
+			page_text->set_visible(!hide_ui);
+			item_text.set_visible(!hide_ui);
+			info_text.set_visible(!hide_ui);
+			exit_btn.set_visible(!hide_ui);
+
+			image_btn.reset_state();
 		}
 		else if(exit_btn.get_state() == STATE_CLICKED)
 		{
@@ -357,11 +419,25 @@ store_menu::view store_selection::update(menus::state& menu)
 				api::locked_store_name = store_menu::store_name;
 			}
 			
-			if(api::add_item_request(api::cart_id, api::locked_store_id, store_selection::current_item_id, store_selection::current_item_cost) != api::error::NONE)
+			std::vector<std::uint32_t> option_ids {};
+			for(int i = 0; i < store_selection::choices.size(); ++i)
+			{
+				try
+				{
+					option_ids.emplace_back(std::stoul(store_selection::choices[i]->options[0]->id));
+				}
+				catch(std::exception e)
+				{
+					console_menu::write_line(e.what());
+				}
+			}
+
+			if(api::add_item_request(api::cart_id, api::locked_store_id, store_selection::current_item_id, store_selection::current_item_cost / 100.0, option_ids) != api::error::NONE)
 			{
 				console_menu::write_line("adding item error!");
 			}
 
+			store_items::unload_items();
 			view = store_menu::view::VIEW_CATEGORIES;
 			add_btn.reset_state();
 		}
@@ -378,7 +454,9 @@ store_menu::view store_selection::update(menus::state& menu)
 	}
 
 	store_selection::unload_choices();
+
 	store_selection::buttons.clear();
+	delete[] img.data;
 
 	menus::halt_gui();
 	menus::main_window->remove(&w);
@@ -388,6 +466,11 @@ store_menu::view store_selection::update(menus::state& menu)
 
 void store_selection::unload_choices()
 {
+	for(auto ptr : store_selection::choices)
+	{
+		delete ptr;
+	}
+	
 	store_selection::choices.clear();
 	store_selection::current_page = 0;
 	store_selection::max_page = 0;

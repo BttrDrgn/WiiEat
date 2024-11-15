@@ -11,7 +11,7 @@ class store_items
 {
     public:
         static store_menu::view update(menus::state& menu);
-        static void load_items(const std::string& store_id, const std::string& cat_id);
+        static bool load_items(const std::string& store_id, const std::string& cat_id);
         static void unload_items();
         static void update_buttons();
         static void next_page();

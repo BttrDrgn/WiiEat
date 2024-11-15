@@ -112,11 +112,11 @@ menus::state payment_menu::update()
 	{
 		if(i + 1 > credit_cards.size()) break;
 
-		auto text = new gui_text(payment_menu::credit_cards[i]->last_4.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::va("%s %s", format::to_upper(payment_menu::credit_cards[i]->type).c_str(), payment_menu::credit_cards[i]->last_4.c_str()).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 		payment_menu::buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(payment_menu::credit_cards[i]->last_4.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(format::va("%s %s", format::to_upper(payment_menu::credit_cards[i]->type).c_str(), payment_menu::credit_cards[i]->last_4.c_str()).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		payment_menu::buttons[i]->set_label_hover(text_hover);
@@ -143,7 +143,7 @@ menus::state payment_menu::update()
 			{
 				w.set_effect(EFFECT_FADE, -25);
 				while(w.get_effect() > 0) usleep(100);
-				
+
 				api::set_active_card(payment_menu::credit_cards[i]->last_4, payment_menu::credit_cards[i]->id);
 				payment_menu::buttons[i]->reset_state();
 				menu = menus::state::MENU_PAYMENT;

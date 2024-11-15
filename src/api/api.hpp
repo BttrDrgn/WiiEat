@@ -14,6 +14,7 @@
 #include <api/carts/carts.hpp>
 #include <api/carts/cart_lines.hpp>
 #include <api/incomplete_delivery.hpp>
+#include <api/delivery_info.hpp>
 #include <api/credit_card.hpp>
 
 using json = nlohmann::json;
@@ -43,8 +44,8 @@ class api
 
         struct img_data
         {
-            uint8_t* data;
             size_t size;
+            std::uint8_t* data;
         };
 
         static char address[ADDRESS_LEN];
@@ -52,6 +53,7 @@ class api
         static char state[STATE_LEN];
         static char zip[ZIP_LEN];
 
+        static std::string email;
         static std::string access_token;
         static std::string ud_id;
         static std::string csrf_token;
@@ -59,8 +61,8 @@ class api
         static std::string geohash;
         static std::unordered_map<char*, char*> endpoints;
         static std::string operation_id;
-        static int tz_offset;
-        static int device_id;
+        static std::int64_t tz_offset;
+        static std::int64_t device_id;
         static std::string cart_id;
         static std::string locked_store_id;
         static std::string locked_store_name;
@@ -90,8 +92,9 @@ class api
         //cart
         static api::error create_cart_request();
         static api::error get_cart_request(const std::string& cart_id, json& json);
-        static api::error add_item_request(const std::string& cart_id, const std::string& store_id, const std::string& menu_item_id, double cost);
+        static api::error add_item_request(const std::string& cart_id, const std::string& store_id, const std::string& menu_item_id, double cost, const std::vector<std::uint32_t>& option_ids);
         static api::error put_incomplete_delivery();
+        static api::error put_delivery_info();
 
         //payments
         static api::error get_payments(const std::string& udId, json& json);
@@ -99,7 +102,7 @@ class api
         static void set_active_card(const std::string& last_4, const std::string& id);
 
         //download
-        static img_data download_image(const std::string& url);
+        static img_data download_image(const std::string& url, int width, int height);
 };
 
 #endif /* API */

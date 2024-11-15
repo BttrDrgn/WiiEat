@@ -3,6 +3,7 @@
 
 #include <string>
 #include <nlohmann/json.hpp>
+#include <api/line_options.hpp>
 
 using json = nlohmann::json;
 
@@ -15,7 +16,6 @@ public:
     int quantity;
     std::string special_instructions;
     std::vector<json> options;
-    //std::vector<int> sub_option_ids;
     double cost;
     std::string restaurant_id;
     bool popular;
@@ -30,7 +30,6 @@ public:
         quantity(count),
         special_instructions(""),
         options({}),
-        //sub_option_ids({}),
         cost(cost),
         restaurant_id(store_id),
         popular(false),
@@ -38,23 +37,33 @@ public:
         source("restaurant menu section_other menu categories")
     {}
 
+    void add_option(std::uint32_t id, int quantity)
+    {
+        line_options* opt = new line_options(id, quantity);
+        options.emplace_back(opt->serialize());
+        delete opt; 
+    }
+
     // Serialize method
     json serialize() const
     {
-        return {
+        json j = {
             {"menu_item_id", menu_item_id},
             {"brand", brand},
             {"experiments", experiments},
             {"quantity", quantity},
             {"special_instructions", special_instructions},
             {"options", options},
-            //{"sub_option_ids", sub_option_ids},
-            {"cost", cost},
             {"restaurant_id", restaurant_id},
             {"popular", popular},
             {"isBadged", is_badged},
             {"source", source}
         };
+
+        if (cost == 0.0) j["cost"] = 0;
+        else j["cost"] = cost;
+
+        return j;
     }
 
     // Static Deserialize method

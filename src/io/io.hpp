@@ -61,6 +61,35 @@ class io
             return false;
         }
 
+        static bool read_file(const std::string& file, std::uint8_t** buffer, std::size_t* size)
+        {
+            if (!buffer || !size) return false;
+            *buffer = nullptr; // Clear the buffer to avoid dangling pointers.
+            *size = 0;         // Reset the size.
+
+            if (file_exists(file)) // Assuming file_exists is defined elsewhere.
+            {
+                std::ifstream stream(file, std::ios::binary);
+                if (!stream.is_open()) return false;
+
+                stream.seekg(0, std::ios::end);
+                const std::streamsize file_size = stream.tellg();
+                stream.seekg(0, std::ios::beg);
+
+                if (file_size > 0)
+                {
+                    *size = static_cast<std::size_t>(file_size);
+                    *buffer = new std::uint8_t[*size]; // Allocate memory for the buffer.
+                    stream.read(reinterpret_cast<char*>(*buffer), file_size);
+                    stream.close();
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         static bool read_file(const std::string& file, uint8_t*& data, size_t& size)
         {
             data = nullptr;

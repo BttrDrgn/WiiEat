@@ -72,6 +72,7 @@ net::response net::http_request(std::string url, const std::string& method,
 
     url = format::replace(url.c_str(), " ", "%20");
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -133,7 +134,11 @@ net::response net::http_request(std::string url, const std::string& method,
     }
 
     console_menu::write_line(format::va("[%s] %i %s", method.c_str(), response.status_code, url.c_str()));
-    console_menu::write_line(response.body.c_str());
+
+    if (response.status_code != 200)
+    {
+        console_menu::write_line(response.body.c_str());
+    }
 
     curl_slist_free_all(headerlist);
     curl_easy_cleanup(curl);

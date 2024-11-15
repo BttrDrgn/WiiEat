@@ -27,7 +27,7 @@ void store_items::update_buttons()
 		text->set_max_width(200);
 		store_items::buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(format::remove_non_ascii(store_items::items[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(format::va("($%.2f) %s", store_items::items[index]->price / 100.0, format::remove_non_ascii(store_items::items[index]->name).c_str()).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		store_items::buttons[i]->set_label_hover(text_hover);
@@ -80,7 +80,7 @@ void store_items::prev_page()
 	store_items::update_buttons();
 }
 
-void store_items::load_items(const std::string& store_id, const std::string& cat_id)
+bool store_items::load_items(const std::string& store_id, const std::string& cat_id)
 {
 	try
 	{
@@ -92,17 +92,34 @@ void store_items::load_items(const std::string& store_id, const std::string& cat
 			for(int i = 0; i < menu_items.size(); ++i)
 			{
 				auto item = menu_items[i];
+				auto cost = item["entity"]["item_price"]["delivery"]["value"].get<double>();
+				//item["entity"]["media_image"]["public_id"].get<std::string>()
+
+				std::string img_id;
+				if (item.contains("entity") && item["entity"].contains("media_image"))
+				{
+					auto media_image = item["entity"]["media_image"];
+					if (media_image.contains("public_id"))
+					{
+						img_id = media_image["public_id"].get<std::string>();
+					}
+				}
+
 				store_items::items.emplace_back(new menu_item(
 					format::remove_non_ascii(item["entity"]["item_name"].get<std::string>()),
-					item["entity"]["item_id"].get<std::string>())
+					item["entity"]["item_id"].get<std::string>(),
+					img_id,
+					cost)
 				);
 			}
 
 			store_items::max_page = (int)ceil(store_items::items.size() / 10.f);
+			return true;
 		}
 		else if(err == api::error::UNAUTHORIZED)
 		{
 			menus::unauthorized_prompt();
+			return false;
 		}
 	}
 	catch(const std::exception& e)
@@ -269,11 +286,11 @@ store_menu::view store_items::update(menus::state& menu)
 		int index = i + (10 * store_items::current_page);
 		if(index + 1 > store_items::items.size()) break;
 
-		auto text = new gui_text(store_items::items[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::remove_non_ascii(store_items::items[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 		store_items::buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(store_items::items[index]->name.c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(format::va("($%.2f) %s", store_items::items[index]->price / 100.0, format::remove_non_ascii(store_items::items[index]->name).c_str()).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		store_items::buttons[i]->set_label_hover(text_hover);
@@ -295,12 +312,11 @@ store_menu::view store_items::update(menus::state& menu)
 			if(store_items::buttons[i]->get_state() == STATE_CLICKED)
 			{
 				int index = i + (10 * current_page);
-				w.set_effect(EFFECT_FADE, -25);
-				while(w.get_effect() > 0) usleep(100);
 
-				if(store_selection::load_choices(store_items::items[index]->name, store_menu::store_id, store_items::items[index]->id))
+				if(store_selection::load_choices(store_items::items[index]->name, store_menu::store_id, store_items::items[index]->id, store_items::items[index]->img_id, store_items::items[index]->price))
 				{
-					store_items::unload_items();
+					w.set_effect(EFFECT_FADE, -25);
+					while(w.get_effect() > 0) usleep(100);
 					view = store_menu::view::VIEW_SELECTION;
 				}
 				store_items::buttons[i]->reset_state();

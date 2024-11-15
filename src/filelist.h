@@ -26,6 +26,8 @@
 #include "left_button_hover_png.h"
 #include "right_button_png.h"
 #include "right_button_hover_png.h"
+#include "image_button_png.h"
+#include "image_button_hover_png.h"
 #include "address_button_png.h"
 #include "address_button_hover_png.h"
 #include "credit_button_png.h"
