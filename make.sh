@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# Check if MSYS2 was launched with -use-full-path by looking for Windows system paths
-# and Dolphin has been applied to path
-
-if ! command -v Dolphin &>/dev/null; then
-    echo "MSYS2 was not launched with -use-full-path or Dolphin was not found in PATH."
-    echo "Exiting script."
-    exit 1
-fi
-
 echo "Detecting new files..."
 # Get the directory of the script
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -24,7 +15,6 @@ temp_file="$script_dir/.files.tmp"
 if [[ ! -f "$temp_file" ]]; then
     # If the temporary file doesn't exist, create it and dump the file structure
     find "$src_dir" "$assets_dir" -type f > "$temp_file"
-    # Set the temporary file as hidden (optional in MSYS2, doesn't actually hide the file)
     chmod 600 "$temp_file"
     echo "Initial file structure dumped."
 else
@@ -35,7 +25,6 @@ else
     if ! cmp -s "$temp_file" "$temp_file.new"; then
         echo "Changes detected. Running make clean..."
         make clean
-        # Update the temporary file with the new file structure
         mv -f "$temp_file.new" "$temp_file"
     else
         echo "No changes detected."
@@ -61,10 +50,34 @@ if [[ -z "$first_dol" ]]; then
     exit 1
 fi
 
+# Check if the argument is "remote"
+if [[ "$1" == "remote" ]]; then
+    # Check if an IP address was provided
+    if [[ -z "$2" ]]; then
+        echo "Usage: $0 remote <IP_ADDRESS>"
+        exit 1
+    fi
+
+    # Set the WIILOAD environment variable for TCP mode
+    export WIILOAD="tcp:$2"
+
+    echo "Running wiiload with $WIILOAD and $first_dol..."
+    wiiload "$first_dol"
+    exit 0
+fi
+
+# Ensure Dolphin is available
+if ! command -v Dolphin &>/dev/null; then
+    echo "MSYS2 was not launched with -use-full-path or Dolphin was not found in PATH."
+    echo "Exiting script."
+    exit 1
+fi
+
 # Conditionally use taskkill if on Windows
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
     taskkill //F //IM Dolphin.exe //T
 fi
 
 # Run Dolphin with the first .dol file in background mode
+echo "Running Dolphin with $first_dol..."
 Dolphin -b -e "$first_dol" &
