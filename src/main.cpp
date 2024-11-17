@@ -1,6 +1,7 @@
 #include "main.hpp"
 
 bool main::shutdown = false;
+bool main::dark_mode = false;
 
 void main::shutdown_app()
 {
@@ -47,14 +48,8 @@ int main(int argc, char *argv[])
 		else
 		{
 			api::load_card_info();
-			if (!api::load_address() || !api::is_address_complete())
-			{
-				menus::initialize(menus::state::MENU_ADDRESS);
-			}
-			else
-			{
-				menus::initialize(menus::state::MENU_RESTAURANT);
-			}
+			if (!api::load_address() || !api::is_address_complete()) menus::initialize(menus::state::MENU_ADDRESS);
+			else menus::initialize(menus::state::MENU_RESTAURANT);
 		}
 	}
 

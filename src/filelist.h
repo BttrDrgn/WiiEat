@@ -44,6 +44,8 @@
 #include "circle_button_png.h"
 #include "button_small_png.h"
 #include "button_small_hover_png.h"
+#include "button_dark_png.h"
+#include "button_dark_hover_png.h"
 #include "button_png.h"
 #include "button_hover_png.h"
 #include "button_required_png.h"

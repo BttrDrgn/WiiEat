@@ -267,14 +267,20 @@ store_menu::view store_category::update(menus::state& menu)
 			{
 				int index = i + (10 * current_page);
 
+				w.set_effect(EFFECT_FADE, -25);
+				while(w.get_effect() > 0) usleep(100);
 				if(store_items::load_items(store_menu::store_id, store_category::categories[index]->id))
 				{
-					w.set_effect(EFFECT_FADE, -25);
-					while(w.get_effect() > 0) usleep(100);
+					
 
 					store_category::category_name = store_category::categories[index]->name;
 					store_category::buttons[i]->reset_state();
 					view = store_menu::view::VIEW_ITEMS;
+				}
+				else
+				{
+					w.set_effect(EFFECT_FADE, 25);
+					while(w.get_effect() > 0) usleep(100);
 				}
 				break;
 			}

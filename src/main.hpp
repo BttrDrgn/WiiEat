@@ -45,6 +45,7 @@
 class main
 {
     public:
+        static bool dark_mode;
         static bool shutdown;
         static void shutdown_app();
 };

@@ -72,6 +72,7 @@ class menus
         static void keyboard(char* var, u16 maxlen);
         static void num_keyboard(char* var, u16 maxlen);
         static int window_prompt(const char *title, const char *msg, const char *btn1Label, const char* btn2Label = "");
+        static void generate_background(bool dark_mode);
 
 };
 

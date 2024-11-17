@@ -32,7 +32,7 @@ void menus::initialize(state menu)
 
 	menus::main_window = new gui_window(screen_width, screen_height);
 
-	menus::bg_img = new gui_image(screen_width, screen_height, (GXColor){0xE1, 0xE1, 0xE1, 0xFF});
+    menus::generate_background(main::dark_mode);
 	menus::main_window->append(menus::bg_img);
 
     menus::current_song = new gui_sound(legacyAlli_mash_up_ogg, legacyAlli_mash_up_ogg_size, SOUND_OGG);
@@ -43,6 +43,11 @@ void menus::initialize(state menu)
 
 	menus::update();
     menus::shutdown_app();
+}
+
+void menus::generate_background(bool dark_mode)
+{
+	menus::bg_img = new gui_image(screen_width, screen_height, dark_mode ? (GXColor){0x35, 0x30, 0x2E, 0xFF} : (GXColor){0xE1, 0xE1, 0xE1, 0xFF});
 }
 
 void menus::update()

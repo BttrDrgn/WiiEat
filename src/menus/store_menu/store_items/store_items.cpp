@@ -313,11 +313,18 @@ store_menu::view store_items::update(menus::state& menu)
 			{
 				int index = i + (10 * current_page);
 
+				w.set_effect(EFFECT_FADE, -25);
+				while(w.get_effect() > 0) usleep(100);
+
 				if(store_selection::load_choices(store_items::items[index]->name, store_menu::store_id, store_items::items[index]->id, store_items::items[index]->img_id, store_items::items[index]->price))
 				{
-					w.set_effect(EFFECT_FADE, -25);
-					while(w.get_effect() > 0) usleep(100);
+					
 					view = store_menu::view::VIEW_SELECTION;
+				}
+				else
+				{
+					w.set_effect(EFFECT_FADE, 25);
+					while(w.get_effect() > 0) usleep(100);
 				}
 				store_items::buttons[i]->reset_state();
 				break;

@@ -26,11 +26,11 @@ void update_buttons()
 
 		if(!buttons[i]->is_visible()) buttons[i]->set_visible(true);
 
-		auto text = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, main::dark_mode ? (GXColor){0xff, 0xff, 0xff, 255} : (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 		buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, main::dark_mode ? (GXColor){0xff, 0xff, 0xff, 255} : (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		buttons[i]->set_label_hover(text_hover);
@@ -140,8 +140,9 @@ menus::state restaurant_menu::update()
 	gui_image_data input_box(input_box_png);
 	gui_image_data input_box_hover(input_box_hover_png);
 
-	gui_image_data btn(button_png);
-	gui_image_data btn_hover(button_hover_png);
+	gui_image_data btn(main::dark_mode ? button_dark_png : button_png);
+	gui_image_data btn_hover(main::dark_mode ? button_dark_hover_png : button_hover_png);
+
 	gui_image_data btn_small(button_small_png);
 	gui_image_data btn_small_hover(button_small_hover_png);
 
@@ -296,11 +297,11 @@ menus::state restaurant_menu::update()
 	{
 		int index = i + (10 * current_page);
 		if(index + 1 > restaurant_menu::restaurants.size()) break;
-		auto text = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, main::dark_mode ? (GXColor){0xEB, 0x9E, 0x67, 255} : (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 		buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, main::dark_mode ? (GXColor){0xEB, 0x9E, 0x67, 255} : (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		buttons[i]->set_label_hover(text_hover);
@@ -329,16 +330,19 @@ menus::state restaurant_menu::update()
 			{
 				int index = i + (10 * current_page);
 
+				w.set_effect(EFFECT_FADE, -25);
+				while(w.get_effect() > 0) usleep(100);
+
 				if(store_menu::load_store(restaurant_menu::restaurants[index]->name, restaurant_menu::restaurants[index]->id))
 				{
-					w.set_effect(EFFECT_FADE, -25);
-					while(w.get_effect() > 0) usleep(100);
-					
 					menu = menus::next(menus::state::MENU_STORE);
 				}
 				else
 				{
 					store_menu::unload_store();
+					
+					w.set_effect(EFFECT_FADE, 25);
+					while(w.get_effect() > 0) usleep(100);
 				}
 				buttons[i]->reset_state();
 				break;
