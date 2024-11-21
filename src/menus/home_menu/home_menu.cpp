@@ -9,8 +9,8 @@ menus::state home_menu::update()
 
 	gui_sound btn_sound_hover(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 
-	gui_image_data btn(button_png);
-	gui_image_data btn_hover(button_hover_png);
+	gui_image_data btn(main::dark_mode ? button_dark_png : button_png);
+	gui_image_data btn_hover(main::dark_mode ? button_dark_hover_png : button_hover_png);
 
 	gui_trigger trig_a;
 	trig_a.set_simple_trigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);

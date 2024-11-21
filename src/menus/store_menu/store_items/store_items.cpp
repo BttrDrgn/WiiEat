@@ -139,8 +139,8 @@ store_menu::view store_items::update(menus::state& menu)
 	gui_image_data input_box(input_box_png);
 	gui_image_data input_box_hover(input_box_hover_png);
 
-	gui_image_data btn(button_png);
-	gui_image_data btn_hover(button_hover_png);
+	gui_image_data btn(main::dark_mode ? button_dark_png : button_png);
+	gui_image_data btn_hover(main::dark_mode ? button_dark_hover_png : button_hover_png);
 	gui_image_data btn_small(button_small_png);
 	gui_image_data btn_small_hover(button_small_hover_png);
 

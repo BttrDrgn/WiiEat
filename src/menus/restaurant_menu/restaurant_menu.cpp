@@ -26,11 +26,11 @@ void update_buttons()
 
 		if(!buttons[i]->is_visible()) buttons[i]->set_visible(true);
 
-		auto text = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, main::dark_mode ? (GXColor){0xff, 0xff, 0xff, 255} : (GXColor){0x0, 0x0, 0x0, 255});
+		auto text = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, main::dark_mode ? (GXColor){0xEB, 0x9E, 0x67, 255} : (GXColor){0x0, 0x0, 0x0, 255});
 		text->set_max_width(200);
 		buttons[i]->set_label(text);
 
-		auto text_hover = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, main::dark_mode ? (GXColor){0xff, 0xff, 0xff, 255} : (GXColor){0x0, 0x0, 0x0, 255});
+		auto text_hover = new gui_text(format::remove_non_ascii(restaurant_menu::restaurants[index]->name).c_str(), 18, main::dark_mode ? (GXColor){0xEB, 0x9E, 0x67, 255} : (GXColor){0x0, 0x0, 0x0, 255});
 		text_hover->set_max_width(200);
 		text_hover->set_scroll(true);
 		buttons[i]->set_label_hover(text_hover);
@@ -237,12 +237,12 @@ menus::state restaurant_menu::update()
 	exit_btn.set_effect_grow();
 	w.append(&exit_btn);
 
-	page_text = new gui_text(format::va("1/%i", max_page).c_str(), 15, (GXColor){0, 0, 0, 255});
+	page_text = new gui_text(format::va("1/%i", max_page).c_str(), 15, main::dark_mode ? (GXColor){0xEB, 0x9E, 0x67, 255} : (GXColor){0x0, 0x0, 0x0, 255});
 	page_text->set_alignment(ALIGN_RIGHT, ALIGN_TOP);
 	page_text->set_position(-112, 40);
 	if(max_page > 1) w.append(page_text);
 
-	gui_text info_text("What are Wii eating today?", 20, (GXColor){0, 0, 0, 255});
+	gui_text info_text("What are Wii eating today?", 20, main::dark_mode ? (GXColor){0xEB, 0x9E, 0x67, 255} : (GXColor){0x0, 0x0, 0x0, 255});
 	info_text.set_alignment(ALIGN_LEFT, ALIGN_TOP);
 	info_text.set_position(32, 80);
 	w.append(&info_text);

@@ -35,8 +35,9 @@ void menus::initialize(state menu)
     menus::generate_background(main::dark_mode);
 	menus::main_window->append(menus::bg_img);
 
-    menus::current_song = new gui_sound(legacyAlli_mash_up_ogg, legacyAlli_mash_up_ogg_size, SOUND_OGG);
-    menus::current_song->SetStartPos(song_times[rand() % 4]);
+    //menus::current_song = new gui_sound(legacyAlli_mash_up_ogg, legacyAlli_mash_up_ogg_size, SOUND_OGG);
+    //menus::current_song->SetStartPos(song_times[rand() % 4]);
+    menus::current_song = new gui_sound(zygxrd_ogg, zygxrd_ogg_size, SOUND_OGG);
     menus::current_song->SetVolume(50);
     menus::current_song->SetLoop(true);
     menus::current_song->Play();

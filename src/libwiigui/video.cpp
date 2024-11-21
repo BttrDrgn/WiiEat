@@ -200,7 +200,7 @@ void menu_draw_img(f32 xpos, f32 ypos, u16 width, u16 height, u8 data[],
 
 	GXTexObj texObj;
 
-	GX_InitTexObj(&texObj, data, width,height, GX_TF_RGBA8,GX_CLAMP, GX_CLAMP,GX_FALSE);
+	GX_InitTexObj(&texObj, data, width,height, GX_TF_RGBA8, GX_CLAMP, GX_CLAMP, GX_FALSE);
 	GX_LoadTexObj(&texObj, GX_TEXMAP0);
 	GX_InvalidateTexAll();
 

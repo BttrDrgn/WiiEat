@@ -8,6 +8,8 @@ void main::shutdown_app()
     shutoff_rumble();
     stop_gx();
 
+	io::file_exists("sd://WiiEat/console.log") io::delete_file("sd://WiiEat/console.log");
+	
 	for(auto line : console_menu::console_out)
 	{
 		io::write_file("sd://WiiEat/console.log", line.c_str(), true);
