@@ -115,6 +115,7 @@ class io
             return false;
         }
 
+        //Writing causes issues on some wii system + sd card combos
         static bool write_file(const std::string& file, const std::string& data, const bool append = false)
         {
             const auto pos = file.find_last_of("/\\");

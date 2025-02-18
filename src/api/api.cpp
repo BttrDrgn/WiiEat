@@ -113,7 +113,7 @@ bool save_token(const std::string& json)
     }
     catch (const std::exception& e)
     {
-        // Handle exception (e.g., JSON parsing error)
+        console_menu::write_line(e.what());
         return false;
     }
 }
@@ -168,37 +168,44 @@ bool save_address(const std::string& full_address, const std::string& json)
 
 api::error api::auth_request(char* email, char* password)
 {
-    auth auth_login(device_id, email, password);
-    auto json = auth_login.serialize();
-    net::response resp;
-
-    char* endpoint = "auth";
-    if(api::request_access(endpoint, api::endpoints[endpoint], "POST"))
+    try
     {
-        std::vector<net::header> headers = 
-        {
-            { "Accept", "*/*"},
-        };
+        auth auth_login(device_id, email, password);
+        auto json = auth_login.serialize();
+        net::response resp;
 
-        resp = net::http_request(api::endpoints[endpoint], "POST", headers, json.dump());
-
-        if(resp.status_code == 463)
+        char* endpoint = "auth";
+        if(api::request_access(endpoint, api::endpoints[endpoint], "POST"))
         {
-            return api::error::EMAIL_2FA;
-        }
-        else if(resp.status_code == 200)
-        {
-            if(!save_token(resp.body))
+            std::vector<net::header> headers = 
             {
-                return api::error::BAD_JSON;
-            }
+                { "Accept", "*/*"},
+            };
 
-            return api::error::NONE;
+            resp = net::http_request(api::endpoints[endpoint], "POST", headers, json.dump());
+
+            if(resp.status_code == 463)
+            {
+                return api::error::EMAIL_2FA;
+            }
+            else if(resp.status_code == 200)
+            {
+                if(!save_token(resp.body))
+                {
+                    return api::error::BAD_JSON;
+                }
+
+                return api::error::NONE;
+            }
+            else if(resp.status_code == 403)
+            {
+                return api::error::UNAUTHORIZED;
+            }
         }
-        else if(resp.status_code == 403)
-        {
-            return api::error::UNAUTHORIZED;
-        }
+    }
+    catch (const std::exception& e)
+    {
+        console_menu::write_line(e.what());
     }
 
     return api::error::UNKNOWN;
