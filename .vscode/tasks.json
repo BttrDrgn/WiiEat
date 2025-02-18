@@ -4,7 +4,7 @@
         {
             "label": "Build - Dolphin",
             "type": "shell",
-            "command": "detect_files.bat && make -j12 && run_dolphin.bat",
+            "command": "make -j12 && run_dolphin.bat",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
