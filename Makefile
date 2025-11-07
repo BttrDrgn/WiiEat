@@ -25,7 +25,7 @@ INCLUDES	:=	src
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS		=	-g -O0 -Wall -w $(MACHDEP) $(INCLUDE) `freetype-config --cflags` -fpermissive
+CFLAGS		=	-g -O0 -Wall -w $(MACHDEP) $(INCLUDE) -fpermissive
 CXXFLAGS	=	$(CFLAGS)
 LDFLAGS		=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 
@@ -37,7 +37,7 @@ MAKEFLAGS += --silent
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS :=	-lcurl -lmbedtls -lmbedcrypto -lmbedx509 -lwiisocket -lm -lwiisocket -lpng `freetype-config --libs` -lz -lfat -lwiiuse -lbte -lasnd -logc -lvorbisidec -logg
+LIBS :=	-lcurl -lmbedtls -lmbedcrypto -lmbedx509 -lwiisocket -lm -lwiisocket -lpng -lfreetype -lz -lfat -lwiiuse -lbte -lasnd -logc -lvorbisidec -logg
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
