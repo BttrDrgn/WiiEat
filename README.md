@@ -12,3 +12,6 @@ Made for educational purposes. Used to fill my stomach.
 - Install the wii-curl libraries one at a time starting from `wii-mbedtls` to `wii-curl` then `libwiisocket` by running `pacman -U *.tar.gz` in dkp
 - Install the dkp portlibs `pacman -S ppc-libogg ppc-freetype ppc-libvorbisidec`
 - Run `./make.sh` in the WiiEat project folder
+### Auto Launch Dolphin (Optional)
+- Edit the MSys2 shortcut that dkp installs to your system to add `-use-full-path` as a launch argument
+- In your environment settings on Windows, navigate to PATH, add a new entry with your Dolphin emulator folder
